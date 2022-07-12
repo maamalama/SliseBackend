@@ -56,7 +56,8 @@ export class TokenProcessorService {
           totalBalanceUsd: 0,
           ethBalance: 0,
           firstTransactionDate: new Date(),
-          volume: 0
+          volume: 0,
+          waitlistId: waitlist.id
         };
         savedHolders.push(dataHolder);
         this.logger.debug(`holder ${tokenHolder} parsed`);

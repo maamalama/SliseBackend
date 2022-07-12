@@ -39,7 +39,7 @@ export class SchedulerService {
         processedTokens: false,
         processedTokensFail: false
       },
-      take: 10
+      take: 10,
     });
 
     await Promise.all(holders.map(async (tokenHolder) => {
@@ -57,7 +57,8 @@ export class SchedulerService {
               transferProcessedStatus: TransferProcessedStatus.STORED,
               symbol: token.currency.symbol,
               name: token.currency.name,
-              holderId: tokenHolder.id
+              holderId: tokenHolder.id,
+              waitlistId: tokenHolder.waitlistId
             };
             savedTransfers.push(tokenTransfer);
           });
