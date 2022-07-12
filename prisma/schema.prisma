@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Token {
+  id        String   @id @default(uuid())
+  network   Int
+  name      String
+  address   String
+  symbol    String
+  logo      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Waitlist {
+  id              String              @id @default(uuid())
+  name            String
+  contractAddress String
+  tokenHolders    HoldersOnWaitlist[]
+}
+
+model WaitlistStatistics {
+  id              String @id @default(uuid())
+  totalBalance    Int
+  totalUsdBalance Int
+  popularTokens   Json
+}
+
+model TokenHolder {
+  id                    String              @id @default(uuid())
+  address               String
+  totalBalanceUsd       Float
+  totalBalanceTokens    Int
+  lastUpdate            DateTime            @default(now())
+  firstTransactionDate  DateTime 
+  ethBalance            Float
+  volume                Float
+  processedTokens Boolean    @default(false)
+  processedBalance Boolean    @default(false)
+  processedTokensFail Boolean    @default(false)
+  processedBalanceFail Boolean    @default(false)
+  waitlists          HoldersOnWaitlist[]
+}
+
+model HoldersOnWaitlist {
+  waitlist      Waitlist    @relation(fields: [waitlistId], references: [id])
+  waitlistId    String
+  tokenHolder   TokenHolder @relation(fields: [tokenHolderId], references: [id])
+  tokenHolderId String
+  assignedAt    DateTime    @default(now())
+
+  @@id([waitlistId, tokenHolderId])
+}
+
+model TokenTransfer {
+  id              String      @id @default(uuid())
+  address    String
+  tokenId         BigInt
+  amount          Float
+  symbol String
+  name String
+  contractType    TokenType
+  metadata        String?
+  holderId String
+  transferProcessedStatus TransferProcessedStatus
+}
+
+enum TransferProcessedStatus {
+  STORED
+  PROCESSED
+}
+
+enum TokenType {
+  ERC20
+  ERC223
+  ERC721
+  ERC827
+  ERC1155
+  UNKOWN
+}
+enum TransactionType {
+  BUY
+  SALE
+  MINT
+  BURN
+  TRANSFER
+  CANCEL_LIST
+}
