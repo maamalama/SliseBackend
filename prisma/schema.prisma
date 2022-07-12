@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
 }
 
@@ -26,7 +26,8 @@ model Token {
 model Waitlist {
   id              String              @id @default(uuid())
   name            String
-  contractAddress String
+  contractAddress String?
+  symbol          String?
   tokenHolders    HoldersOnWaitlist[]
 }
 
@@ -38,19 +39,19 @@ model WaitlistStatistics {
 }
 
 model TokenHolder {
-  id                    String              @id @default(uuid())
-  address               String
-  totalBalanceUsd       Float
-  totalBalanceTokens    Int
-  lastUpdate            DateTime            @default(now())
-  firstTransactionDate  DateTime 
-  ethBalance            Float
-  volume                Float
-  processedTokens Boolean    @default(false)
-  processedBalance Boolean    @default(false)
-  processedTokensFail Boolean    @default(false)
-  processedBalanceFail Boolean    @default(false)
-  waitlists          HoldersOnWaitlist[]
+  id                   String              @id @default(uuid())
+  address              String
+  totalBalanceUsd      Float
+  totalBalanceTokens   Int
+  lastUpdate           DateTime            @default(now())
+  firstTransactionDate DateTime
+  ethBalance           Float
+  volume               Float
+  processedTokens      Boolean             @default(false)
+  processedBalance     Boolean             @default(false)
+  processedTokensFail  Boolean             @default(false)
+  processedBalanceFail Boolean             @default(false)
+  waitlists            HoldersOnWaitlist[]
 }
 
 model HoldersOnWaitlist {
@@ -64,15 +65,15 @@ model HoldersOnWaitlist {
 }
 
 model TokenTransfer {
-  id              String      @id @default(uuid())
-  address    String
-  tokenId         BigInt
-  amount          Float
-  symbol String
-  name String
-  contractType    TokenType
-  metadata        String?
-  holderId String
+  id                      String                  @id @default(uuid())
+  address                 String
+  tokenId                 BigInt
+  amount                  Float
+  symbol                  String
+  name                    String
+  contractType            TokenType
+  metadata                String?
+  holderId                String
   transferProcessedStatus TransferProcessedStatus
 }
 
@@ -89,6 +90,7 @@ enum TokenType {
   ERC1155
   UNKOWN
 }
+
 enum TransactionType {
   BUY
   SALE

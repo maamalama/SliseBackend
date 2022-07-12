@@ -43,7 +43,8 @@ export class TokenProcessorService {
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: holders.collectionName,
-        contractAddress: holders.contractAddress
+        contractAddress: holders.contractAddress,
+        symbol: holders.symbol
       }
     });
     try {

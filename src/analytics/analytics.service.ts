@@ -97,7 +97,7 @@ export class AnalyticsService {
 
   public async parseHolders(holdersRequest: HolderInfoRequest): Promise<void> {
     this.logger.debug(`collection: ${holdersRequest.collectionName} received for processing`);
-    const hldrs = await this.fetchHolders(1, '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', 6439);
+    const hldrs = await this.fetchHolders(1, holdersRequest.contractAddress, 6439);
     const addresses = hldrs.items.map((item) => {
       return item.address;
     });

@@ -9,6 +9,9 @@ export class HolderInfoRequest {
   @ApiProperty({ type: String, required: false })
   @IsString()
   contractAddress?: string;
+  @ApiProperty({ type: String, required: false })
+  @IsString()
+  symbol?: string;
   @ArrayMinSize(1)
   @IsArray()
   @IsString({ each: true })
