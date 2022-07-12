@@ -12,6 +12,9 @@ export class HolderInfoRequest {
   @ApiProperty({ type: String, required: false })
   @IsString()
   symbol?: string;
+  @ApiProperty({ type: Number })
+  @IsString()
+  waitlistSize: number;
   @ArrayMinSize(1)
   @IsArray()
   @IsString({ each: true })
