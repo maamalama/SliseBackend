@@ -24,11 +24,11 @@ model Token {
 }
 
 model Waitlist {
-  id              String              @id @default(uuid())
+  id              String        @id @default(uuid())
   name            String
   contractAddress String?
   symbol          String?
-  tokenHolders    HoldersOnWaitlist[]
+  tokenHolders    TokenHolder[]
 }
 
 model WaitlistStatistics {
@@ -39,29 +39,20 @@ model WaitlistStatistics {
 }
 
 model TokenHolder {
-  id                   String              @id @default(uuid())
+  id                   String   @id @default(uuid())
   address              String
   totalBalanceUsd      Float
   totalBalanceTokens   Int
-  lastUpdate           DateTime            @default(now())
+  lastUpdate           DateTime @default(now())
   firstTransactionDate DateTime
   ethBalance           Float
   volume               Float
-  processedTokens      Boolean             @default(false)
-  processedBalance     Boolean             @default(false)
-  processedTokensFail  Boolean             @default(false)
-  processedBalanceFail Boolean             @default(false)
-  waitlists            HoldersOnWaitlist[]
-}
-
-model HoldersOnWaitlist {
-  waitlist      Waitlist    @relation(fields: [waitlistId], references: [id])
-  waitlistId    String
-  tokenHolder   TokenHolder @relation(fields: [tokenHolderId], references: [id])
-  tokenHolderId String
-  assignedAt    DateTime    @default(now())
-
-  @@id([waitlistId, tokenHolderId])
+  processedTokens      Boolean  @default(false)
+  processedBalance     Boolean  @default(false)
+  processedTokensFail  Boolean  @default(false)
+  processedBalanceFail Boolean  @default(false)
+  waitlist             Waitlist @relation(fields: [waitlistId], references: [id])
+  waitlistId           String
 }
 
 model TokenTransfer {
@@ -74,6 +65,7 @@ model TokenTransfer {
   contractType            TokenType
   metadata                String?
   holderId                String
+  waitlistId              String
   transferProcessedStatus TransferProcessedStatus
 }
 
