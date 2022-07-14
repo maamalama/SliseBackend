@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token } from '@prisma/client';
+import { Token, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import { HolderInfo, TimestampEvent, TokenHolder, TokenHoldersResponse } from './models/token-holders';
 import { BalanceResponse } from './models/balances';
@@ -56,6 +56,11 @@ export class AnalyticsService {
     );
 
     this.zdk = new ZDK({ endpoint: this.ZORA_API_ENDPOINT });
+  }
+
+  public async getWhitelists(): Promise<Waitlist[]> {
+    const whitelists = await this.prisma.waitlist.findMany();
+    return whitelists;
   }
 
   public async getTokens(): Promise<Token[]> {

@@ -29,6 +29,8 @@ model Waitlist {
   contractAddress String?
   symbol          String?
   tokenHolders    TokenHolder[]
+  mainWaitlist    Boolean @default(true)
+  parentWaitlist  String?
 }
 
 model WaitlistStatistics {

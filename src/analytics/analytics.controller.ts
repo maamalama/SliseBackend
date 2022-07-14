@@ -6,6 +6,7 @@ import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { AnalyticsService } from './analytics.service';
 import { HolderInfoRequest } from './requests/holder-info-request';
 import { BlockChainUserEvent } from './models/blockchain-events';
+import { Waitlist } from '@prisma/client';
 
 @ApiTags('Slice')
 @UseInterceptors(SentryInterceptor)
@@ -86,5 +87,12 @@ export class AnalyticsController {
     @Query(new ValidationPipe(/*{ transform: true }*/)) request: HolderInfoRequest): Promise<string> {
     await this.analyticsService.parseHolders(request);
     return 'success';
+  }
+
+  @Get('getWhitelists')
+  @UseInterceptors(TransformInterceptor)
+  async getWhitelists(): Promise<Waitlist[]> {
+    const response = await this.analyticsService.getWhitelists();
+    return response;
   }
 }
