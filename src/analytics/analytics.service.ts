@@ -7,10 +7,13 @@ import { BalanceResponse } from './models/balances';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { BlockChainEvent, BlockChainUserEvent } from './models/blockchain-events';
 import { TokensQueryArgs, ZDK } from '@zoralabs/zdk';
-import { HolderInfoRequest } from './requests/holder-info-request';
+import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import path from 'path';
+import { WhitelistInfoResponse } from './models/whitelist-info-response';
+import { readFileSync } from 'fs';
+import papaparse from 'papaparse';
 
 @Injectable()
 export class AnalyticsService {
@@ -45,11 +48,11 @@ export class AnalyticsService {
       keyFilename: path.join(process.cwd(), 'configs/slise-355804-95d4d7714e5a.json')
     });
 
-    this.Moralis.start({
-      serverUrl: process.env.MORALIS_SERVER_URL,
-      appId: process.env.MORALIS_APP_ID,
-      masterKey: process.env.MORALIS_MASTER_KEY
-    });
+    /* this.Moralis.start({
+       serverUrl: process.env.MORALIS_SERVER_URL,
+       appId: process.env.MORALIS_APP_ID,
+       masterKey: process.env.MORALIS_MASTER_KEY
+     });*/
 
     this.ethDater = new this.ethDater(
       this.web3
@@ -59,11 +62,20 @@ export class AnalyticsService {
   }
 
   public async getWhitelists(): Promise<Waitlist[]> {
-    const whitelists = await this.prisma.waitlist.findMany();
+    const whitelists = await this.prisma.waitlist.findMany({
+      where: {
+        mainWaitlist: true
+      }
+    });
     return whitelists;
   }
 
+  public async getWhitelistStatistics(id: string): Promise<any> {
+
+  }
+
   public async getTokens(): Promise<Token[]> {
+    const hldrs = await this.fetchHolders(1, '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', 10000);
     /*const a = await this.getTokensByAddresses(['0x8ba525b1e98735d24417ae324a9709b2396fa7c8']);
     const b = a;*/
     //const a = await this.getTokensByAddresses(['0x7525e71f51bda1fbc326000714d2fc68ed5aed6b']);
@@ -100,30 +112,67 @@ export class AnalyticsService {
     return await this.fetchEventsByContractsAndAddresses(contractAddresses, addresses);
   }
 
-  public async parseHolders(holdersRequest: HolderInfoRequest): Promise<void> {
-    this.logger.debug(`collection: ${holdersRequest.collectionName} received for processing`);
-    const hldrs = await this.fetchHolders(1, holdersRequest.contractAddress, holdersRequest.waitlistSize);
-    const addresses = hldrs.items.map((item) => {
-      return item.address;
+  /* public async parseHolders(holdersRequest: WhitelistInfoRequest): Promise<void> {
+     this.logger.debug(`collection: ${holdersRequest.collectionName} received for processing`);
+     const hldrs = await this.fetchHolders(1, holdersRequest.contractAddress, holdersRequest.waitlistSize);
+     const addresses = hldrs.items.map((item) => {
+       return item.address;
+     });
+     holdersRequest.addresses = addresses;
+     const job = await this.holdersQueue.add('parseAndStore', {
+       holdersRequest
+     });
+     this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
+     /!*const chunkSize = 20;
+     for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
+       const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
+       const holders: HolderInfoRequest = {
+         addresses: chunk,
+         collectionName: holdersRequest.collectionName,
+         contractAddress: holdersRequest.contractAddress
+       }
+       const job = await this.holdersQueue.add('parseAndStore', {
+         holders
+       }, {});
+       this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
+     }*!/
+   }*/
+
+  public async storeWaitlist(waitlistRequest: WhitelistInfoRequest, file: Express.Multer.File): Promise<WhitelistInfoResponse> {
+    this.logger.debug(`collection: ${waitlistRequest.collectionName} received for processing`);
+    //const hldrs = await this.fetchHolders(1, waitlistRequest.contractAddress, waitlistRequest.waitlistSize);
+    /* const addresses = hldrs.items.map((item) => {
+       return item.address;
+     });*/
+    const csvFile = readFileSync(`uploads/${file.filename}`);
+    const parsedCsv = await papaparse.parse(csvFile.toString(), {
+      header: false,
+      skipEmptyLines: true,
+      complete: (results) => results.data
     });
-    holdersRequest.addresses = addresses;
+    //TODO: change to map in map
+    let addresses: string[] = [];
+    parsedCsv.data.map((subarray) => subarray.map((address) => {
+      return addresses.push(address);
+    }));
+    const waitlist = await this.prisma.waitlist.create({
+      data: {
+        name: waitlistRequest.collectionName,
+        contractAddress: waitlistRequest.contractAddress
+      }
+    });
+    const holdersRequest = {
+      //addresses: waitlistRequest.addresses,
+      waitlistId: waitlist.id
+    };
     const job = await this.holdersQueue.add('parseAndStore', {
       holdersRequest
     });
-    this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
-    /*const chunkSize = 20;
-    for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
-      const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
-      const holders: HolderInfoRequest = {
-        addresses: chunk,
-        collectionName: holdersRequest.collectionName,
-        contractAddress: holdersRequest.contractAddress
-      }
-      const job = await this.holdersQueue.add('parseAndStore', {
-        holders
-      }, {});
-      this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
-    }*/
+    this.logger.debug(`collection: ${holdersRequest.waitlistId} will be processed with jobId: ${job.id}`);
+    return {
+      contractAddress: waitlist.contractAddress,
+      id: waitlist.id
+    };
   }
 
   public async tokenEventsByContract(network: number, token: string, pageSize: number): Promise<BlockChainUserEvent[]> {

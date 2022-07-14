@@ -12,6 +12,7 @@ import { BullModule } from '@nestjs/bull';
 import { TokenProcessorModule } from './tokenprocessor/tokenprocessor.module';
 import IORedis from 'ioredis';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [AuthModule, AnalyticsModule, PrismaModule, RedisModule.forRoot({
@@ -36,6 +37,9 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     }),
     SchedulerModule, ScheduleModule.forRoot(),
     TokenProcessorModule,
+    MulterModule.register({
+      dest: './uploads',
+    })
     // SentryModule.forRoot({
     //   dsn: 'sentry_io_dsn',
     //   debug: true,

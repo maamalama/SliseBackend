@@ -1,12 +1,23 @@
-import { Controller, Get, Param, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+  ValidationPipe
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Token } from '@prisma/client';
+import { Token, Waitlist } from '@prisma/client';
 import { SentryInterceptor } from '../interceptors/sentry.interceptor';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { AnalyticsService } from './analytics.service';
-import { HolderInfoRequest } from './requests/holder-info-request';
+import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { BlockChainUserEvent } from './models/blockchain-events';
-import { Waitlist } from '@prisma/client';
+import { WhitelistInfoResponse } from './models/whitelist-info-response';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Slice')
 @UseInterceptors(SentryInterceptor)
@@ -15,11 +26,11 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {
   }
 
- @Get('getTokens')
+ /* @Get('getTokens')
   @UseInterceptors(TransformInterceptor)
   async getTokens(): Promise<Token[]> {
-      const result = await this.analyticsService.getTokens();
-      return result;
+    const result = await this.analyticsService.getTokens();
+    return result;
   }
 
   @Get('tokenEventsByContracts/:token')
@@ -29,7 +40,8 @@ export class AnalyticsController {
     @Query('network') network: number,
     @Query('pageSize') pageSize: number): Promise<BlockChainUserEvent[]> {
     return await this.analyticsService.tokenEventsByContract(network, token, pageSize);
-  }
+  }*/
+
   /*
    @Get('token/:token')
    @UseInterceptors(TransformInterceptor)
@@ -81,18 +93,34 @@ export class AnalyticsController {
        return response;
    }*/
 
-  @Get('parseHolders')
+  /*@Get('parseHolders')
   @UseInterceptors(TransformInterceptor)
   async parseHolders(
-    @Query(new ValidationPipe(/*{ transform: true }*/)) request: HolderInfoRequest): Promise<string> {
+    @Query(new ValidationPipe(/!*{ transform: true }*!/)) request: WhitelistInfoRequest): Promise<string> {
     await this.analyticsService.parseHolders(request);
     return 'success';
+  }*/
+
+  @Post('storeWhitelist')
+  @UseInterceptors(
+    TransformInterceptor,
+    FileInterceptor('file'))
+  async storeWhitelist(@Body(new ValidationPipe()) request: WhitelistInfoRequest, @UploadedFile() file: Express.Multer.File): Promise<WhitelistInfoResponse> {
+    const response = await this.analyticsService.storeWaitlist(request, file);
+    return response;
   }
 
   @Get('getWhitelists')
   @UseInterceptors(TransformInterceptor)
   async getWhitelists(): Promise<Waitlist[]> {
     const response = await this.analyticsService.getWhitelists();
+    return response;
+  }
+
+  @Get('getWhitelistStatistics')
+  @UseInterceptors(TransformInterceptor)
+  async getWhitelistStatistics(): Promise<Waitlist> {
+    const response = await this.analyticsService.getWhitelistStatistics('1');
     return response;
   }
 }

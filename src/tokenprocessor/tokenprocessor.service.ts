@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { HolderInfoRequest } from '../analytics/requests/holder-info-request';
+import { WhitelistInfoRequest } from '../analytics/requests/whitelist-info-request';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
@@ -27,7 +27,7 @@ export class TokenProcessorService {
     this.logger.debug(`received job with id: ${job.id}`);
 
     this.logger.debug(`parsing job with id: ${job.id}`);
-    const holders: HolderInfoRequest = job.data.holdersRequest;
+    const holders = job.data.holdersRequest;
 
     async function timeout(interval) {
       return new Promise(resolve => {
@@ -35,18 +35,6 @@ export class TokenProcessorService {
       });
     }
 
-    await this.prisma.waitlist.findFirst({
-      where: {
-        name: holders.collectionName
-      }
-    });
-    const waitlist = await this.prisma.waitlist.create({
-      data: {
-        name: holders.collectionName,
-        contractAddress: holders.contractAddress,
-        symbol: holders.symbol
-      }
-    });
     try {
       let savedHolders: any[] = [];
       holders.addresses.map((tokenHolder) => {
@@ -57,7 +45,7 @@ export class TokenProcessorService {
           ethBalance: 0,
           firstTransactionDate: new Date(),
           volume: 0,
-          waitlistId: waitlist.id
+          waitlistId: holders.waitlistId
         };
         savedHolders.push(dataHolder);
         this.logger.debug(`holder ${tokenHolder} parsed`);

@@ -24,13 +24,17 @@ model Token {
 }
 
 model Waitlist {
-  id              String        @id @default(uuid())
-  name            String
-  contractAddress String?
-  symbol          String?
-  tokenHolders    TokenHolder[]
-  mainWaitlist    Boolean @default(true)
-  parentWaitlist  String?
+  id               String        @id @default(uuid())
+  name             String
+  contractAddress  String?
+  symbol           String?
+  tokenHolders     TokenHolder[]
+  mainWaitlist     Boolean       @default(true)
+  parentWaitlist   String?
+  twitter          String?
+  twitterFollowers Int?
+  discord          String?
+  discordMembers   Int?
 }
 
 model WaitlistStatistics {
@@ -41,20 +45,21 @@ model WaitlistStatistics {
 }
 
 model TokenHolder {
-  id                   String   @id @default(uuid())
+  id                   String    @id @default(uuid())
   address              String
   totalBalanceUsd      Float
   totalBalanceTokens   Int
-  lastUpdate           DateTime @default(now())
+  lastUpdate           DateTime  @default(now())
   firstTransactionDate DateTime
   ethBalance           Float
   volume               Float
-  processedTokens      Boolean  @default(false)
-  processedBalance     Boolean  @default(false)
-  processedTokensFail  Boolean  @default(false)
-  processedBalanceFail Boolean  @default(false)
-  waitlist             Waitlist @relation(fields: [waitlistId], references: [id])
+  processedTokens      Boolean   @default(false)
+  processedBalance     Boolean   @default(false)
+  processedTokensFail  Boolean   @default(false)
+  processedBalanceFail Boolean   @default(false)
+  waitlist             Waitlist  @relation(fields: [waitlistId], references: [id])
   waitlistId           String
+  chainType            ChainType @default(UNKNOWN)
 }
 
 model TokenTransfer {
@@ -83,6 +88,13 @@ enum TokenType {
   ERC827
   ERC1155
   UNKOWN
+}
+
+enum ChainType {
+  ETHEREUM
+  POLYGON
+  SOLANA
+  UNKNOWN
 }
 
 enum TransactionType {
