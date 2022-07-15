@@ -86,7 +86,7 @@ export class AnalyticsService {
 
   public async fetchNewBalances(address: string): Promise<any> {
     const options = {
-      address: '0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9'
+      address: address
     };
     const ethBalance = await this.Moralis.Web3API.account.getNativeBalance(options);
     const usdBalance = (await this.ethPrice('usd'))[0];
