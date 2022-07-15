@@ -5,7 +5,7 @@ import { Auth0Client } from '@auth0/auth0-spa-js';
 import { AUTH0_API } from '../config';
 
 // ----------------------------------------------------------------------
-
+const a = 1;
 let auth0Client = null;
 
 const initialState = {
