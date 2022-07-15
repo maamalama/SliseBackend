@@ -103,7 +103,7 @@ export class SchedulerService {
         processedBalance: false,
         processedBalanceFail: false
       },
-      take: 15
+      take: 10
     });
     await Promise.all(holders.map(async (holder) => {
       try{
