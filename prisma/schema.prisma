@@ -49,7 +49,7 @@ model TokenHolder {
   id                   String    @id @default(uuid())
   address              String
   totalBalanceUsd      Float
-  totalBalanceTokens   Int
+  totalBalanceTokens   Float
   lastUpdate           DateTime  @default(now())
   firstTransactionDate DateTime
   ethBalance           Float
