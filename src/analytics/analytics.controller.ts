@@ -26,21 +26,21 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {
   }
 
- /* @Get('getTokens')
+ @Get('getTokens')
   @UseInterceptors(TransformInterceptor)
   async getTokens(): Promise<Token[]> {
     const result = await this.analyticsService.getTokens();
     return result;
   }
-
-  @Get('tokenEventsByContracts/:token')
-  @UseInterceptors(TransformInterceptor)
-  async getHoldersByContracts(
-    @Param('token') token: string,
-    @Query('network') network: number,
-    @Query('pageSize') pageSize: number): Promise<BlockChainUserEvent[]> {
-    return await this.analyticsService.tokenEventsByContract(network, token, pageSize);
-  }*/
+  /*
+    @Get('tokenEventsByContracts/:token')
+    @UseInterceptors(TransformInterceptor)
+    async getHoldersByContracts(
+      @Param('token') token: string,
+      @Query('network') network: number,
+      @Query('pageSize') pageSize: number): Promise<BlockChainUserEvent[]> {
+      return await this.analyticsService.tokenEventsByContract(network, token, pageSize);
+    }*/
 
   /*
    @Get('token/:token')

@@ -35,6 +35,7 @@ model Waitlist {
   twitterFollowers Int?
   discord          String?
   discordMembers   Int?
+  size             Int?
 }
 
 model WaitlistStatistics {

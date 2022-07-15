@@ -30,6 +30,7 @@ export class AnalyticsService {
   private readonly web3 = require('web3');
   private readonly ethDater = require('ethereum-block-by-date');
   private readonly zdk: ZDK;
+  private readonly ethPrice = require('eth-price');
 
   constructor(
     @InjectRedis() private readonly redis: Redis,
@@ -48,11 +49,11 @@ export class AnalyticsService {
       keyFilename: path.join(process.cwd(), 'configs/slise-355804-95d4d7714e5a.json')
     });
 
-    /* this.Moralis.start({
-       serverUrl: process.env.MORALIS_SERVER_URL,
-       appId: process.env.MORALIS_APP_ID,
-       masterKey: process.env.MORALIS_MASTER_KEY
-     });*/
+    this.Moralis.start({
+      serverUrl: process.env.MORALIS_SERVER_URL,
+      appId: process.env.MORALIS_APP_ID,
+      masterKey: process.env.MORALIS_MASTER_KEY
+    });
 
     this.ethDater = new this.ethDater(
       this.web3
@@ -74,8 +75,40 @@ export class AnalyticsService {
 
   }
 
+  private async getWaitlistSize(id: string): Promise<number> {
+    const count = await this.prisma.tokenHolder.count({
+      where: {
+        waitlistId: id
+      }
+    });
+    return count;
+  }
+
+  public async fetchNewBalances(address: string): Promise<any> {
+    const options = {
+      address: '0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9'
+    };
+    const ethBalance = await this.Moralis.Web3API.account.getNativeBalance(options);
+    const usdBalance = (await this.ethPrice('usd'))[0];
+    const usd = +(usdBalance.substr(5,usdBalance.length))
+    const ethB = +(this.web3.utils.fromWei(ethBalance.balance,'ether'));
+
+    const data = {
+      ethBalance: ethB,
+      usdBalance: +((+usd) * ethB)
+    }
+    return data
+  }
+
   public async getTokens(): Promise<Token[]> {
-    const hldrs = await this.fetchHolders(1, '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', 10000);
+    const options = {
+      address: '0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9'
+    };
+    const d = await this.fetchNewBalances('0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9');
+    let a = d;
+    /*  const balance = await this.Moralis.Web3API.account.getTokenBalances(options);
+      const a = balance;*/
+    //const hldrs = await this.fetchHolders(1, '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', 10000);
     /*const a = await this.getTokensByAddresses(['0x8ba525b1e98735d24417ae324a9709b2396fa7c8']);
     const b = a;*/
     //const a = await this.getTokensByAddresses(['0x7525e71f51bda1fbc326000714d2fc68ed5aed6b']);

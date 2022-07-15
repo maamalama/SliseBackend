@@ -107,10 +107,12 @@ export class SchedulerService {
     });
     await Promise.all(holders.map(async (holder) => {
       try{
-        const balance = (await this.analyticsService.fetchBalances(1, holder.address));
-        const holderUsdBalance = balance.items.reduce(function(prev, cur) {
+        const balance = (await this.analyticsService.fetchNewBalances(holder.address));
+       /* const holderUsdBalance = balance.items.reduce(function(prev, cur) {
           return prev + cur.quote;
-        }, 0);
+        }, 0);*/
+        const holderUsdBalance = balance.usdBalance;
+        const holderEthBalance = balance.ethBalance
         await this.prisma.$transaction(async () => {
           await this.prisma.tokenHolder.update({
             where: {
@@ -118,6 +120,7 @@ export class SchedulerService {
             },
             data: {
               totalBalanceUsd: +(holderUsdBalance).toFixed(5),
+              totalBalanceTokens: +(holderEthBalance).toFixed(5),
               processedBalance: true,
               processedBalanceFail: false
             }
