@@ -18,6 +18,7 @@ import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { BlockChainUserEvent } from './models/blockchain-events';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
 
 @ApiTags('Slice')
 @UseInterceptors(SentryInterceptor)
@@ -119,7 +120,7 @@ export class AnalyticsController {
 
   @Get('getWhitelistStatistics')
   @UseInterceptors(TransformInterceptor)
-  async getWhitelistStatistics(): Promise<Waitlist> {
+  async getWhitelistStatistics(): Promise<WhitelistStatisticsResponse> {
     const response = await this.analyticsService.getWhitelistStatistics('1');
     return response;
   }

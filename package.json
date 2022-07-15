@@ -49,6 +49,7 @@
     "eth-price": "^0.1.4",
     "ethereum-block-by-date": "^1.4.5",
     "etherscan-api": "^10.0.9",
+    "follower-count": "^0.5.0",
     "ioredis": "^4.28.5",
     "moralis": "^1.8.1",
     "oraq": "^0.2.4",

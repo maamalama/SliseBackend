@@ -1,8 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, Waitlist } from '@prisma/client';
+import { Token, TokenHolder, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
-import { HolderInfo, TimestampEvent, TokenHolder, TokenHoldersResponse } from './models/token-holders';
+import {
+  HolderInfo,
+  TimestampEvent,
+  TokenHolder as TokenHolderInternal,
+  TokenHoldersResponse
+} from './models/token-holders';
 import { BalanceResponse } from './models/balances';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { BlockChainEvent, BlockChainUserEvent } from './models/blockchain-events';
@@ -14,6 +19,9 @@ import path from 'path';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { readFileSync } from 'fs';
 import papaparse from 'papaparse';
+import { getFollowerCount } from 'follower-count';
+import { DiscordResponse } from './models/discord-response';
+import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
 
 @Injectable()
 export class AnalyticsService {
@@ -71,17 +79,44 @@ export class AnalyticsService {
     return whitelists;
   }
 
-  public async getWhitelistStatistics(id: string): Promise<any> {
-
-  }
-
-  private async getWaitlistSize(id: string): Promise<number> {
-    const count = await this.prisma.tokenHolder.count({
+  public async getWhitelistStatistics(id: string): Promise<WhitelistStatisticsResponse> {
+    const whitelist = await this.prisma.waitlist.findFirst({
       where: {
-        waitlistId: id
+        id: id
       }
     });
-    return count;
+
+    const [whitelistSize, twitterFollowersCount, discordInfo]
+      = await Promise.all([
+      this.getWaitlistSize(id),
+      this.getTwitterFollowersCount(whitelist.twitter),
+      this.getDiscordInfo(whitelist.discord)]);
+    const whales = 20;
+    const bluechipHolders = 48;
+    const bots = 318;
+
+    return {
+      bluechipHolders: bluechipHolders,
+      bots: bots,
+      discordInfo: discordInfo,
+      twitterFollowersCount: twitterFollowersCount,
+      whales: whales,
+      whitelistSize: whitelistSize
+    };
+  }
+
+  public async getTopHolders(whitelistId: string): Promise<TokenHolder[]> {
+    const response = await this.prisma.tokenHolder.findMany({
+      where: {
+        waitlistId: whitelistId
+      },
+      orderBy: {
+        totalBalanceUsd: 'desc'
+      },
+      take: 10
+    });
+
+    return response;
   }
 
   public async fetchNewBalances(address: string): Promise<any> {
@@ -90,22 +125,19 @@ export class AnalyticsService {
     };
     const ethBalance = await this.Moralis.Web3API.account.getNativeBalance(options);
     const usdBalance = (await this.ethPrice('usd'))[0];
-    const usd = +(usdBalance.substr(5,usdBalance.length))
-    const ethB = +(this.web3.utils.fromWei(ethBalance.balance,'ether'));
+    const usd = +(usdBalance.substr(5, usdBalance.length));
+    const ethB = +(this.web3.utils.fromWei(ethBalance.balance, 'ether'));
 
     const data = {
       ethBalance: ethB,
-      usdBalance: +((+usd) * ethB)
-    }
-    return data
+      usdBalance: +(usd * ethB)
+    };
+    return data;
   }
 
   public async getTokens(): Promise<Token[]> {
-    const options = {
-      address: '0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9'
-    };
-    const d = await this.fetchNewBalances('0x4a0e23ae46c3a144f61133d5de05e4881c09a5c9');
-    let a = d;
+    /*const a = await this.getTwitterFollowersCount('acecreamu');*/
+
     /*  const balance = await this.Moralis.Web3API.account.getTokenBalances(options);
       const a = balance;*/
     //const hldrs = await this.fetchHolders(1, '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', 10000);
@@ -134,7 +166,7 @@ export class AnalyticsService {
     return tokens;
   }
 
-  public async tokenHoldersFromSource(network: number, token: string, pageSize: number): Promise<TokenHolder[]> {
+  public async tokenHoldersFromSource(network: number, token: string, pageSize: number): Promise<TokenHolderInternal[]> {
     const holders = await this.fetchTokenHolders(network, token, pageSize);
 
     return holders;
@@ -209,7 +241,7 @@ export class AnalyticsService {
   }
 
   public async tokenEventsByContract(network: number, token: string, pageSize: number): Promise<BlockChainUserEvent[]> {
-    let holders: TokenHolder[] = [];
+    let holders: TokenHolderInternal[] = [];
 
     // const cachedHolders = await this.redis.get(`${token}:holders`);
     // if (cachedHolders) {
@@ -238,8 +270,8 @@ export class AnalyticsService {
     return events;
   }
 
-  public async tokenHolders(network: number, token: string, pageSize: number): Promise<TokenHolder[]> {
-    let holders: TokenHolder[] = [];
+  public async tokenHolders(network: number, token: string, pageSize: number): Promise<TokenHolderInternal[]> {
+    let holders: TokenHolderInternal[] = [];
     holders = await this.fetchTokenHolders(network, token, pageSize);
 
     const addresses = holders.map((holder) => {
@@ -267,12 +299,12 @@ export class AnalyticsService {
     return holders;
   }
 
-  public async fetchTokenHolders(network: number, token: string, pageSize: number): Promise<TokenHolder[]> {
+  public async fetchTokenHolders(network: number, token: string, pageSize: number): Promise<TokenHolderInternal[]> {
     const holders = await this.fetchHolders(network, token, pageSize);
 
     //await this.fetchBalances(network, holders.items[1].address);
 
-    const response: TokenHolder[] = await Promise.all(
+    const response: TokenHolderInternal[] = await Promise.all(
       holders.items.map(async (item) => ({
         address: item.address,
         amount: +item.balance,
@@ -421,6 +453,65 @@ export class AnalyticsService {
     return response.data.result;
   }
 
+  public async getNFTsTransfers(address: string, continuation?: string): Promise<any> {
+
+    let query = `https://api.nftport.xyz/v0/transactions/accounts/${address}?chain=ethereum&type=all`;
+    if (continuation !== undefined) {
+      query += `&continuation=${continuation}`;
+    }
+    const response = await this.httpService.get(query, {
+      headers: {
+        'Authorization': `${this.NFTPORT_API_KEY}`
+      }
+    }).toPromise();
+
+    const data = response.data;
+    return data;
+  }
+
+  public async getTokensByAddresses(addresses: string[]): Promise<HolderInfo[]> {
+    const response = await this.httpService.post('https://graphql.bitquery.io/', {
+      query: `
+            query ($network: EthereumNetwork!, $addresses: [String!]) {
+              ethereum(network: $network) {
+                address(address: {in: $addresses}) {
+                   balances {
+                    value
+                    currency {
+                      tokenId
+                      tokenType
+                      address
+                      symbol
+                      name
+                    }
+                  }
+                  address
+                }
+              }
+            }`,
+      variables: {
+        network: 'ethereum',
+        addresses: addresses
+      }
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': this.bitqueryApiKey
+      }
+    }).toPromise();
+
+    return await response.data.data.ethereum.address;
+  }
+
+  public async getNFTsByAddress(address: string): Promise<any> {
+    const options = {
+      chain: 'eth',
+      address: address
+    };
+    const NFTs = await this.Moralis.Web3API.account.getNFTTransfers(options);
+    return NFTs;
+  }
+
   private getEventByAddress(address: string): string {
     let event = null;
     switch (address) {
@@ -435,15 +526,6 @@ export class AnalyticsService {
     }
 
     return event;
-  }
-
-  public async getNFTsByAddress(address: string): Promise<any> {
-    const options = {
-      chain: 'eth',
-      address: address
-    };
-    const NFTs = await this.Moralis.Web3API.account.getNFTTransfers(options);
-    return NFTs;
   }
 
   private getEventFromByAddress(address: string): string {
@@ -581,7 +663,7 @@ export class AnalyticsService {
     return userEvents;
   }
 
-  private async fetchEventsByContractsAndHolders(contractAddresses: string[], holders: TokenHolder[]): Promise<BlockChainUserEvent[]> {
+  private async fetchEventsByContractsAndHolders(contractAddresses: string[], holders: TokenHolderInternal[]): Promise<BlockChainUserEvent[]> {
     const addresses: string[] = holders.map((holder) => {
       return holder['address'];
     });
@@ -687,53 +769,33 @@ export class AnalyticsService {
     return response;
   }
 
-  public async getNFTsTransfers(address: string, continuation?: string): Promise<any> {
-
-    let query = `https://api.nftport.xyz/v0/transactions/accounts/${address}?chain=ethereum&type=all`;
-    if (continuation !== undefined) {
-      query += `&continuation=${continuation}`;
-    }
-    const response = await this.httpService.get(query, {
-      headers: {
-        'Authorization': `${this.NFTPORT_API_KEY}`
+  private async getWaitlistSize(id: string): Promise<number> {
+    const count = await this.prisma.tokenHolder.count({
+      where: {
+        waitlistId: id
       }
-    }).toPromise();
-
-    const data = response.data;
-    return data;
+    });
+    return count;
   }
 
-  public async getTokensByAddresses(addresses: string[]): Promise<HolderInfo[]> {
-    const response = await this.httpService.post('https://graphql.bitquery.io/', {
-      query: `
-            query ($network: EthereumNetwork!, $addresses: [String!]) {
-              ethereum(network: $network) {
-                address(address: {in: $addresses}) {
-                   balances {
-                    value
-                    currency {
-                      tokenId
-                      tokenType
-                      address
-                      symbol
-                      name
-                    }
-                  }
-                  address
-                }
-              }
-            }`,
-      variables: {
-        network: 'ethereum',
-        addresses: addresses
-      }
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': this.bitqueryApiKey
-      }
-    }).toPromise();
+  private async getTwitterFollowersCount(link: string): Promise<number> {
+    const username = link.substring(link.lastIndexOf(`/`) + 1, link.length);
+    const countByApi = await getFollowerCount({
+      type: 'twitter',
+      username: username
+    });
 
-    return await response.data.data.ethereum.address;
+    return countByApi;
+  }
+
+  private async getDiscordInfo(link: string): Promise<DiscordResponse> {
+    const code = link.substring(link.lastIndexOf(`/`) + 1, link.length);
+    const response = await this.httpService.get(`https://discord.com/api/v9/invites/${code}?with_counts=true&with_expiration=true`).toPromise();
+
+    return {
+      name: response.data.guild.name,
+      approximateMemberCount: response.data.approximate_member_count,
+      premiumSubscriptionCount: response.data.guild.premium_subscription_count
+    };
   }
 }
