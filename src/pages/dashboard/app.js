@@ -9,7 +9,9 @@ import Layout from '../../layouts';
 // components
 import Page from '../../components/Page';
 import MLPrediction from '../../components/MLPrediction'
+import TopHolders from '../../components/TopHolders'
 import Label from '../../components/Label'
+import MutualHolders from '../../components/MutualHolders'
 // sections
 import {
   AppWidget,
@@ -41,16 +43,10 @@ export default function GeneralApp() {
 
   return (
     <Page title="General: App">
-      <Container maxWidth={themeStretch ? false : 'xl'}>
-        <Grid container spacing={4}>
-          {/*<Grid item xs={12} md={8}>
-            <AppWelcome displayName={user?.displayName} />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <AppFeatured />
-          </Grid>*/}
-          <Grid item xs={12} md={3} direction="column" >
+      <Container >
+        <Grid container spacing={4}  direction="row" sx={{paddingBottom: '30px'}}  >
+     
+          <Grid item xs={12} md={3} >
         
             <AppWidgetSummary
              icon='majesticons:paper-fold-text-line'
@@ -82,12 +78,11 @@ export default function GeneralApp() {
               chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} sx={{ gridRow: 'span 2' }}>            
          <MLPrediction 
          title="ML Prediction"
-         />
+         />       
           </Grid>
-
           <Grid item xs={12} md={3}>
             <AppWidgetSummary
              icon="emojione:blue-circle"
@@ -110,7 +105,7 @@ export default function GeneralApp() {
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} >
             <AppWidgetSummary
                 icon="noto:robot"
                 title="Bots identified"
@@ -120,37 +115,22 @@ export default function GeneralApp() {
                 chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
             />
           </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentDownload />
+</Grid>
+<Grid container spacing={3} >
+          <Grid item xs={12} md={4} lg={4}>
+            <TopHolders />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppAreaInstalled />
+          <Grid item xs={12} md={4} lg={4}>
+          <MutualHolders />
           </Grid>
 
-          <Grid item xs={12} lg={8}>
-            <AppNewInvoice />
+          <Grid item xs={12} lg={4}>
+            <TopHolders />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopRelated />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopInstalledCountries />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopAuthors />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Stack spacing={3}>
-              <AppWidget title="Conversion" total={38566} icon={'eva:person-fill'} chartData={48} />
-              <AppWidget title="Applications" total={55566} icon={'eva:email-fill'} color="warning" chartData={75} />
-            </Stack>
-          </Grid>
+        
+      
         </Grid>
       </Container>
     </Page>

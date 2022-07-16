@@ -54,10 +54,10 @@ export default function MLPrediction({title}) {
 //   };
 
   return (
-    <Card sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', p: 3, backgroundColor: '#DDFF55' }}>
-      <Box sx={{ flexGrow: 1 }}>
+    <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#DDFF55', fontFamily:'Public Sans' }} >
+      <Box sx={{ flexGrow: 1 }} >
         <Typography textAlign="left" variant="subtitle1">{title}</Typography>
-        <Typography textAlign="left" variant="subtitle2">Mint Price</Typography>
+        <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
         <Typography textAlign='left'variant="subtitle1">
         <IconStyle icon="codicon:three-bars" />{price}
       </Typography>
@@ -70,7 +70,7 @@ export default function MLPrediction({title}) {
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
       />
-          <Typography textAlign="left" variant="subtitle2">Collection Size</Typography>
+          <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
           <Typography textAlign='left'variant="subtitle1">{collectionSize}</Typography>
           <Slider
         value={collectionSize}
@@ -81,10 +81,10 @@ export default function MLPrediction({title}) {
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
       />
-           <Typography textAlign="center" variant="subtitle2">Probability Of Sold Out</Typography>
+           <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
            <Stack direction='row' spacing={2}  justifyContent="center"alignItems="center">
            <Typography textAlign="center" variant="h4">86%</Typography>
-            <Label variant="filled" color='success'>High</Label>
+            <Label variant="outlined" >High</Label>
             </Stack>
         {/* <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography> */}
       </Box>
