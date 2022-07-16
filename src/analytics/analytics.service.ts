@@ -120,19 +120,29 @@ export class AnalyticsService {
   }
 
   public async fetchNewBalances(address: string): Promise<any> {
-    const options = {
-      address: address
-    };
-    const ethBalance = await this.Moralis.Web3API.account.getNativeBalance(options);
-    const usdBalance = (await this.ethPrice('usd'))[0];
-    const usd = +(usdBalance.substr(5, usdBalance.length));
-    const ethB = +(this.web3.utils.fromWei(ethBalance.balance, 'ether'));
+    try{
+      const options = {
+        address: address
+      };
+      const ethBalance = await this.Moralis.Web3API.account.getNativeBalance(options);
+      const usdBalance = (await this.ethPrice('usd'))[0];
+      const usd = +(usdBalance.substr(5, usdBalance.length));
+      const ethB = +(this.web3.utils.fromWei(ethBalance.balance, 'ether'));
+      const usdB = +((+usd) * ethB);
 
-    const data = {
-      ethBalance: ethB,
-      usdBalance: +(usd * ethB)
-    };
-    return data;
+      const data = {
+        ethBalance: ethB,
+        usdBalance: usdB
+      };
+      return data;
+    }
+    catch{
+      return {
+        ethBalance: 0,
+        usdBalance: 0
+      }
+    }
+
   }
 
   public async getTokens(): Promise<Token[]> {
