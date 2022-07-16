@@ -20,7 +20,13 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
   color: theme.palette.success.main,
   backgroundColor: alpha(theme.palette.success.main, 0.16),
 }));
-
+const IconStyle = styled(Iconify)(({ theme }) => ({
+  width: 20,
+  textAlign:'center',
+  height: 20,
+  marginLeft: '47%',
+  marginBottom: '0px',
+}));
 // ----------------------------------------------------------------------
 
 AppWidgetSummary.propTypes = {
@@ -29,9 +35,10 @@ AppWidgetSummary.propTypes = {
   percent: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   total: PropTypes.number.isRequired,
+  icon: PropTypes.string.isRequired,
 };
 
-export default function  AppWidgetSummary({ title, percent, total, chartColor, chartData }) {
+export default function  AppWidgetSummary({ title, percent, total, chartColor, chartData, icon }) {
   const theme = useTheme();
 
   const chartOptions = {
@@ -51,8 +58,9 @@ export default function  AppWidgetSummary({ title, percent, total, chartColor, c
   };
 
   return (
-    <Card sx={{ display: 'flex', alignItems: 'center', p: 3 }}>
+    <Card sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', p: 3 }}>
       <Box sx={{ flexGrow: 1 }}>
+      <IconStyle icon={icon} />
         <Typography textAlign="center" variant="subtitle2">{title}</Typography>
 
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
