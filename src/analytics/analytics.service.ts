@@ -263,7 +263,6 @@ export class AnalyticsService {
 
     this.logger.debug(`fetched holders count ${holders.length}`);
 
-
     const defaultContracts: string[] = ['0x026224A2940bFE258D0dbE947919B62fE321F042', '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b', '0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9'];
     const events = await this.fetchEventsByContractsAndHolders(defaultContracts, holders);
 
@@ -633,7 +632,6 @@ export class AnalyticsService {
       const eventFrom = this.getEventFromByAddress(event.smartContract.address.address.toLowerCase());
       const from = eventFrom === event.smartContract.address.address.toLowerCase() ? 'Smart Contract Event' : eventFrom;
 
-
       return {
         txHash: event.transaction.hash.toLowerCase(),
         txFrom: event.transaction.txFrom.address.toLowerCase(),
@@ -723,7 +721,6 @@ export class AnalyticsService {
       });
       const eventFrom = this.getEventFromByAddress(event.smartContract.address.address.toLowerCase());
       const from = eventFrom === event.smartContract.address.address.toLowerCase() ? 'Smart Contract Event' : eventFrom;
-
 
       return {
         txHash: event.transaction.hash.toLowerCase(),
