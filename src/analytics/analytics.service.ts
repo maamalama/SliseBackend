@@ -212,18 +212,27 @@ export class AnalyticsService {
     return await this.fetchEventsByContractsAndAddresses(contractAddresses, addresses);
   }
 
-  /* public async parseHolders(holdersRequest: WhitelistInfoRequest): Promise<void> {
-     this.logger.debug(`collection: ${holdersRequest.collectionName} received for processing`);
-     const hldrs = await this.fetchHolders(1, holdersRequest.contractAddress, holdersRequest.waitlistSize);
+   public async parseHolders(request: WhitelistInfoRequest): Promise<void> {
+     this.logger.debug(`collection: ${request.collectionName} received for processing`);
+     const hldrs = await this.fetchHolders(1, request.contractAddress, 10000);
      const addresses = hldrs.items.map((item) => {
        return item.address;
      });
-     holdersRequest.addresses = addresses;
+     const waitlist = await this.prisma.waitlist.create({
+       data: {
+         name: request.collectionName,
+         contractAddress: request.contractAddress
+       }
+     });
+     const holdersRequest = {
+       addresses: addresses,
+       waitlistId: waitlist.id
+     };
      const job = await this.holdersQueue.add('parseAndStore', {
        holdersRequest
      });
-     this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
-     /!*const chunkSize = 20;
+     this.logger.debug(`collection: ${request.collectionName} will be processed with jobId: ${job.id}`);
+     /*const chunkSize = 20;
      for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
        const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
        const holders: HolderInfoRequest = {
@@ -235,8 +244,8 @@ export class AnalyticsService {
          holders
        }, {});
        this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
-     }*!/
-   }*/
+     }*/
+   }
 
   public async storeWaitlist(waitlistRequest: WhitelistInfoRequest, file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     this.logger.debug(`collection: ${waitlistRequest.collectionName} received for processing`);
