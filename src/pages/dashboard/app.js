@@ -66,7 +66,7 @@ export default function GeneralApp() {
               title="Twitter Followers"
               icon="logos:twitter"
               percent={0.2}
-              total={4876}
+              total={4876}//
               chartColor={theme.palette.chart.blue[0]}
               chartData={[20, 41, 63, 33, 28, 35, 50, 46, 11, 26]}
             />
