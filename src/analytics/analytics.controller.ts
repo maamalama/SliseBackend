@@ -1,21 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  UploadedFile,
-  UseInterceptors,
-  ValidationPipe
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UploadedFile, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Token, Waitlist } from '@prisma/client';
 import { SentryInterceptor } from '../interceptors/sentry.interceptor';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { AnalyticsService } from './analytics.service';
 import { WhitelistInfoRequest } from './requests/whitelist-info-request';
-import { BlockChainUserEvent } from './models/blockchain-events';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
@@ -27,12 +16,13 @@ export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {
   }
 
- @Get('getTokens')
+  @Get('getTokens')
   @UseInterceptors(TransformInterceptor)
   async getTokens(): Promise<Token[]> {
     const result = await this.analyticsService.getTokens();
     return result;
   }
+
   /*
     @Get('tokenEventsByContracts/:token')
     @UseInterceptors(TransformInterceptor)
@@ -120,8 +110,8 @@ export class AnalyticsController {
 
   @Get('getWhitelistStatistics')
   @UseInterceptors(TransformInterceptor)
-  async getWhitelistStatistics(): Promise<WhitelistStatisticsResponse> {
-    const response = await this.analyticsService.getWhitelistStatistics('1');
+  async getWhitelistStatistics(@Query('id') id: string): Promise<WhitelistStatisticsResponse> {
+    const response = await this.analyticsService.getWhitelistStatistics(id);
     return response;
   }
 }

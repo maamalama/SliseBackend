@@ -1,5 +1,12 @@
 import { DiscordResponse } from './discord-response';
 
+export class TopHoldersResponse {
+  address: string;
+  nfts: number;
+  portfolio: number;
+  label: string;
+}
+
 export class WhitelistStatisticsResponse {
   whitelistSize: number;
   twitterFollowersCount: number;
@@ -7,4 +14,5 @@ export class WhitelistStatisticsResponse {
   bluechipHolders: number;
   whales: number;
   bots: number;
+  topHolders: TopHoldersResponse[];
 }

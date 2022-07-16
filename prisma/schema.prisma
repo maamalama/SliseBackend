@@ -46,21 +46,22 @@ model WaitlistStatistics {
 }
 
 model TokenHolder {
-  id                   String    @id @default(uuid())
+  id                   String          @id @default(uuid())
   address              String
   totalBalanceUsd      Float
   totalBalanceTokens   Float
-  lastUpdate           DateTime  @default(now())
+  lastUpdate           DateTime        @default(now())
   firstTransactionDate DateTime
   ethBalance           Float
   volume               Float
-  processedTokens      Boolean   @default(false)
-  processedBalance     Boolean   @default(false)
-  processedTokensFail  Boolean   @default(false)
-  processedBalanceFail Boolean   @default(false)
-  waitlist             Waitlist  @relation(fields: [waitlistId], references: [id])
+  processedTokens      Boolean         @default(false)
+  processedBalance     Boolean         @default(false)
+  processedTokensFail  Boolean         @default(false)
+  processedBalanceFail Boolean         @default(false)
+  waitlist             Waitlist        @relation(fields: [waitlistId], references: [id])
   waitlistId           String
-  chainType            ChainType @default(UNKNOWN)
+  tokens               TokenTransfer[]
+  chainType            ChainType       @default(UNKNOWN)
 }
 
 model TokenTransfer {
@@ -72,6 +73,7 @@ model TokenTransfer {
   name                    String
   contractType            TokenType
   metadata                String?
+  holder                  TokenHolder             @relation(fields: [holderId], references: [id])
   holderId                String
   waitlistId              String
   transferProcessedStatus TransferProcessedStatus

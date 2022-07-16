@@ -29,12 +29,6 @@ export class TokenProcessorService {
     this.logger.debug(`parsing job with id: ${job.id}`);
     const holders = job.data.holdersRequest;
 
-    async function timeout(interval) {
-      return new Promise(resolve => {
-        setTimeout(resolve, interval);
-      });
-    }
-
     try {
       let savedHolders: any[] = [];
       holders.addresses.map((tokenHolder) => {

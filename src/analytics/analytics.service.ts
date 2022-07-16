@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, TokenHolder, Waitlist } from '@prisma/client';
+import { Token, TokenHolder, Waitlist, TokenType } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import {
   HolderInfo,
@@ -22,6 +22,7 @@ import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import { DiscordResponse } from './models/discord-response';
 import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
+import Redlock from 'redlock';
 
 @Injectable()
 export class AnalyticsService {
@@ -39,7 +40,7 @@ export class AnalyticsService {
   private readonly ethDater = require('ethereum-block-by-date');
   private readonly zdk: ZDK;
   private readonly ethPrice = require('eth-price');
-
+  private readonly redlock;
   constructor(
     @InjectRedis() private readonly redis: Redis,
     private readonly prisma: PrismaService,
@@ -62,6 +63,8 @@ export class AnalyticsService {
       appId: process.env.MORALIS_APP_ID,
       masterKey: process.env.MORALIS_MASTER_KEY
     });
+
+    this.redlock = new Redlock([redis]);
 
     this.ethDater = new this.ethDater(
       this.web3
@@ -91,9 +94,30 @@ export class AnalyticsService {
       this.getWaitlistSize(id),
       this.getTwitterFollowersCount(whitelist.twitter),
       this.getDiscordInfo(whitelist.discord)]);
+
     const whales = 20;
     const bluechipHolders = 48;
     const bots = 318;
+    const topHolders = await this.getTopHolders(id).then(async (data) => {
+      const user = await Promise.all(data.map(async (holder) => {
+        //const lock = await this.redlock.acquire(['a'],150);
+        const topHolder = {
+          address: holder.address,
+          nfts: await this.getNFTs(holder.address),
+          /*nfts: await this.prisma.tokenTransfer.count({
+            where: {
+              holderId: holder.id,
+              contractType: TokenType.ERC721
+            }
+          }),*/
+          portfolio: holder.totalBalanceUsd,
+          label: ''
+        }
+        //await lock.release();
+        return topHolder;
+      }));
+      return user;
+    });
 
     return {
       bluechipHolders: bluechipHolders,
@@ -101,7 +125,8 @@ export class AnalyticsService {
       discordInfo: discordInfo,
       twitterFollowersCount: twitterFollowersCount,
       whales: whales,
-      whitelistSize: whitelistSize
+      whitelistSize: whitelistSize,
+      topHolders: topHolders
     };
   }
 
@@ -759,6 +784,14 @@ export class AnalyticsService {
     });
 
     return userEvents;
+  }
+
+  private async getNFTs(address: string): Promise<number> {
+    const options = {
+      address: address,
+    };
+    const NFTs = await this.Moralis.Web3API.account.getNFTs(options);
+    return NFTs.total;
   }
 
   private async fetchZora(addresses: string[]): Promise<any> {
