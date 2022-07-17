@@ -88,8 +88,8 @@ export class AnalyticsController {
   @UseInterceptors(TransformInterceptor)
   async parseHolders(
     @Query(new ValidationPipe(/*{ transform: true }*/)) request: WhitelistInfoRequest): Promise<string> {
-    await this.analyticsService.parseHolders(request);
-    return 'success';
+    const id = await this.analyticsService.parseHolders(request);
+    return id;
   }
 
   @Post('storeWhitelist')

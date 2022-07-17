@@ -212,7 +212,7 @@ export class AnalyticsService {
     return await this.fetchEventsByContractsAndAddresses(contractAddresses, addresses);
   }
 
-   public async parseHolders(request: WhitelistInfoRequest): Promise<void> {
+   public async parseHolders(request: WhitelistInfoRequest): Promise<string> {
      this.logger.debug(`collection: ${request.collectionName} received for processing`);
      const hldrs = await this.fetchHolders(1, request.contractAddress, 10000);
      const addresses = hldrs.items.map((item) => {
@@ -232,6 +232,7 @@ export class AnalyticsService {
        holdersRequest
      });
      this.logger.debug(`collection: ${request.collectionName} will be processed with jobId: ${job.id}`);
+     return waitlist.id;
      /*const chunkSize = 20;
      for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
        const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
