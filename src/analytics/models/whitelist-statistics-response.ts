@@ -7,6 +7,11 @@ export class TopHoldersResponse {
   portfolio: number;
   label: string;
 }
+export class MutualHoldingsResponse {
+  address: string;
+  name: string;
+  holdings: number;
+}
 
 export class WhitelistStatisticsResponse {
   whitelistSize: number;
@@ -16,4 +21,5 @@ export class WhitelistStatisticsResponse {
   whales: number;
   bots: number;
   topHolders: TopHoldersResponse[];
+  mutualHoldings: MutualHoldingsResponse[];
 }

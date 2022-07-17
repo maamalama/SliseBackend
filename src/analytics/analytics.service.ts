@@ -21,7 +21,11 @@ import { readFileSync } from 'fs';
 import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import { DiscordResponse } from './models/discord-response';
-import { TopHoldersResponse, WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
+import {
+  MutualHoldingsResponse,
+  TopHoldersResponse,
+  WhitelistStatisticsResponse
+} from './models/whitelist-statistics-response';
 import Redlock from 'redlock';
 
 @Injectable()
@@ -100,12 +104,20 @@ export class AnalyticsService {
         this.getTwitterFollowersCount(whitelist.twitter),
         this.getDiscordInfo(whitelist.discord)]);
 
-      const topHolders = await this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd", count(DISTINCT TT.address) as nfts from "TokenHolder"
-      inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
-      where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
-      group by "TokenHolder".address, "TokenHolder"."totalBalanceUsd"
-      order by "TokenHolder"."totalBalanceUsd" desc
-      limit 20;`;
+      const [topHolders, mutualHoldings] = await Promise.all([
+        this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd", count(DISTINCT TT.address) as nfts from "TokenHolder"
+        inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
+        where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
+        group by "TokenHolder".address, "TokenHolder"."totalBalanceUsd"
+        order by "TokenHolder"."totalBalanceUsd" desc
+        limit 15;`,
+        this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as holdings from "TokenTransfer"
+        where "TokenTransfer"."waitlistId" = ${id} and "contractType" = 'ERC721'
+        and "TokenTransfer".address <> ${whitelist.contractAddress}
+        group by "TokenTransfer".name, "TokenTransfer".address
+        order by holdings desc
+        limit 15;`
+      ]);
 
       let whl = 0;
       const whales = 5;
@@ -130,7 +142,8 @@ export class AnalyticsService {
         twitterFollowersCount: twitterFollowersCount,
         whales: whales,
         whitelistSize: whitelistSize,
-        topHolders: topHolders
+        topHolders: topHolders,
+        mutualHoldings: mutualHoldings
       }
 
       await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);

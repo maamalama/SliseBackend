@@ -1,7 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { WhitelistInfoRequest } from '../analytics/requests/whitelist-info-request';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';

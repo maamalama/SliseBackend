@@ -1,4 +1,4 @@
-import { DynamicModule, Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -7,10 +7,8 @@ import { AnalyticsController } from './analytics/analytics.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import * as Sentry from '@sentry/node';
 import { BullModule } from '@nestjs/bull';
 import { TokenProcessorModule } from './tokenprocessor/tokenprocessor.module';
-import IORedis from 'ioredis';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterModule } from '@nestjs/platform-express';
 
@@ -26,9 +24,9 @@ import { MulterModule } from '@nestjs/platform-express';
   }),
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT,
-        password: process.env.REDIS_PASSWORD,
+        host: process.env.REDIS_QUEUE_HOST,
+        port: process.env.REDIS_QUEUE_PORT,
+        password: process.env.REDIS_QUEUE_PASSWORD,
         connectTimeout: 20000,
         tls: {
           rejectUnauthorized: false
