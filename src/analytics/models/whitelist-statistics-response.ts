@@ -1,6 +1,7 @@
 import { DiscordResponse } from './discord-response';
 
 export class TopHoldersResponse {
+  whale: boolean;
   address: string;
   nfts: number;
   portfolio: number;

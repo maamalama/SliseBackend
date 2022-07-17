@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, TokenHolder, Waitlist, TokenType } from '@prisma/client';
+import { Token, TokenHolder, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import {
   HolderInfo,
@@ -21,7 +21,7 @@ import { readFileSync } from 'fs';
 import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import { DiscordResponse } from './models/discord-response';
-import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
+import { TopHoldersResponse, WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
 import Redlock from 'redlock';
 
 @Injectable()
@@ -41,6 +41,7 @@ export class AnalyticsService {
   private readonly zdk: ZDK;
   private readonly ethPrice = require('eth-price');
   private readonly redlock;
+
   constructor(
     @InjectRedis() private readonly redis: Redis,
     private readonly prisma: PrismaService,
@@ -83,51 +84,58 @@ export class AnalyticsService {
   }
 
   public async getWhitelistStatistics(id: string): Promise<WhitelistStatisticsResponse> {
-    const whitelist = await this.prisma.waitlist.findFirst({
-      where: {
-        id: id
-      }
-    });
-
-    const [whitelistSize, twitterFollowersCount, discordInfo]
-      = await Promise.all([
-      this.getWaitlistSize(id),
-      this.getTwitterFollowersCount(whitelist.twitter),
-      this.getDiscordInfo(whitelist.discord)]);
-
-    const whales = 20;
-    const bluechipHolders = 48;
-    const bots = 318;
-    const topHolders = await this.getTopHolders(id).then(async (data) => {
-      const user = await Promise.all(data.map(async (holder) => {
-        //const lock = await this.redlock.acquire(['a'],150);
-        const topHolder = {
-          address: holder.address,
-          nfts: await this.getNFTs(holder.address),
-          /*nfts: await this.prisma.tokenTransfer.count({
-            where: {
-              holderId: holder.id,
-              contractType: TokenType.ERC721
-            }
-          }),*/
-          portfolio: holder.totalBalanceUsd,
-          label: ''
+    const existTopHolders = await this.redis.get(`topHolders ${id}`);
+    if (existTopHolders) {
+      return JSON.parse(existTopHolders);
+    } else {
+      const whitelist = await this.prisma.waitlist.findFirst({
+        where: {
+          id: id
         }
-        //await lock.release();
-        return topHolder;
-      }));
-      return user;
-    });
+      });
 
-    return {
-      bluechipHolders: bluechipHolders,
-      bots: bots,
-      discordInfo: discordInfo,
-      twitterFollowersCount: twitterFollowersCount,
-      whales: whales,
-      whitelistSize: whitelistSize,
-      topHolders: topHolders
-    };
+      const [whitelistSize, twitterFollowersCount, discordInfo]
+        = await Promise.all([
+        this.getWaitlistSize(id),
+        this.getTwitterFollowersCount(whitelist.twitter),
+        this.getDiscordInfo(whitelist.discord)]);
+
+      const topHolders = await this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd", count(DISTINCT TT.address) as nfts from "TokenHolder"
+      inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
+      where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
+      group by "TokenHolder".address, "TokenHolder"."totalBalanceUsd"
+      order by "TokenHolder"."totalBalanceUsd" desc
+      limit 20;`;
+
+      let whl = 0;
+      const whales = 5;
+      const bluechipHolders = 48;
+      const bots = 318;
+
+      topHolders.map((holder) => {
+        if (whl < whales) {
+          holder.label = 'whale';
+          holder.whale = true;
+        } else {
+          holder.label = 'mixed';
+          holder.whale = false;
+        }
+        whl += 1;
+      });
+
+      const response: WhitelistStatisticsResponse = {
+        bluechipHolders: bluechipHolders,
+        bots: bots,
+        discordInfo: discordInfo,
+        twitterFollowersCount: twitterFollowersCount,
+        whales: whales,
+        whitelistSize: whitelistSize,
+        topHolders: topHolders
+      }
+
+      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+      return response
+    }
   }
 
   public async getTopHolders(whitelistId: string): Promise<TokenHolder[]> {
@@ -145,7 +153,7 @@ export class AnalyticsService {
   }
 
   public async fetchNewBalances(address: string): Promise<any> {
-    try{
+    try {
       const options = {
         address: address
       };
@@ -160,8 +168,7 @@ export class AnalyticsService {
         usdBalance: usdB
       };
       return data;
-    }
-    catch{
+    } catch {
       return {
         ethBalance: 0,
         usdBalance: 0
@@ -212,41 +219,41 @@ export class AnalyticsService {
     return await this.fetchEventsByContractsAndAddresses(contractAddresses, addresses);
   }
 
-   public async parseHolders(request: WhitelistInfoRequest): Promise<string> {
-     this.logger.debug(`collection: ${request.collectionName} received for processing`);
-     const hldrs = await this.fetchHolders(1, request.contractAddress, 10000);
-     const addresses = hldrs.items.map((item) => {
-       return item.address;
-     });
-     const waitlist = await this.prisma.waitlist.create({
-       data: {
-         name: request.collectionName,
-         contractAddress: request.contractAddress
-       }
-     });
-     const holdersRequest = {
-       addresses: addresses,
-       waitlistId: waitlist.id
-     };
-     const job = await this.holdersQueue.add('parseAndStore', {
-       holdersRequest
-     });
-     this.logger.debug(`collection: ${request.collectionName} will be processed with jobId: ${job.id}`);
-     return waitlist.id;
-     /*const chunkSize = 20;
-     for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
-       const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
-       const holders: HolderInfoRequest = {
-         addresses: chunk,
-         collectionName: holdersRequest.collectionName,
-         contractAddress: holdersRequest.contractAddress
-       }
-       const job = await this.holdersQueue.add('parseAndStore', {
-         holders
-       }, {});
-       this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
-     }*/
-   }
+  public async parseHolders(request: WhitelistInfoRequest): Promise<string> {
+    this.logger.debug(`collection: ${request.collectionName} received for processing`);
+    const hldrs = await this.fetchHolders(1, request.contractAddress, 10000);
+    const addresses = hldrs.items.map((item) => {
+      return item.address;
+    });
+    const waitlist = await this.prisma.waitlist.create({
+      data: {
+        name: request.collectionName,
+        contractAddress: request.contractAddress
+      }
+    });
+    const holdersRequest = {
+      addresses: addresses,
+      waitlistId: waitlist.id
+    };
+    const job = await this.holdersQueue.add('parseAndStore', {
+      holdersRequest
+    });
+    this.logger.debug(`collection: ${request.collectionName} will be processed with jobId: ${job.id}`);
+    return waitlist.id;
+    /*const chunkSize = 20;
+    for (let i = 0; i < holdersRequest.addresses.length; i += chunkSize) {
+      const chunk = holdersRequest.addresses.slice(i, i + chunkSize);
+      const holders: HolderInfoRequest = {
+        addresses: chunk,
+        collectionName: holdersRequest.collectionName,
+        contractAddress: holdersRequest.contractAddress
+      }
+      const job = await this.holdersQueue.add('parseAndStore', {
+        holders
+      }, {});
+      this.logger.debug(`collection: ${holdersRequest.collectionName} will be processed with jobId: ${job.id}`);
+    }*/
+  }
 
   public async storeWaitlist(waitlistRequest: WhitelistInfoRequest, file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     this.logger.debug(`collection: ${waitlistRequest.collectionName} received for processing`);
