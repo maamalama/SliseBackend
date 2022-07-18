@@ -10,7 +10,13 @@ export class TopHoldersResponse {
 export class MutualHoldingsResponse {
   address: string;
   name: string;
-  holdings: number;
+  totalHoldings: number;
+  holdings?: CollectionInfoResponse;
+}
+
+export class CollectionInfoResponse {
+  totalSupply?: number;
+  logo?: string;
 }
 
 export class WhitelistStatisticsResponse {
@@ -22,4 +28,19 @@ export class WhitelistStatisticsResponse {
   bots: number;
   topHolders: TopHoldersResponse[];
   mutualHoldings: MutualHoldingsResponse[];
+}
+
+export class WhitelistResponse {
+  address: number;
+  holdings: CollectionInfoResponse[];
+  nfts: number;
+  avgNFTsPrice: number;
+  balance: number;
+  portfolio: number;
+  label: string;
+  bluechipHolders: number;
+  whales: number;
+  bots: number;
+  twitter?: string;
+  discord?: string;
 }

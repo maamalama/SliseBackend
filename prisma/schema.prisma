@@ -36,6 +36,10 @@ model Waitlist {
   discord          String?
   discordMembers   Int?
   size             Int?
+  logo             String?
+  bluechipHolders  Int?
+  whales           Int?
+  bots             Int?
 }
 
 model WaitlistStatistics {
@@ -61,6 +65,10 @@ model TokenHolder {
   waitlist             Waitlist        @relation(fields: [waitlistId], references: [id])
   waitlistId           String
   tokens               TokenTransfer[]
+  twitter              String?
+  twitterInteractions  Int?
+  discord              String?
+  discordMessages      Int?
   chainType            ChainType       @default(UNKNOWN)
 }
 
@@ -76,7 +84,9 @@ model TokenTransfer {
   holder                  TokenHolder             @relation(fields: [holderId], references: [id])
   holderId                String
   waitlistId              String
+  logo                    String?
   transferProcessedStatus TransferProcessedStatus
+  totalSupply             Int?
 }
 
 enum TransferProcessedStatus {

@@ -11,7 +11,7 @@ import {
 import { BalanceResponse } from './models/balances';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { BlockChainEvent, BlockChainUserEvent } from './models/blockchain-events';
-import { TokensQueryArgs, ZDK } from '@zoralabs/zdk';
+import { CollectionStatsAggregateQuery, ZDK } from '@zoralabs/zdk';
 import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
@@ -20,13 +20,14 @@ import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { readFileSync } from 'fs';
 import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
-import { DiscordResponse } from './models/discord-response';
 import {
+  CollectionInfoResponse,
   MutualHoldingsResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
 } from './models/whitelist-statistics-response';
 import Redlock from 'redlock';
+import { Network } from '@zoralabs/zdk/dist/queries/queries-sdk';
 
 @Injectable()
 export class AnalyticsService {
@@ -110,31 +111,43 @@ export class AnalyticsService {
         where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
         group by "TokenHolder".address, "TokenHolder"."totalBalanceUsd"
         order by "TokenHolder"."totalBalanceUsd" desc
-        limit 15;`,
-        this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as holdings from "TokenTransfer"
+        limit 10;`,
+        this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
         where "TokenTransfer"."waitlistId" = ${id} and "contractType" = 'ERC721'
         and "TokenTransfer".address <> ${whitelist.contractAddress}
         group by "TokenTransfer".name, "TokenTransfer".address
-        order by holdings desc
-        limit 15;`
+        order by totalHoldings desc
+        limit 10;`
       ]);
 
-      let whl = 0;
       const whales = 5;
       const bluechipHolders = 48;
       const bots = 318;
 
       topHolders.map((holder) => {
-        if (whl < whales) {
+        if (holder.portfolio >= 2000000) {
           holder.label = 'whale';
           holder.whale = true;
         } else {
           holder.label = 'mixed';
           holder.whale = false;
         }
-        whl += 1;
       });
 
+      let failed: string[] = [];
+
+      //TODO: add default logo
+      await Promise.all(mutualHoldings.map(async (holding) => {
+          try {
+            holding.holdings = await this.getCollectionInfo(holding.address);
+          } catch (e) {
+            failed.push(holding.address);
+          }
+        }
+      ));
+      if(failed.length > 0){
+        this.logger.debug(`${failed} failed parsing mutual holdings`);
+      }
       const response: WhitelistStatisticsResponse = {
         bluechipHolders: bluechipHolders,
         bots: bots,
@@ -191,6 +204,8 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
+    const a = await this.fetchTotalSupply('0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d');
+    const b = a;
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
 
     /*  const balance = await this.Moralis.Web3API.account.getTokenBalances(options);
@@ -533,6 +548,22 @@ export class AnalyticsService {
     return data;
   }
 
+  public async getCollectionInfo(address: string): Promise<CollectionInfoResponse> {
+    const query = `https://api.nftport.xyz/v0/nfts/${address}?chain=ethereum&page_number=1&page_size=1&include=all&refresh_metadata=true`;
+
+    const response = await this.httpService.get(query, {
+      headers: {
+        'Authorization': `${this.NFTPORT_API_KEY}`
+      }
+    }).toPromise();
+
+    const data = response.data;
+    return {
+      totalSupply: data.total,
+      logo: data.contract.metadata.thumbnail_url
+    }
+  }
+
   public async getTokensByAddresses(addresses: string[]): Promise<HolderInfo[]> {
     const response = await this.httpService.post('https://graphql.bitquery.io/', {
       query: `
@@ -824,19 +855,16 @@ export class AnalyticsService {
     return NFTs.total;
   }
 
-  private async fetchZora(addresses: string[]): Promise<any> {
-    const args: TokensQueryArgs = {
-      where: {
-        ownerAddresses: addresses
-      },
-      pagination: { limit: 1000 },
-      // Optional, limits the response size to 3 NFTs
-      includeFullDetails: false, // Optional, provides more data on the NFTs such as events
-      includeSalesHistory: false // Optional, provides sales data on the NFTs
+  private async fetchTotalSupply(address: string): Promise<number> {
+    const args: CollectionStatsAggregateQuery = {
+      collectionAddress: address,
+      network: {
+        network: Network.Ethereum
+      }
     };
 
-    const response = await this.zdk.tokens(args);
-    return response;
+    const response = await this.zdk.collectionStatsAggregate(args);
+    return 0;
   }
 
   private async getWaitlistSize(id: string): Promise<number> {
@@ -849,7 +877,7 @@ export class AnalyticsService {
   }
 
   private async getTwitterFollowersCount(link: string): Promise<any> {
-    if(link){
+    if (link) {
       const username = link.substring(link.lastIndexOf(`/`) + 1, link.length);
       const countByApi = await getFollowerCount({
         type: 'twitter',
@@ -862,7 +890,7 @@ export class AnalyticsService {
   }
 
   private async getDiscordInfo(link: string): Promise<any> {
-    if(link){
+    if (link) {
       const code = link.substring(link.lastIndexOf(`/`) + 1, link.length);
       const response = await this.httpService.get(`https://discord.com/api/v9/invites/${code}?with_counts=true&with_expiration=true`).toPromise();
 
