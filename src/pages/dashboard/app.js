@@ -35,17 +35,15 @@ export default function GeneralApp() {
 
   const getWhitelistStatistics = useCallback(async () => {
     const whitelistId = window.localStorage.getItem('whitelistId');
-    if (whitelistId !== 'undefined') {
+    if (whitelistId) {
       const response = await axios.get(`getWhitelistStatistics?id=${whitelistId}`);
-      console.log(response.data.data);
       setStatistics(response.data.data);
       if (isMountedRef.current) {
 
       }
     }
     else{
-      const response = await axios.get(`getWhitelistStatistics?id=9c755944-d9f1-4ac3-9ea1-84d9648de6e8`);
-      console.log(response.data.data);
+      const response = await axios.get(`getWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
       setStatistics(response.data.data);
     }
 
