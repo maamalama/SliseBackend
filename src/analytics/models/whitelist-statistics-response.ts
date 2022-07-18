@@ -15,8 +15,8 @@ export class MutualHoldingsResponse {
 
 export class WhitelistStatisticsResponse {
   whitelistSize: number;
-  twitterFollowersCount: number;
-  discordInfo: DiscordResponse;
+  twitterFollowersCount?: number;
+  discordInfo?: DiscordResponse;
   bluechipHolders: number;
   whales: number;
   bots: number;

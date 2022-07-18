@@ -848,24 +848,30 @@ export class AnalyticsService {
     return count;
   }
 
-  private async getTwitterFollowersCount(link: string): Promise<number> {
-    const username = link.substring(link.lastIndexOf(`/`) + 1, link.length);
-    const countByApi = await getFollowerCount({
-      type: 'twitter',
-      username: username
-    });
+  private async getTwitterFollowersCount(link: string): Promise<any> {
+    if(link){
+      const username = link.substring(link.lastIndexOf(`/`) + 1, link.length);
+      const countByApi = await getFollowerCount({
+        type: 'twitter',
+        username: username
+      });
 
-    return countByApi;
+      return countByApi;
+    }
+    return null;
   }
 
-  private async getDiscordInfo(link: string): Promise<DiscordResponse> {
-    const code = link.substring(link.lastIndexOf(`/`) + 1, link.length);
-    const response = await this.httpService.get(`https://discord.com/api/v9/invites/${code}?with_counts=true&with_expiration=true`).toPromise();
+  private async getDiscordInfo(link: string): Promise<any> {
+    if(link){
+      const code = link.substring(link.lastIndexOf(`/`) + 1, link.length);
+      const response = await this.httpService.get(`https://discord.com/api/v9/invites/${code}?with_counts=true&with_expiration=true`).toPromise();
 
-    return {
-      name: response.data.guild.name,
-      approximateMemberCount: response.data.approximate_member_count,
-      premiumSubscriptionCount: response.data.guild.premium_subscription_count
-    };
+      return {
+        name: response.data.guild.name,
+        approximateMemberCount: response.data.approximate_member_count,
+        premiumSubscriptionCount: response.data.guild.premium_subscription_count
+      };
+    }
+    return null;
   }
 }
