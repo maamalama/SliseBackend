@@ -65,11 +65,10 @@ export default function MLPrediction({title}) {
         value={price}
         min={.01}
         step={.01}
-        max={10}
+        max={30}
         onChange={handlePriceChange}
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
-        color="#131F0F"
       />
           <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
           <Typography textAlign='left'variant="subtitle1">{collectionSize}</Typography>
@@ -77,7 +76,7 @@ export default function MLPrediction({title}) {
         value={collectionSize}
         min={100}
         step={100}
-        max={20000}
+        max={10000}
         onChange={handleCollectionChange}
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
