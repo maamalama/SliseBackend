@@ -43,6 +43,11 @@ export default function GeneralApp() {
 
       }
     }
+    else{
+      const response = await axios.get(`getWhitelistStatistics?id=9c755944-d9f1-4ac3-9ea1-84d9648de6e8`);
+      console.log(response.data.data);
+      setStatistics(response.data.data);
+    }
 
 
   }, [isMountedRef]);
