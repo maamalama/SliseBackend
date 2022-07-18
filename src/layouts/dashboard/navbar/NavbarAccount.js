@@ -1,19 +1,21 @@
 import PropTypes from 'prop-types';
 // next
-import NextLink from 'next/link';
 // @mui
-import { styled } from '@mui/material/styles';
-import { Box, Link, Typography } from '@mui/material';
+import {styled} from '@mui/material/styles';
 // hooks
 import useAuth from '../../../hooks/useAuth';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
 // components
-import MyAvatar from '../../../components/MyAvatar';
+import {useCallback, useEffect, useState} from 'react';
+import axios from '../../../utils/axios';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import useIsMountedRef from "../../../hooks/useIsMountedRef";
 
 // ----------------------------------------------------------------------
 
-const RootStyle = styled('div')(({ theme }) => ({
+const RootStyle = styled('div')(({theme}) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(2, 2.5),
@@ -28,45 +30,80 @@ const RootStyle = styled('div')(({ theme }) => ({
 
 NavbarAccount.propTypes = {
   isCollapse: PropTypes.bool,
+  textColor: PropTypes.string,
 };
 
-export default function NavbarAccount({ isCollapse }) {
-  const { user } = useAuth();
+export default function NavbarAccount({isCollapse, textColor}) {
+  const {user} = useAuth();
+  const [whitelists, setWhitelists] = useState([]);
+  const [whitelist, setWhitelist] = useState('');
+  const color = '#F3F4EF';
+  const isMountedRef = useIsMountedRef();
+
+  const getWhitelists = useCallback(async () => {
+    const response = await axios.get('getWhitelists');
+    if (isMountedRef.current) {
+      setWhitelists(response.data.data);
+      const existWhitelist = window.localStorage.getItem('whitelistId');
+      if (!existWhitelist) {
+        setWhitelist(response.data.data[0].name);
+        window.localStorage.setItem('whitelistId', response.data.data[0].id);
+      } else {
+        setWhitelist(findWhitelistById(response.data.data, existWhitelist));
+      }
+    }
+
+  }, [isMountedRef]);
+  useEffect(() => {
+    getWhitelists();
+  }, [getWhitelists]);
+
+  const findWhitelistId = (name) => {
+    let id;
+    whitelists.map((list) => {
+      if (list.name === name)
+        id = list.id;
+    });
+    return id;
+  }
+
+  const findWhitelistById = (data,id) => {
+    let wl;
+    data.map((list) => {
+      if (list.id === id)
+        wl = list.name;
+    });
+    return wl || '';
+  }
+
+  const handleChange = (event) => {
+    /*  const sep = event.target.value.lastIndexOf(':');
+      const name = event.target.value.substring(event.target.value, sep);
+      const id = event.target.value.substring(sep,event.target.value.length);*/
+    const wl = findWhitelistId(event.target.value);
+    setWhitelist(event.target.value);
+    window.localStorage.setItem('whitelistId', wl);
+    window.location.reload(false);
+  };
+
+  if (!whitelists)
+    return <></>
 
   return (
-    <NextLink href={PATH_DASHBOARD.user.account} passHref>
-      <Link underline="none" color="inherit">
-        <RootStyle
-          sx={{
-            ...(isCollapse && {
-              bgcolor: 'transparent',
-            }),
-          }}
-        >
-          <MyAvatar />
+    <FormControl>
+      <Select sx={{color: color}}
+              value={whitelist}
+              onChange={handleChange}
+      >
+        {whitelists.map((whitelist) => {
+          return (
+            <MenuItem key={whitelist.id} value={whitelist.name}>
+              {whitelist.name}
+            </MenuItem>
+          )
+        })}
 
-          <Box
-            sx={{
-              ml: 2,
-              transition: (theme) =>
-                theme.transitions.create('width', {
-                  duration: theme.transitions.duration.shorter,
-                }),
-              ...(isCollapse && {
-                ml: 0,
-                width: 0,
-              }),
-            }}
-          >
-            <Typography variant="subtitle2" noWrap>
-              {user?.displayName}
-            </Typography>
-            <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-              {user?.role}
-            </Typography>
-          </Box>
-        </RootStyle>
-      </Link>
-    </NextLink>
+      </Select>
+    </FormControl>
   );
 }

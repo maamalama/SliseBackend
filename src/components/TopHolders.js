@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { sentenceCase } from 'change-case';
 // @mui
-import { useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -26,55 +26,65 @@ import Label from '../components/Label';
 import Iconify from '../components/Iconify';
 import Scrollbar from '../components/Scrollbar';
 import MenuPopover from '../components/MenuPopover';
+import PropTypes from 'prop-types';
+import AppWidgetSummary from '../sections/@dashboard/general/app/AppWidgetSummary';
 
 // ----------------------------------------------------------------------
 
-export default function TopHolders() {
+TopHolders.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.any),
+};
+
+export default function TopHolders({data}) {
   const theme = useTheme();
+
+  if(!data){
+    return <></>
+  }
 
   return (
     <Card>
       <CardHeader title="Top Holders"  />
-   
-        <TableContainer >
-          <Table size="small">
-              <TableRow >
-                <TableCell>Wallet</TableCell>
-                <TableCell>NFTS</TableCell>
-                <TableCell>Portfolio</TableCell>
-                <TableCell>Label</TableCell>
-               
-              </TableRow>
-         
-            <TableBody >
-              {_appInvoices.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{`INV-${row.id}`}</TableCell>
-                  <TableCell>{row.category}</TableCell>
-                  <TableCell>{fCurrency(row.price)}</TableCell>
-                  <TableCell>
-                    <Label
-                      variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                      color={
-                        (row.status === 'in_progress' && 'warning') ||
-                        (row.status === 'out_of_date' && 'error') ||
-                        'success'
-                      }
-                    >
-                      {sentenceCase(row.status)}
-                    </Label>
-                  </TableCell>
-                  {/* <TableCell align="right">
+      <TableContainer>
+        <Table size="small">
+          <TableRow >
+            <TableCell>Wallet</TableCell>
+            <TableCell>NFTS</TableCell>
+            <TableCell>Portfolio</TableCell>
+            <TableCell>Label</TableCell>
+
+          </TableRow>
+
+          <TableBody >
+            {Array.from(data).map((row) => (
+              <TableRow key={row.address}>
+                <TableCell> <Box sx={{ display: 'flex' }}> {row.whale === true ? <IconStyle icon={'fxemoji:whale'} /> : <></>} <a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></Box></TableCell>
+                <TableCell>{row.nfts}</TableCell>
+                <TableCell>{fCurrency(row.totalBalanceUsd)}</TableCell>
+
+
+                <TableCell>
+                  <Label
+                    color={
+                      (row.label === 'mixed' && 'warning') ||
+                      (row.label === 'out_of_date' && 'error') ||
+                      'success'
+                    }
+                  >
+                    {sentenceCase(row.label)}
+                  </Label>
+                </TableCell>
+                {/* <TableCell align="right">
                     <MoreMenuButton />
                   </TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-   
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-    
+
+
 
       {/* <Box sx={{ p: 2, textAlign: 'right' }}>
         <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
@@ -84,6 +94,13 @@ export default function TopHolders() {
     </Card>
   );
 }
+
+const IconStyle = styled(Iconify)(({ theme }) => ({
+  width: 20,
+  textAlign:'left',
+  height: 20,
+  marginRight: '7px'
+}));
 
 // ----------------------------------------------------------------------
 

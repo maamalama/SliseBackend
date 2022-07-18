@@ -29,11 +29,10 @@ const navConfig = [
   {
     items: [
       {
-        title: 'app',
+        title: 'Dashboard',
         path: PATH_DASHBOARD.general.app,
         icon: ICONS.dashboard,
       },
-      { title: 'Dashboard', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
       { title: 'Whitelist', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
       { title: 'Social Data', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
       { title: 'Mutual Holders', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
