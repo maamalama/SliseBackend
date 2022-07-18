@@ -1,6 +1,8 @@
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Container, Grid, Stack } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { Container, Grid, Stack, Box } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -33,18 +35,35 @@ import {
 GeneralApp.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
+const theme = createTheme();
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    gridRow: '1 / span 2',
+   height: '100%'
+
+  },
+  root2: {
+    
+    height: '100%',
+    paddingBottom: '30px',
+    
+  }
+}));
+
+ 
 
 // ----------------------------------------------------------------------
 
 export default function GeneralApp() {
   const { user } = useAuth();
-  const theme = useTheme();
+  const theme = createTheme();
   const { themeStretch } = useSettings();
 
   return (
     <Page title="General: App">
-      <Container >
-        <Grid container spacing={4}  direction="row" sx={{paddingBottom: '30px'}}  >
+      <Container>
+        <Grid container spacing={4} direction="row" className={classes.root2}  >
      
           <Grid item xs={12} md={3} >
         
@@ -53,7 +72,7 @@ export default function GeneralApp() {
               title="Whitelist Size"
               percent={2.6}
               total={18765}
-              chartColor={theme.palette.primary.main}
+               chartColor={theme.palette.primary.main}
               chartData={[5, 18, 12, 51, 68, 11, 39, 37, 27, 20]}
             />
           </Grid>
@@ -78,12 +97,15 @@ export default function GeneralApp() {
               chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
             />
           </Grid>
-          <Grid item xs={12} md={3} sx={{ gridRow: 'span 2' }}>            
+          <Grid item xs={12} md={3}  theme={theme}  >  
+           
          <MLPrediction 
+         
+       className={classes.root}
          title="ML Prediction"
-         />       
-          </Grid>
-          <Grid item xs={12} md={3}>
+         />   </Grid>      
+         
+          <Grid item xs={12} md={3} >
             <AppWidgetSummary
              icon="emojione:blue-circle"
                 title="Bluechip Holders"
@@ -116,18 +138,19 @@ export default function GeneralApp() {
             />
           </Grid>
 </Grid>
-<Grid container spacing={3} >
-          <Grid item xs={12} md={4} lg={4}>
+<Grid container spacing={2} >
+          <Grid item xs={12} md={4} lg={4} minWidth={'470px'}>
             <TopHolders />
           </Grid>
 
-          <Grid item xs={12} md={4} lg={4}>
+          <Grid item xs={12} md={3} lg={3} >
           <MutualHolders />
           </Grid>
 
-          <Grid item xs={12} lg={4}>
+          <Grid item xs={12} lg={3}>
             <TopHolders />
           </Grid>
+        
 
         
       
