@@ -44,8 +44,13 @@ export default function NavbarAccount({isCollapse, textColor}) {
     const response = await axios.get('getWhitelists');
     if (isMountedRef.current) {
       setWhitelists(response.data.data);
-      setWhitelist(response.data.data[0].name);
-      window.localStorage.setItem('whitelistId', response.data.data[0].id);
+      const existWhitelist = window.localStorage.getItem('whitelistId');
+      if (!existWhitelist) {
+        setWhitelist(response.data.data[0].name);
+        window.localStorage.setItem('whitelistId', response.data.data[0].id);
+      } else {
+        setWhitelist(findWhitelistById(response.data.data, existWhitelist));
+      }
     }
 
   }, [isMountedRef]);
@@ -61,14 +66,24 @@ export default function NavbarAccount({isCollapse, textColor}) {
     });
     return id;
   }
+
+  const findWhitelistById = (data,id) => {
+    let wl;
+    data.map((list) => {
+      if (list.id === id)
+        wl = list.name;
+    });
+    return wl || '';
+  }
+
   const handleChange = (event) => {
     /*  const sep = event.target.value.lastIndexOf(':');
       const name = event.target.value.substring(event.target.value, sep);
       const id = event.target.value.substring(sep,event.target.value.length);*/
-    const id = findWhitelistId(event.target.value);
+    const wl = findWhitelistId(event.target.value);
     setWhitelist(event.target.value);
-    window.localStorage.setItem('whitelistId', id);
-    //window.location.reload(false);
+    window.localStorage.setItem('whitelistId', wl);
+    window.location.reload(false);
   };
 
   if (!whitelists)

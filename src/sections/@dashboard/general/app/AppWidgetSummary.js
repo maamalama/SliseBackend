@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 // @mui
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, Card, Typography, Stack } from '@mui/material';
+import {alpha, styled, useTheme} from '@mui/material/styles';
+import {Box, Card, Stack, Typography} from '@mui/material';
 // utils
-import { fNumber, fPercent } from '../../../../utils/formatNumber';
+import {fNumber} from '../../../../utils/formatNumber';
 // components
 import Iconify from '../../../../components/Iconify';
-import ReactApexChart from '../../../../components/chart';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ AppWidgetSummary.propTypes = {
   chartData: PropTypes.arrayOf(PropTypes.number).isRequired,
   percent: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
+  total: PropTypes.any,
   icon: PropTypes.string.isRequired,
 };
 
@@ -79,8 +78,8 @@ export default function  AppWidgetSummary({ title, percent, total, chartColor, c
             {fPercent(percent)}
           </Typography>*/}
         </Stack>
+        {total === null ? <Typography textAlign="center" variant="h3">No data</Typography> : <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography>}
 
-        <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography>
       </Box>
 
       {/*<ReactApexChart type="bar" series={[{ data: chartData }]} options={chartOptions} width={60} height={36} />*/}
