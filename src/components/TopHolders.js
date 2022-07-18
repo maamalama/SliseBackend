@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { sentenceCase } from 'change-case';
 // @mui
-import { useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -45,7 +45,7 @@ export default function TopHolders({data}) {
   return (
     <Card>
       <CardHeader title="Top Holders"  />
-      <TableContainer >
+      <TableContainer>
         <Table size="small">
           <TableRow >
             <TableCell>Wallet</TableCell>
@@ -58,7 +58,7 @@ export default function TopHolders({data}) {
           <TableBody >
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-                <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell>
+                <TableCell> <Box sx={{ display: 'flex' }}> {row.whale === true ? <IconStyle icon={'fxemoji:whale'} /> : <></>} <a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></Box></TableCell>
                 <TableCell>{row.nfts}</TableCell>
                 <TableCell>{fCurrency(row.totalBalanceUsd)}</TableCell>
 
@@ -94,6 +94,13 @@ export default function TopHolders({data}) {
     </Card>
   );
 }
+
+const IconStyle = styled(Iconify)(({ theme }) => ({
+  width: 20,
+  textAlign:'left',
+  height: 20,
+  marginRight: '7px'
+}));
 
 // ----------------------------------------------------------------------
 

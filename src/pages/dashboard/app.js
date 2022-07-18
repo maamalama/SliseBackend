@@ -41,8 +41,7 @@ export default function GeneralApp() {
       if (isMountedRef.current) {
 
       }
-    }
-    else{
+    } else {
       const response = await axios.get(`getWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
       setStatistics(response.data.data);
     }
@@ -145,7 +144,7 @@ export default function GeneralApp() {
               />
             }
           </Grid>
-          <Grid item xs={12} md={3} sx={{gridRow: 'span 2'}}>
+          <Grid item xs={6} md={3} sx={{gridRow: 'span 1'}}>
             <MLPrediction
               title="ML Prediction"
             />
