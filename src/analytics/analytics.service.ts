@@ -160,7 +160,7 @@ export class AnalyticsService {
       }
 
       await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
-      return response
+      return response;
     }
   }
 
