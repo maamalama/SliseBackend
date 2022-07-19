@@ -139,13 +139,21 @@ export class AnalyticsService {
       //TODO: add default logo
       await Promise.all(mutualHoldings.map(async (holding) => {
           try {
-            holding.holdings = await this.getCollectionInfo(holding.address);
+            const response = await this.getCollectionInfo(holding.address);
+            if (response) {
+              holding.holdings = response;
+            }
           } catch (e) {
             failed.push(holding.address);
           }
         }
       ));
-      if(failed.length > 0){
+
+      mutualHoldings.sort((a, b) => {
+        return b.totalHoldings - a.totalHoldings;
+      });
+
+      if (failed.length > 0) {
         this.logger.debug(`${failed} failed parsing mutual holdings`);
       }
       const response: WhitelistStatisticsResponse = {
@@ -559,7 +567,7 @@ export class AnalyticsService {
 
     const data = response.data;
     return {
-      totalSupply: data.total,
+      totalSupply: data.total || 0,
       logo: data.contract.metadata.thumbnail_url
     }
   }
