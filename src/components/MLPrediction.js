@@ -96,8 +96,8 @@ export default function MLPrediction({title}) {
       </Typography>
       <Slider
         value={price}
-        min={.01}
-        step={.01}
+        min={0.01}
+        step={0.01}
         max={30}
         onChange={handlePriceChange}
         valueLabelDisplay="auto"
