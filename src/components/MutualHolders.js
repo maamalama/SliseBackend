@@ -8,6 +8,7 @@ import {
   Card,
   Avatar,
   CardHeader,
+  LinearProgress,
   Typography,
   TableContainer,
   Table,
@@ -47,23 +48,22 @@ export default function MutualHolders({data}) {
     return <></>
   }
   return (
-    <Card>
-      <CardHeader title="Mutual Holders" />
+    <Card sx={{height:'357px'}}>
+      <CardHeader title="Mutual Holders" sx={{paddingBottom:'10px'}}/>
       <TableContainer >
         <Table size="small">
-          <TableRow >
-            <TableCell>Address</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Holdings</TableCell>
-
-          </TableRow>
+      
 
           <TableBody >
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-                <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{fNumber(row.holdings)}</TableCell>
+               <TableCell size='small' > <Stack direction="row" alignItems="center" spacing={2}>
+                <Avatar sx={{ width: 24, height: 24 }} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png' />
+                <Typography>{row.name}</Typography></Stack></TableCell>
+                {/* <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell> */}
+  
+<TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={1} color='primary'></LinearProgress></Box></TableCell>
+                {/* <TableCell>{fNumber(row.holdings)}</TableCell> */}
                 {/* <TableCell align="right">
                     <MoreMenuButton />
                   </TableCell> */}
@@ -72,11 +72,7 @@ export default function MutualHolders({data}) {
           </TableBody>
         </Table>
       </TableContainer>
-      {/*<Stack spacing={3} sx={{ p: 3 }}>
-        {data.map((author, index) => (
-          <AuthorItem key={author.id} author={author} index={index} />
-        ))}
-      </Stack>*/}
+  
     </Card>
   );
 }

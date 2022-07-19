@@ -13,6 +13,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
+  Typography,
   CardHeader,
   IconButton,
   TableContainer,
@@ -43,15 +44,15 @@ export default function TopHolders({data}) {
   }
 
   return (
-    <Card>
-      <CardHeader title="Top Holders"  />
+    <Card sx={{height:'357px'}}>
+      <CardHeader title="Top Holders"  sx={{paddingBottom:'10px'}}/>
       <TableContainer>
         <Table size="small">
           <TableRow >
-            <TableCell>Wallet</TableCell>
-            <TableCell>NFTS</TableCell>
-            <TableCell>Portfolio</TableCell>
-            <TableCell>Label</TableCell>
+            <TableCell><Typography align='center' variant="subtitle2">Wallet</Typography></TableCell>
+            <TableCell><Typography variant="subtitle2">NFTS</Typography></TableCell>
+            <TableCell><Typography variant="subtitle2">Portfolio</Typography></TableCell>
+            <TableCell><Typography variant="subtitle2">Label</Typography></TableCell>
 
           </TableRow>
 

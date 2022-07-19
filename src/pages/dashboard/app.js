@@ -180,7 +180,7 @@ export default function GeneralApp() {
             }
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} >
             {statistics === null || statistics.whales === null ?
               <AppWidgetSummary
                 icon="fxemoji:whale"
@@ -227,8 +227,10 @@ export default function GeneralApp() {
             }
           </Grid>
         </Grid>
+
         <Grid container spacing={3}>
           <Grid item xs={12} md={4} lg={4} sx={{height: '362px'}}>
+
             {statistics === null || statistics.topHolders === null ?
               <></>
 
@@ -238,7 +240,7 @@ export default function GeneralApp() {
 
           </Grid>
 
-          <Grid item xs={12} md={4} lg={4}>
+          <Grid item xs={12} md={4} lg={4} sx={{height:'362px'}}>
             {statistics === null || statistics.mutualHoldings === null ?
               <></>
 
