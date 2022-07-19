@@ -66,25 +66,29 @@ export default function MutualHolders({data}) {
           <TableBody sx={{maxHeight: '357px'}}>
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-                <TableCell size='small' style={{width: '50%'}}> <Stack direction="row" alignItems="flex-start"
-                                                                       spacing={1}>
-                  {row.holdings === null || row.holdings.logo === null ?
-                    <Avatar sx={{width: 24, height: 24}} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png'/>
-                    :
-                    <Avatar sx={{width: 24, height: 24}} alt={row.name} src={row.holdings.logo}/>
-                  }
-
-                  <Typography>{row.name}</Typography></Stack></TableCell>
-                {/* <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell> */}
-
-                {row.holdings === null || row.totalholdings === null ?
+                <TableCell size='small' style={{width: '50%'}}> <Stack direction="row" alignItems="flex-start" spacing={1}>
+                  <a style={{textDecoration: 'none', color: 'inherit'}} target={'_blank'}
+                     href={`https://etherscan.io/address/${row.address}`} underline="none">
+                    {row.holdings === null || row.holdings?.logo === null ?
+                      <Avatar sx={{width: 24, height: 24}} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png'/>
+                      :
+                      <Avatar sx={{width: 24, height: 24}} alt={row.name} src={row.holdings?.logo}/>
+                    }
+                  </a>
+                  <a style={{textDecoration: 'none', color: 'inherit'}} target={'_blank'}
+                     href={`https://etherscan.io/address/${row.address}`} underline="none">
+                    <Typography>{row.name}</Typography>
+                  </a>
+                </Stack>
+                </TableCell>
+                {row.holdings === null || row.prercent === null ?
                   <TableCell><Box sx={{width: '100%'}}><BorderLinearProgress variant="determinate"
                                                                              value={0}></BorderLinearProgress></Box></TableCell>
                   :
                   <TableCell>
                     <Tooltip title={row.totalholdings} placement="top">
                       <Box sx={{width: '100%'}} alt>
-                        <BorderLinearProgress variant="determinate" value={(row.totalholdings * 0.1)}>
+                        <BorderLinearProgress variant="determinate" value={(row.percent)}>
                         </BorderLinearProgress>
                       </Box>
                     </Tooltip>

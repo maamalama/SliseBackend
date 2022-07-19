@@ -1,40 +1,51 @@
-import { useState } from 'react';
-import { sentenceCase } from 'change-case';
+import {useState} from 'react';
+import {sentenceCase} from 'change-case';
 // @mui
 import {styled, useTheme} from '@mui/material/styles';
 import {
   Box,
   Card,
-  Table,
-  Button,
+  CardHeader,
   Divider,
+  IconButton,
   MenuItem,
-  TableRow,
+  Table,
   TableBody,
   TableCell,
-  TableHead,
-  Typography,
-  CardHeader,
-  IconButton,
   TableContainer,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // utils
-import { fCurrency } from '../utils/formatNumber';
+import {fCurrency} from '../utils/formatNumber';
 // _mock_
-import { _appInvoices } from '../_mock';
 // components
 import Label from '../components/Label';
 import Iconify from '../components/Iconify';
-import Scrollbar from '../components/Scrollbar';
 import MenuPopover from '../components/MenuPopover';
 import PropTypes from 'prop-types';
-import AppWidgetSummary from '../sections/@dashboard/general/app/AppWidgetSummary';
 
 // ----------------------------------------------------------------------
 
 TopHolders.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
 };
+function nFormatter(num, digits) {
+  const lookup = [
+    { value: 1, symbol: "" },
+    { value: 1e3, symbol: "k" },
+    { value: 1e6, symbol: "M" },
+    { value: 1e9, symbol: "G" },
+    { value: 1e12, symbol: "T" },
+    { value: 1e15, symbol: "P" },
+    { value: 1e18, symbol: "E" }
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  var item = lookup.slice().reverse().find(function(item) {
+    return num >= item.value;
+  });
+  return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
+}
 
 export default function TopHolders({data}) {
   const theme = useTheme();
@@ -49,19 +60,19 @@ export default function TopHolders({data}) {
       <TableContainer size="small" sx={{height: '300px'}}>
         <Table size="small" stickyHeader sx={{height: "max-content"}}>
           <TableRow >
-            <TableCell><Typography align='center' variant="subtitle2">Wallet</Typography></TableCell>
-            <TableCell><Typography variant="subtitle2">NFTS</Typography></TableCell>
-            <TableCell><Typography variant="subtitle2">Portfolio</Typography></TableCell>
-            <TableCell><Typography variant="subtitle2">Label</Typography></TableCell>
+            <TableCell><Typography align='center' variant="subtitle1">Wallet</Typography></TableCell>
+            <TableCell><Typography align='center' variant="subtitle1">NFTS</Typography></TableCell>
+            <TableCell><Typography align='center' variant="subtitle1">Portfolio</Typography></TableCell>
+            <TableCell><Typography variant="subtitle1">Label</Typography></TableCell>
 
           </TableRow>
 
           <TableBody >
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-                <TableCell> <Box sx={{ display: 'flex' }}> {row.whale === true ? <IconStyle icon={'fxemoji:whale'} /> : <></>} <a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></Box></TableCell>
-                <TableCell>{row.nfts}</TableCell>
-                <TableCell>{fCurrency(row.totalBalanceUsd)}</TableCell>
+                <TableCell> <Box sx={{ display: 'flex' }}> {row.whale === true ? <IconStyle icon={'fxemoji:whale'} /> : <></>} <a style={{ textDecoration: 'none', color: 'inherit'}} target={'_blank'} href={`https://etherscan.io/address/${row.address}`}><Typography>{row.address.substring(0,6)}</Typography></a></Box></TableCell>
+                <TableCell align={'center'}><Typography>{row.nfts}</Typography></TableCell>
+                <TableCell align={'center'}><Typography>{nFormatter(row.totalBalanceUsd)}</Typography></TableCell>
 
 
                 <TableCell>
