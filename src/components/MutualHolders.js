@@ -58,11 +58,21 @@ export default function MutualHolders({data}) {
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
                <TableCell size='small' > <Stack direction="row" alignItems="center" spacing={2}>
-                <Avatar sx={{ width: 24, height: 24 }} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png' />
+                 {row.holdings === null || row.holdings.logo === null ?
+                   <Avatar sx={{ width: 24, height: 24 }} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png' />
+                   :
+                   <Avatar sx={{ width: 24, height: 24 }} alt={row.name} src={row.holdings.logo} />
+                 }
+
                 <Typography>{row.name}</Typography></Stack></TableCell>
                 {/* <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell> */}
-  
-<TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={1} color='primary'></LinearProgress></Box></TableCell>
+
+                {row.holdings === null || row.holdings.totalSupply === null ?
+                  <TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={1} color='primary'></LinearProgress></Box></TableCell>
+                  :
+                  <TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={row.holdings.totalSupply} color='primary'></LinearProgress></Box></TableCell>
+                }
+
                 {/* <TableCell>{fNumber(row.holdings)}</TableCell> */}
                 {/* <TableCell align="right">
                     <MoreMenuButton />
