@@ -1,7 +1,6 @@
 // @mui
 import {useTheme} from '@mui/material/styles';
 import {Card, CardMedia, Container, Grid, Typography} from '@mui/material';
-import Icon from '@material-ui/core/Icon';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -25,12 +24,12 @@ GeneralApp.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-function NoteIcon() {
-  return (<Icon>
-    <img src={Note}/>
-  </Icon>)
-
-}
+// function NoteIcon() {
+//   return (<Icon>
+//     <img src={Note}/>
+//   </Icon>)
+//
+// }
 
 
 // ----------------------------------------------------------------------
@@ -48,9 +47,6 @@ export default function GeneralApp() {
       const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/getWhitelistStatistics?id=${whitelistId}`);
       window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
       setStatistics(response.data.data);
-      if (isMountedRef.current) {
-
-      }
     } else {
       const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/FgetWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
       window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
