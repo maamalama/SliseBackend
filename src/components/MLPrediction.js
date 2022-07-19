@@ -36,7 +36,11 @@ export default function MLPrediction({title}) {
 
   useEffect(() => {
     const getData = setTimeout(() => {
-      axios.get(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${collectionSize}&whitelist=${+whitelistSize}`)
+      axios.get(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${collectionSize}&whitelist=${+whitelistSize}`, {
+        headers:{
+          'Access-Control-Allow-Origin' : '*'
+        }
+      })
         .then((response) => {
           console.log(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${collectionSize}&whitelist=${+whitelistSize}`);
           console.log(response);
