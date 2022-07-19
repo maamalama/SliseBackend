@@ -46,8 +46,8 @@ export default function TopHolders({data}) {
   return (
     <Card sx={{height:'357px'}}>
       <CardHeader title="Top Holders"  sx={{paddingBottom:'10px'}}/>
-      <TableContainer>
-        <Table size="small">
+      <TableContainer size="small" sx={{height: '300px'}}>
+        <Table size="small" stickyHeader sx={{height: "max-content"}}>
           <TableRow >
             <TableCell><Typography align='center' variant="subtitle2">Wallet</Typography></TableCell>
             <TableCell><Typography variant="subtitle2">NFTS</Typography></TableCell>

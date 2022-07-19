@@ -1,33 +1,31 @@
 import PropTypes from 'prop-types';
 import orderBy from 'lodash/orderBy';
 // @mui
-import { alpha, styled } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import {
-  Box,
-  Stack,
-  Card,
   Avatar,
+  Box,
+  Card,
   CardHeader,
-  LinearProgress,
-  Typography,
-  TableContainer,
+  Stack,
   Table,
+  TableBody,
+  TableCell,
+  TableContainer,
   TableRow,
-  TableCell, TableBody
+  Tooltip,
+  Typography
 } from '@mui/material';
 // utils
-import {fCurrency, fNumber, fShortenNumber} from '../utils/formatNumber';
 // _mock_
-import { _appAuthors } from '../_mock';
+import {_appAuthors} from '../_mock';
 // components
-import Iconify from '../components/Iconify';
 import TopHolders from './TopHolders';
-import Label from './Label';
-import {sentenceCase} from 'change-case';
+import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
 
 // ----------------------------------------------------------------------
 
-const IconWrapperStyle = styled('div')(({ theme }) => ({
+const IconWrapperStyle = styled('div')(({theme}) => ({
   width: 40,
   height: 40,
   display: 'flex',
@@ -42,35 +40,55 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 TopHolders.propTypes = {
   data: PropTypes.arrayOf(PropTypes.any),
 };
+const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: '#fff',
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#000000' : '#308fe8',
+  },
+}));
+
 export default function MutualHolders({data}) {
   const displayAuthor = orderBy(_appAuthors, ['favourite'], ['desc']);
-  if(!data){
+  console.log(data);
+  if (!data) {
     return <></>
   }
   return (
-    <Card sx={{height:'357px'}}>
-      <CardHeader title="Mutual Holders" sx={{paddingBottom:'10px'}}/>
-      <TableContainer >
-        <Table size="small">
-      
-
-          <TableBody >
+    <Card sx={{maxHeight: '357px'}}>
+      <CardHeader title="Mutual Holders" sx={{paddingBottom: '10px'}}/>
+      <TableContainer size="small" sx={{maxHeight: '300px'}}>
+        <Table size="medium" stickyHeader sx={{height: "max-content"}}>
+          <TableBody sx={{maxHeight: '357px'}}>
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-               <TableCell size='small' > <Stack direction="row" alignItems="center" spacing={2}>
-                 {row.holdings === null || row.holdings.logo === null ?
-                   <Avatar sx={{ width: 24, height: 24 }} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png' />
-                   :
-                   <Avatar sx={{ width: 24, height: 24 }} alt={row.name} src={row.holdings.logo} />
-                 }
+                <TableCell size='small' style={{width: '50%'}}> <Stack direction="row" alignItems="flex-start"
+                                                                       spacing={1}>
+                  {row.holdings === null || row.holdings.logo === null ?
+                    <Avatar sx={{width: 24, height: 24}} alt='avatar name' src='https://i.ibb.co/WFD2Kj6/IMG.png'/>
+                    :
+                    <Avatar sx={{width: 24, height: 24}} alt={row.name} src={row.holdings.logo}/>
+                  }
 
-                <Typography>{row.name}</Typography></Stack></TableCell>
+                  <Typography>{row.name}</Typography></Stack></TableCell>
                 {/* <TableCell><a href={`https://etherscan.io/address/${row.address}`}>{row.address.substring(0,6)}</a></TableCell> */}
 
-                {row.holdings === null || row.holdings.totalSupply === null ?
-                  <TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={1} color='primary'></LinearProgress></Box></TableCell>
+                {row.holdings === null || row.totalholdings === null ?
+                  <TableCell><Box sx={{width: '100%'}}><BorderLinearProgress variant="determinate"
+                                                                             value={0}></BorderLinearProgress></Box></TableCell>
                   :
-                  <TableCell><Box sx={{width:'100%'}}><LinearProgress variant="determinate" value={row.holdings.totalSupply} color='primary'></LinearProgress></Box></TableCell>
+                  <TableCell>
+                    <Tooltip title={row.totalholdings} placement="top">
+                      <Box sx={{width: '100%'}} alt>
+                        <BorderLinearProgress variant="determinate" value={(row.totalholdings * 0.1)}>
+                        </BorderLinearProgress>
+                      </Box>
+                    </Tooltip>
+                  </TableCell>
                 }
 
                 {/* <TableCell>{fNumber(row.holdings)}</TableCell> */}
@@ -82,7 +100,7 @@ export default function MutualHolders({data}) {
           </TableBody>
         </Table>
       </TableContainer>
-  
+
     </Card>
   );
 }
@@ -98,20 +116,17 @@ AuthorItem.propTypes = {
   index: PropTypes.number,
 };
 
-function AuthorItem({ author, index }) {
+function AuthorItem({author, index}) {
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <Avatar alt={author.name} src={author.avatar} />
-      <Box sx={{ flexGrow: 1 }}>
+      <Avatar alt={author.name} src={author.avatar}/>
+      <Box sx={{flexGrow: 1}}>
         <Typography variant="subtitle2">{author.name}</Typography>
-       
-    
-      
+
+
       </Box>
 
-      
-      
-     
+
     </Stack>
   );
 }
