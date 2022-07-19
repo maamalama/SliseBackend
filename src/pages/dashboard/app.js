@@ -1,6 +1,9 @@
 // @mui
 import {useTheme} from '@mui/material/styles';
-import {Container, Grid} from '@mui/material';
+import {Container, Grid, Card, Typography, Box, CardMedia} from '@mui/material';
+import SvgIcon from '@mui/material/SvgIcon';
+import Icon from '@material-ui/core/Icon';
+import SvgIconStyle from 'src/components/SvgIconStyle';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -23,6 +26,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 GeneralApp.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
+function NoteIcon () {
+  return (<Icon>
+    <img src={Note}/>
+  </Icon>)
+  
+}
+
 
 // ----------------------------------------------------------------------
 
@@ -75,12 +85,13 @@ export default function GeneralApp() {
   return (
     <Page title="General: App">
       <Container>
-        <Grid container spacing={4} direction="row" sx={{paddingBottom: '30px'}}>
+        <Grid container spacing={4}  direction="row"
+        alignItems="stretch" sx={{paddingBottom: '30px', height:'100%'}}>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} >
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
-                icon='majesticons:paper-fold-text-line'
+                icon={Note}
                 title="Whitelist Size"
                 percent={2.6}
                 total={null}
@@ -90,7 +101,7 @@ export default function GeneralApp() {
 
               :
               <AppWidgetSummary
-                icon='majesticons:paper-fold-text-line'
+                icon=''
                 title="Whitelist Size"
                 percent={2.6}
                 total={statistics.whitelistSize}
@@ -144,7 +155,7 @@ export default function GeneralApp() {
               />
             }
           </Grid>
-          <Grid item xs={6} md={3} sx={{gridRow: 'span 1'}}>
+          <Grid item xs={6} md={3}>
             <MLPrediction
               title="ML Prediction"
             />
@@ -219,8 +230,8 @@ export default function GeneralApp() {
             }
           </Grid>
         </Grid>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4} lg={4}>
+        <Grid container spacing={3}  >
+          <Grid item xs={12} md={4} lg={4} sx={{height:'362px'}}>
             {statistics === null || statistics.topHolders === null ?
               <></>
 
@@ -237,6 +248,24 @@ export default function GeneralApp() {
               :
               <MutualHolders data={statistics.mutualHoldings}/>
             }
+          </Grid>
+          <Grid item xs={12} md={4} lg={4}>
+      
+           <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#131F0F', fontFamily:'Public Sans', height: '100%' }}>
+            
+           <Typography color="white" textAlign="left" variant="h3">4,887</Typography>
+           <Typography color="#FFFFFF" textAlign="left" variant="subtitle2" sx={{opacity: '0.72'}}>Target Wallets identified</Typography>
+          
+           <CardMedia
+           sx={{marginTop:'20px'}}
+           component="img"
+           height="220px"
+           image='https://i.ibb.co/k1GH2YF/Type-ML-dashboard.png'
+           alt="Wallet Chart"
+        >
+           </CardMedia>
+           </Card>
+          
           </Grid>
 
 

@@ -54,8 +54,8 @@ export default function MLPrediction({title}) {
 //   };
 
   return (
-    <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#DDFF55', fontFamily:'Public Sans', height: '100%', gridRow:'span 2' }} >
-      <Box  >
+    <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#DDFF55', fontFamily:'Public Sans', height:'100%'}} >
+     
         <Typography textAlign="left" variant="subtitle1">{title}</Typography>
         <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
         <Typography textAlign='left'variant="subtitle1">
@@ -80,6 +80,7 @@ export default function MLPrediction({title}) {
         onChange={handleCollectionChange}
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
+        
       />
            <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
            <Stack direction='row' spacing={2}  justifyContent="center"alignItems="center">
@@ -87,7 +88,7 @@ export default function MLPrediction({title}) {
             <Label variant="outlined" >High</Label>
             </Stack>
         {/* <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography> */}
-      </Box>
+      
 
       {/*<ReactApexChart type="bar" series={[{ data: chartData }]} options={chartOptions} width={60} height={36} />*/}
     </Card>
