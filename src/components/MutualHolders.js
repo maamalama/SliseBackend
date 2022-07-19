@@ -48,7 +48,7 @@ export default function MutualHolders({data}) {
     return <></>
   }
   return (
-    <Card sx={{height:'337px'}}>
+    <Card sx={{height:'357px'}}>
       <CardHeader title="Mutual Holders" sx={{paddingBottom:'10px'}}/>
       <TableContainer >
         <Table size="small">

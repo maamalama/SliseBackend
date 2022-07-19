@@ -44,7 +44,7 @@ export default function TopHolders({data}) {
   }
 
   return (
-    <Card sx={{height:'337px'}}>
+    <Card sx={{height:'357px'}}>
       <CardHeader title="Top Holders"  sx={{paddingBottom:'10px'}}/>
       <TableContainer>
         <Table size="small">
