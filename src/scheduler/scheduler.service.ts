@@ -49,7 +49,7 @@ export class SchedulerService {
         await Promise.all(tokenBalance.map(async (balance) => {
           balance.balances.map(async (token) => {
             const tokenTransfer = {
-              address: token.currency.address,
+              address: token.currency.address.toLowerCase(),
               tokenId: BigInt.parse(token.currency.tokenId),
               amount: token.value,
               contractType: mapTokenType(token.currency.tokenType),

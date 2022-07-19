@@ -114,7 +114,7 @@ export class AnalyticsService {
         limit 10;`,
         this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
         where "TokenTransfer"."waitlistId" = ${id} and "contractType" = 'ERC721'
-        and "TokenTransfer".address <> ${whitelist.contractAddress}
+        and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()}
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
         limit 10;`
@@ -179,7 +179,7 @@ export class AnalyticsService {
         mutualHoldings: mutualHoldings
       }
 
-      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 5);
       return response;
     }
   }
@@ -276,7 +276,7 @@ export class AnalyticsService {
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: request.collectionName,
-        contractAddress: request.contractAddress
+        contractAddress: request.contractAddress.toLowerCase()
       }
     });
     const holdersRequest = {

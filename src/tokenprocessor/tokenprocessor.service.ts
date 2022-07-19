@@ -32,7 +32,7 @@ export class TokenProcessorService {
       let savedHolders: any[] = [];
       holders.addresses.map((tokenHolder) => {
         const dataHolder = {
-          address: tokenHolder,
+          address: tokenHolder.toLowerCase(),
           totalBalanceTokens: 0,
           totalBalanceUsd: 0,
           ethBalance: 0,
