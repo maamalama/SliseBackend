@@ -137,7 +137,7 @@ export class AnalyticsService {
       let failed: string[] = [];
 
       //TODO: add default logo
-      await Promise.all(mutualHoldings.map(async (holding) => {
+      await Promise.all(mutualHoldings.map(async (holding, idx) => {
           try {
             const response = await this.getCollectionInfo(holding.address);
             if (response) {
@@ -149,8 +149,20 @@ export class AnalyticsService {
         }
       ));
 
+      let initPercent = 100;
+      let initValue: number;
+
       mutualHoldings.sort((a, b) => {
-        return b.totalHoldings - a.totalHoldings;
+        return b.totalholdings - a.totalholdings;
+      });
+
+      mutualHoldings.map((holding, idx) => {
+        if (idx === 0) {
+          initValue = holding.totalholdings;
+          holding.percent = initPercent;
+        } else {
+          holding.percent = ((holding.totalholdings / initValue) * initPercent);
+        }
       });
 
       if (failed.length > 0) {

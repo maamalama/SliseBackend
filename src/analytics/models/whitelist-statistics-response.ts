@@ -10,7 +10,8 @@ export class TopHoldersResponse {
 export class MutualHoldingsResponse {
   address: string;
   name: string;
-  totalHoldings: number;
+  totalholdings: number;
+  percent: number
   holdings?: CollectionInfoResponse;
 }
 
