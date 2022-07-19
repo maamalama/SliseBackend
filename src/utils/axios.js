@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: 'https://daoanalytics.herokuapp.com/api/analytics/' });
+const axiosInstance = axios.create();
 
 axiosInstance.interceptors.response.use(
   (response) => response,

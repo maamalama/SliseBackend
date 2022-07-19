@@ -1,23 +1,22 @@
 import PropTypes from 'prop-types';
 // @mui
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, Card, Typography, Stack, Slider } from '@mui/material';
+import {styled, useTheme} from '@mui/material/styles';
+import {Box, Card, Slider, Stack, Typography} from '@mui/material';
 // utils
-import { fNumber, fPercent } from '../utils/formatNumber';
 // components
 import Iconify from '../components/Iconify';
-import ReactApexChart from '../components/chart';
 import Label from '../components/Label'
-import { useState } from "react";
+import {useState} from "react";
+import axios from '../utils/axios';
 
-const IconStyle = styled(Iconify)(({ theme }) => ({
+const IconStyle = styled(Iconify)(({theme}) => ({
   width: 15,
   height: 15,
-  
+
 }));
 // ----------------------------------------------------------------------
 
-MLPrediction.propTypes = { 
+MLPrediction.propTypes = {
   title: PropTypes.string.isRequired,
 //   mintPrice: PropTypes.number.isRequired,
 //   collectionSize: PropTypes.number.isRequired,
@@ -27,14 +26,29 @@ MLPrediction.propTypes = {
 };
 
 export default function MLPrediction({title}) {
-    const [price, setMintPrice] = useState(0.01)
-    const [collectionSize, setCollectionSize] = useState(0)
-    function handlePriceChange(event, newNumber) {
-        setMintPrice(newNumber);
-      }
-      function handleCollectionChange(event, newNumber) {
-        setCollectionSize(newNumber);
-      }
+  const [price, setMintPrice] = useState(0.01)
+  const [collectionSize, setCollectionSize] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const whitelistSize = window.localStorage.getItem('whitelistSize');
+
+  function handlePriceChange(event, newNumber) {
+    setMintPrice(newNumber);
+  }
+
+  function handleCollectionChange(event, newNumber) {
+    setCollectionSize(newNumber);
+  }
+
+  const getPredict = async (price, supply, whitelistSize) => {
+    return await axios.get(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${supply}&whitelist=${whitelistSize}`);
+  }
+
+  const predict = async (price, supply, whitelistSize) => {
+    setTimeout(() => getPredict(price,supply,whitelistSize), 1000);
+    const mintShare = response.mint_share[0];
+    console.log(mintShare);
+  }
+
   const theme = useTheme();
 
 //   const chartOptions = {
@@ -54,39 +68,46 @@ export default function MLPrediction({title}) {
 //   };
 
   return (
-    <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#DDFF55', fontFamily:'Public Sans', height: '100%', gridRow:'span 2' }} >
-      <Box  >
+    <Card sx={{
+      justifyContent: 'center',
+      p: 3,
+      backgroundColor: '#DDFF55',
+      fontFamily: 'Public Sans',
+      height: '100%',
+      gridRow: 'span 2'
+    }}>
+      <Box>
         <Typography textAlign="left" variant="subtitle1">{title}</Typography>
         <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
-        <Typography textAlign='left'variant="subtitle1">
-        <IconStyle icon="codicon:three-bars" />{price}
-      </Typography>
+        <Typography textAlign='left' variant="subtitle1">
+          <IconStyle icon="codicon:three-bars"/>{price}
+        </Typography>
         <Slider
-        value={price}
-        min={.01}
-        step={.01}
-        max={10}
-        onChange={handlePriceChange}
-        valueLabelDisplay="auto"
-        aria-labelledby="non-linear-slider"
-        color="#131F0F"
-      />
-          <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
-          <Typography textAlign='left'variant="subtitle1">{collectionSize}</Typography>
-          <Slider
-        value={collectionSize}
-        min={100}
-        step={100}
-        max={20000}
-        onChange={handleCollectionChange}
-        valueLabelDisplay="auto"
-        aria-labelledby="non-linear-slider"
-      />
-           <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
-           <Stack direction='row' spacing={2}  justifyContent="center"alignItems="center">
-           <Typography textAlign="center" variant="h4">86%</Typography>
-            <Label variant="outlined" >High</Label>
-            </Stack>
+          value={price}
+          min={.01}
+          step={.01}
+          max={10}
+          onChange={handlePriceChange}
+          valueLabelDisplay="auto"
+          aria-labelledby="non-linear-slider"
+          color="#131F0F"
+        />
+        <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
+        <Typography textAlign='left' variant="subtitle1">{collectionSize}</Typography>
+        <Slider
+          value={collectionSize}
+          min={100}
+          step={100}
+          max={20000}
+          onChange={handleCollectionChange}
+          valueLabelDisplay="auto"
+          aria-labelledby="non-linear-slider"
+        />
+        <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
+        <Stack direction='row' spacing={2} justifyContent="center" alignItems="center">
+          <Typography textAlign="center" variant="h4">86%</Typography>
+          <Label variant="outlined">High</Label>
+        </Stack>
         {/* <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography> */}
       </Box>
 
