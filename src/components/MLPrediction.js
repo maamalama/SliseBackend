@@ -95,6 +95,7 @@ export default function MLPrediction({title}) {
         <IconStyle icon="codicon:three-bars"/>{price}
       </Typography>
       <Slider
+        sx={{color: 'black'}}
         value={price}
         min={0.01}
         step={0.01}
@@ -106,6 +107,7 @@ export default function MLPrediction({title}) {
       <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
       <Typography textAlign='left' variant="subtitle1">{collectionSize}</Typography>
       <Slider
+        sx={{color: 'black'}}
         value={collectionSize}
         min={100}
         step={100}
