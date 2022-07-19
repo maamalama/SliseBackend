@@ -88,7 +88,7 @@ export default function MLPrediction({title}) {
 
 
   return (
-    <Card sx={{justifyContent: 'center', p: 3, backgroundColor: '#DDFF55', fontFamily: 'Public Sans', height: '100%'}}>
+    <Card sx={{justifyContent: 'center', p: 3, backgroundColor: '#DDFF55', fontFamily: 'Public Sans', height: '100px'}}>
       <Typography textAlign="left" variant="subtitle1">{title}</Typography>
       <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
       <Typography textAlign='left' variant="subtitle1">

@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react";
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 
-
 const rand = (min, max) => {
   return Math.random() * (max - min) + min;
 }
@@ -133,13 +132,16 @@ export default function GeneralBooking() {
   const [value, setValue] = useState(0)
   const [newSer, setnewSer] = useState(moveData(serOrig, 1))
   const [newView, setView] = useState(0)
+  const [wallets, setWallets] = useState(0)
   const handleChange = (event, newNumber) => {
     const number = newNumber/10;
     const newVal = forceNumber(number);
     const newSer = moveData(serOrig, newVal);
+    const walletsPredicted = newSer[1].data.length
     setView(newNumber)
     setValue(newVal)
     setnewSer(newSer)
+    setWallets(walletsPredicted)
   }
   return (
     <Page title="ML Targeting" >
@@ -147,7 +149,7 @@ export default function GeneralBooking() {
         <Typography variant="h3" sx={{marginTop:'-80px', marginBottom:'20px'}}>ML Targeting</Typography>
         <Grid container spacing={2} alignItems="stretch">
             <Grid item sm={12} md={8} lg={8} >
-            <Card sx={{backgroundColor:'white'}}>
+            <Card sx={{backgroundColor:'white', height:'671px'}}>
             <Typography variant="h6" sx={{padding:'20px'}}>Search space visualization</Typography>
             <Chart
             
@@ -161,27 +163,26 @@ export default function GeneralBooking() {
 
             </Grid>
             <Grid item sm={12} md={4} lg={4}>
-                <Card >
+                <Card  sx={{backgroundColor:'white', height:'671px'}}>
                 <Typography variant="h6" sx={{padding:'25px'}}>Find similar wallets to your whitelist</Typography>
                 <Typography variant="subtitle2" sx={{marginLeft:'25px', paddingBottom: '15px'}}>SIMILARITY THRESHOLD</Typography>
                 <Typography variant="h6" sx={{marginLeft:'25px'}}>{newView + '%'}</Typography>
-                <Box   sx={{marginRight:'25px', marginLeft: '25px', marginBottom: '150px'}}>
+                <Box   sx={{marginRight:'25px', marginLeft: '25px', marginBottom: '250px'}}>
                 <Slider
                 sx={{color: 'black'}}
-        value={newView}
-        min={1}
-        step={1}
-      
-        defaultValue={1}
-        max={100}
-        onChange={handleChange}
-        valueLabelDisplay="auto"
-        aria-labelledby="non-linear-slider"
+                value={newView}
+                min={1}
+                step={1}
+                defaultValue={1}
+                max={100}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                aria-labelledby="non-linear-slider"
       />
       </Box>
-                <Typography variant="h2" align='center' >4,324</Typography>
+                <Typography variant="h2" align='center' >{wallets}</Typography>
                 <Typography variant="subtitle1" align='center' sx={{opacity:'.72', marginBottom:'50px'}}>Target wallets identified</Typography>
-                <Button align='center' size='large'  sx={{backgroundColor:'#DDFF55', color:'black', width:'90%', marginLeft:'5%', marginBottom:'25px'}} variant="contained">Export Wallets</Button>
+                <Button align='center' size='large'  sx={{backgroundColor:'#DDFF55', color:'black', width:'90%', marginLeft:'5%', marginBottom:'25px', ':hover':{opacity: '.6', backgroundColor:'#DDFF55'}}} variant="contained">Export Wallets</Button>
               
         </Card>
          </Grid>
