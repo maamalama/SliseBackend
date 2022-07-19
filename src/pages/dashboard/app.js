@@ -1,9 +1,7 @@
 // @mui
 import {useTheme} from '@mui/material/styles';
-import {Container, Grid, Card, Typography, Box, CardMedia} from '@mui/material';
-import SvgIcon from '@mui/material/SvgIcon';
+import {Card, CardMedia, Container, Grid, Typography} from '@mui/material';
 import Icon from '@material-ui/core/Icon';
-import SvgIconStyle from 'src/components/SvgIconStyle';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -26,11 +24,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 GeneralApp.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
-function NoteIcon () {
+
+function NoteIcon() {
   return (<Icon>
     <img src={Note}/>
   </Icon>)
-  
+
 }
 
 
@@ -47,14 +46,14 @@ export default function GeneralApp() {
     const whitelistId = window.localStorage.getItem('whitelistId');
     if (whitelistId) {
       const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/getWhitelistStatistics?id=${whitelistId}`);
-      window.localStorage.setItem('whitelistSize',response.data.data.whitelistSize);
+      window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
       setStatistics(response.data.data);
       if (isMountedRef.current) {
 
       }
     } else {
       const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/FgetWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
-      window.localStorage.setItem('whitelistSize',response.data.data.whitelistSize);
+      window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
       setStatistics(response.data.data);
     }
 
@@ -87,10 +86,10 @@ export default function GeneralApp() {
   return (
     <Page title="General: App">
       <Container>
-        <Grid container spacing={4}  direction="row"
-        alignItems="stretch" sx={{paddingBottom: '30px', height:'100%'}}>
+        <Grid container spacing={4} direction="row"
+              alignItems="stretch" sx={{paddingBottom: '30px', height: '100%'}}>
 
-          <Grid item xs={12} md={3} >
+          <Grid item xs={12} md={3}>
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
                 icon={Note}
@@ -232,8 +231,8 @@ export default function GeneralApp() {
             }
           </Grid>
         </Grid>
-        <Grid container spacing={3}  >
-          <Grid item xs={12} md={4} lg={4} sx={{height:'362px'}}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4} lg={4} sx={{height: '362px'}}>
             {statistics === null || statistics.topHolders === null ?
               <></>
 
@@ -252,22 +251,29 @@ export default function GeneralApp() {
             }
           </Grid>
           <Grid item xs={12} md={4} lg={4}>
-      
-           <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#131F0F', fontFamily:'Public Sans', height: '100%' }}>
-            
-           <Typography color="white" textAlign="left" variant="h3">4,887</Typography>
-           <Typography color="#FFFFFF" textAlign="left" variant="subtitle2" sx={{opacity: '0.72'}}>Target Wallets identified</Typography>
-          
-           <CardMedia
-           sx={{marginTop:'20px'}}
-           component="img"
-           height="220px"
-           image='https://i.ibb.co/k1GH2YF/Type-ML-dashboard.png'
-           alt="Wallet Chart"
-        >
-           </CardMedia>
-           </Card>
-          
+
+            <Card sx={{
+              justifyContent: 'center',
+              p: 3,
+              backgroundColor: '#131F0F',
+              fontFamily: 'Public Sans',
+              height: '100%'
+            }}>
+
+              <Typography color="white" textAlign="left" variant="h3">4,887</Typography>
+              <Typography color="#FFFFFF" textAlign="left" variant="subtitle2" sx={{opacity: '0.72'}}>Target Wallets
+                identified</Typography>
+
+              <CardMedia
+                sx={{marginTop: '20px'}}
+                component="img"
+                height="220px"
+                image='https://i.ibb.co/k1GH2YF/Type-ML-dashboard.png'
+                alt="Wallet Chart"
+              >
+              </CardMedia>
+            </Card>
+
           </Grid>
 
 

@@ -43,16 +43,14 @@ export default function MLPrediction({title}) {
           const mintShare = response.data.mint_share[0].toFixed(2);
           setMintShare(mintShare);
           console.log(mintShare);
-          if(mintShare > 0.00 && mintShare < 0.05){
+          if (mintShare > 0.00 && mintShare < 0.05) {
             setSharePredict('Low');
-          }
-          else if (mintShare > 0.05){
+          } else if (mintShare > 0.05) {
             setSharePredict('Hight');
-          }
-          else{
+          } else {
             setSharePredict('??');
           }
-        
+
         });
     }, 2000)
     return () => clearTimeout(getData);
