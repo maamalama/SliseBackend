@@ -48,7 +48,7 @@ export default function GeneralApp() {
       window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
       setStatistics(response.data.data);
     } else {
-      const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/FgetWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
+      const response = await axios.get(`https://daoanalytics.herokuapp.com/api/analytics/getWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`);
       window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
       setStatistics(response.data.data);
     }
