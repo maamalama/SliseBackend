@@ -1,23 +1,23 @@
 import PropTypes from 'prop-types';
 // @mui
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, Card, Typography, Stack, Slider } from '@mui/material';
+import {styled, useTheme} from '@mui/material/styles';
+import {Card, Slider, Stack, Typography} from '@mui/material';
 // utils
-import { fNumber, fPercent } from '../utils/formatNumber';
 // components
 import Iconify from '../components/Iconify';
-import ReactApexChart from '../components/chart';
 import Label from '../components/Label'
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import axios from '../utils/axios';
+import {fShortenNumber} from '../utils/formatNumber';
 
-const IconStyle = styled(Iconify)(({ theme }) => ({
+const IconStyle = styled(Iconify)(({theme}) => ({
   width: 15,
   height: 15,
-  
+
 }));
 // ----------------------------------------------------------------------
 
-MLPrediction.propTypes = { 
+MLPrediction.propTypes = {
   title: PropTypes.string.isRequired,
 //   mintPrice: PropTypes.number.isRequired,
 //   collectionSize: PropTypes.number.isRequired,
@@ -27,14 +27,43 @@ MLPrediction.propTypes = {
 };
 
 export default function MLPrediction({title}) {
-    const [price, setMintPrice] = useState(0.01)
-    const [collectionSize, setCollectionSize] = useState(0)
-    function handlePriceChange(event, newNumber) {
-        setMintPrice(newNumber);
-      }
-      function handleCollectionChange(event, newNumber) {
-        setCollectionSize(newNumber);
-      }
+  const [price, setMintPrice] = useState(0.01)
+  const [collectionSize, setCollectionSize] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const whitelistSize = window.localStorage.getItem('whitelistSize');
+  const [mintShare, setMintShare] = useState(0);
+  const [sharePredict, setSharePredict] = useState('???');
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      axios.get(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${collectionSize}&whitelist=${+whitelistSize}`)
+        .then((response) => {
+          console.log(`https://slise-ml.herokuapp.com/items?price=${price}&supply=${collectionSize}&whitelist=${+whitelistSize}`);
+          console.log(response);
+          const mintShare = response.data.mint_share[0].toFixed(2);
+          setMintShare(mintShare);
+          console.log(mintShare);
+          if (mintShare > 0.00 && mintShare < 0.05) {
+            setSharePredict('Low');
+          } else if (mintShare > 0.05) {
+            setSharePredict('Hight');
+          } else {
+            setSharePredict('??');
+          }
+
+        });
+    }, 2000)
+    return () => clearTimeout(getData);
+  }, [price, collectionSize]);
+
+  async function handlePriceChange(event, newNumber) {
+    setMintPrice(newNumber);
+  }
+
+  async function handleCollectionChange(event, newNumber) {
+    setCollectionSize(newNumber);
+  }
+
   const theme = useTheme();
 
 //   const chartOptions = {
@@ -53,15 +82,15 @@ export default function MLPrediction({title}) {
 //     },
 //   };
 
+
   return (
-    <Card sx={{  justifyContent:'center', p: 3, backgroundColor: '#DDFF55', fontFamily:'Public Sans', height:'100%'}} >
-     
-        <Typography textAlign="left" variant="subtitle1">{title}</Typography>
-        <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
-        <Typography textAlign='left'variant="subtitle1">
-        <IconStyle icon="codicon:three-bars" />{price}
+    <Card sx={{justifyContent: 'center', p: 3, backgroundColor: '#DDFF55', fontFamily: 'Public Sans', height: '100%'}}>
+      <Typography textAlign="left" variant="subtitle1">{title}</Typography>
+      <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
+      <Typography textAlign='left' variant="subtitle1">
+        <IconStyle icon="codicon:three-bars"/>{price}
       </Typography>
-        <Slider
+      <Slider
         value={price}
         min={.01}
         step={.01}
@@ -70,9 +99,9 @@ export default function MLPrediction({title}) {
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
       />
-          <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
-          <Typography textAlign='left'variant="subtitle1">{collectionSize}</Typography>
-          <Slider
+      <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
+      <Typography textAlign='left' variant="subtitle1">{collectionSize}</Typography>
+      <Slider
         value={collectionSize}
         min={100}
         step={100}
@@ -80,15 +109,16 @@ export default function MLPrediction({title}) {
         onChange={handleCollectionChange}
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
-        
+
       />
-           <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
-           <Stack direction='row' spacing={2}  justifyContent="center"alignItems="center">
-           <Typography textAlign="center" variant="h4">86%</Typography>
-            <Label variant="outlined" >High</Label>
-            </Stack>
-        {/* <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography> */}
-      
+      <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
+      <Stack direction='row' spacing={2} justifyContent="center" alignItems="center">
+        <Typography textAlign="center" variant="h4">{mintShare > 0 ? fShortenNumber(mintShare) : '???'}%</Typography>
+
+        <Label variant="outlined">{sharePredict}</Label>
+      </Stack>
+      {/* <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography> */}
+
 
       {/*<ReactApexChart type="bar" series={[{ data: chartData }]} options={chartOptions} width={60} height={36} />*/}
     </Card>
