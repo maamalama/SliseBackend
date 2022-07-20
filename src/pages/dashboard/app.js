@@ -1,20 +1,20 @@
-import Layout from '../../layouts';
-import { Card, CardMedia, Grid, Typography, Box, CircularProgress } from '@mui/material';
-import Page from '../../components/Page';
-import React, { useCallback, useEffect, useState } from 'react';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/styles';
+import React, { useCallback, useEffect, useState } from 'react';
+import Page from 'src/components/Page';
+import useIsMountedRef from 'src/hooks/useIsMountedRef';
+import Layout from 'src/layouts';
+import axiosInstance from 'src/utils/axios';
 import BluechipHolders from './widgets/BluechipHolders';
 import BotsIdentified from './widgets/BotsIdentified';
 import DiscordMembers from './widgets/DiscordMembers';
-import Whales from './widgets/Whales';
-import WhitelistSize from './widgets/WhitelistSize';
-import TwitterFollowers from './widgets/TwitterFollowers';
 import MlPrediction from './widgets/MlPrediction';
-import TopHolders from './widgets/TopHolders';
 import MutualHolders from './widgets/MutualHolders';
 import TargetWallets from './widgets/TargetWallets';
-import axiosInstance from 'src/utils/axios';
-import useIsMountedRef from 'src/hooks/useIsMountedRef';
+import TopHolders from './widgets/TopHolders';
+import TwitterFollowers from './widgets/TwitterFollowers';
+import Whales from './widgets/Whales';
+import WhitelistSize from './widgets/WhitelistSize';
 
 const CardsGrid = styled('div')(() => ({
   display: 'grid',
@@ -29,6 +29,7 @@ const CardsGrid = styled('div')(() => ({
   minHeight: 0,
   '& > *': {
     minHeight: 0,
+    minWidth: 0,
   },
 }));
 
@@ -39,6 +40,7 @@ const BigCardsGrid = styled('div')(() => ({
   minHeight: 0,
   '& > *': {
     minHeight: 0,
+    minWidth: 0,
   },
 }));
 

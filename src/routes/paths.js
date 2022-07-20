@@ -36,11 +36,12 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
     app: path(ROOTS_DASHBOARD, '/app'),
+    whitelist: path(ROOTS_DASHBOARD, '/whitelist'),
     ecommerce: path(ROOTS_DASHBOARD, '/ecommerce'),
     analytics: path(ROOTS_DASHBOARD, '/analytics'),
     banking: path(ROOTS_DASHBOARD, '/banking'),
     booking: path(ROOTS_DASHBOARD, '/booking'),
-    mltargeting:path(ROOTS_DASHBOARD, '/mltargeting')
+    mltargeting: path(ROOTS_DASHBOARD, '/mltargeting'),
   },
   mail: {
     root: path(ROOTS_DASHBOARD, '/mail'),
