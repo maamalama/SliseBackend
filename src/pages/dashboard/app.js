@@ -15,7 +15,7 @@ import MutualHolders from '../../components/MutualHolders'
 import {AppWidget, AppWidgetSummary,} from '../../sections/@dashboard/general/app';
 import useIsMountedRef from "../../hooks/useIsMountedRef";
 import axios from '../../utils/axios';
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
@@ -80,8 +80,9 @@ export default function GeneralApp() {
   }
 
   return (
-    <Page title="General: App">
+    <Page title="Dashboard">
       <Container>
+        <Typography variant="h3" sx={{marginTop:'-80px', marginBottom:'20px'}}>Dashboard</Typography>
         <Grid container spacing={4} direction="row"
               alignItems="stretch" sx={{paddingBottom: '30px', height: '100%'}}>
 
