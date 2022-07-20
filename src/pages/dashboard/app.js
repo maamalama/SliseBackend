@@ -1,6 +1,6 @@
 // @mui
 import {useTheme} from '@mui/material/styles';
-import {Card, CardMedia, Container, Grid, Typography} from '@mui/material';
+import {Card, CardMedia, Container, Grid, Stack, Typography} from '@mui/material';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -12,7 +12,7 @@ import MLPrediction from '../../components/MLPrediction'
 import TopHolders from '../../components/TopHolders'
 import MutualHolders from '../../components/MutualHolders'
 // sections
-import {AppWidgetSummary,} from '../../sections/@dashboard/general/app';
+import {AppWidget, AppWidgetSummary,} from '../../sections/@dashboard/general/app';
 import useIsMountedRef from "../../hooks/useIsMountedRef";
 import axios from '../../utils/axios';
 import {useCallback, useEffect, useState} from 'react';
@@ -88,7 +88,7 @@ export default function GeneralApp() {
           <Grid item xs={12} md={3}>
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
-                icon={Note}
+                icon="twemoji:spiral-notepad"
                 title="Whitelist Size"
                 percent={2.6}
                 total={null}
@@ -98,7 +98,7 @@ export default function GeneralApp() {
 
               :
               <AppWidgetSummary
-                icon=''
+                icon="twemoji:spiral-notepad"
                 title="Whitelist Size"
                 percent={2.6}
                 total={statistics.whitelistSize}

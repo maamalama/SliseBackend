@@ -21,6 +21,8 @@ const ICONS = {
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
   booking: getIcon('ic_booking'),
+  social: getIcon('ic_animate'),
+  components: getIcon('ic_components'),
 };
 
 const navConfig = [
@@ -34,10 +36,10 @@ const navConfig = [
         icon: ICONS.dashboard,
       },
       { title: 'Whitelist', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
-      { title: 'Social Data', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
-      { title: 'Mutual Holders', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
-      { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.booking },
-      { title: 'ML Targeting', path: PATH_DASHBOARD.general.mltargeting, icon: ICONS.booking },
+      { title: 'Social Data', path: PATH_DASHBOARD.general.banking, icon: ICONS.chat },
+      { title: 'Mutual Holders', path: PATH_DASHBOARD.general.booking, icon: ICONS.social },
+      { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.user },
+      { title: 'ML Targeting', path: PATH_DASHBOARD.general.mltargeting, icon: ICONS.components },
     ],
   },
 
