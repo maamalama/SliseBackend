@@ -28,7 +28,7 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
     height: 22,
     minWidth: 22,
     lineHeight: 0,
-    borderRadius: 8,
+    borderRadius: 6,
     cursor: 'default',
     alignItems: 'center',
     whiteSpace: 'nowrap',
