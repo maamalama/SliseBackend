@@ -145,10 +145,6 @@ export class AnalyticsService {
             if (response) {
               holding.holdings = response;
             }
-            const totalHolders = await this.fetchHolders(1, holding.address, 10000);
-            if (totalHolders) {
-              holding.totalHolders = totalHolders.items.length;
-            }
           } catch (e) {
             failed.push(holding.address);
           }
@@ -274,6 +270,10 @@ export class AnalyticsService {
         try {
           const collectionStats = await this.getCollectionStats(mutual.address);
           mutual.holdings.stats = collectionStats;
+          const totalHolders = await this.fetchHolders(1, mutual.address, 10000);
+          if (totalHolders) {
+            mutual.totalHolders = totalHolders.items.length;
+          }
         } catch {
 
         }
