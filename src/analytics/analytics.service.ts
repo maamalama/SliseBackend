@@ -156,6 +156,14 @@ export class AnalyticsService {
       this.logger.debug('NFT port requests');
       let initPercent = 100;
       let initValue: number;
+      mutualHoldings.map((holding, idx) => {
+        if (idx === 0) {
+          initValue = holding.totalholdings;
+          holding.percent = initPercent;
+        } else {
+          holding.percent = ((holding.totalholdings / initValue) * initPercent);
+        }
+      });
       //TODO: add default logo
       await Promise.all(mutualHoldings.map(async (holding, idx) => {
           try {
@@ -163,18 +171,11 @@ export class AnalyticsService {
             if (response) {
               holding.holdings = response;
             }
-            if (idx === 0) {
-              initValue = holding.totalholdings;
-              holding.percent = initPercent;
-            } else {
-              holding.percent = ((holding.totalholdings / initValue) * initPercent);
-            }
           } catch (e) {
             failed.push(holding.address);
           }
         }
       ));
-
 
       this.logger.debug('complete');
 
