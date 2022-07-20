@@ -91,7 +91,7 @@ const DashboardIndex = () => {
         <MlPrediction />
       </CardsGrid>
       <BigCardsGrid>
-        <TopHolders />
+        <TopHolders data={statistics?.topHolders ?? []} />
         <MutualHolders />
         <TargetWallets />
       </BigCardsGrid>
