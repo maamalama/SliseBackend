@@ -70,6 +70,7 @@ model TokenHolder {
   discord              String?
   discordMessages      Int?
   chainType            ChainType       @default(UNKNOWN)
+  forTargeting         Boolean         @default(false)
 }
 
 model TokenTransfer {
