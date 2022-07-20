@@ -1,6 +1,6 @@
 // @mui
 import {useTheme} from '@mui/material/styles';
-import {Card, CardMedia, Container, Grid, Typography} from '@mui/material';
+import {Card, CardMedia, Container, Grid, Typography, Box} from '@mui/material';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
@@ -82,10 +82,10 @@ export default function GeneralApp() {
   return (
     <Page title="General: App">
       <Container>
-        <Grid container spacing={4} direction="row"
-              alignItems="stretch" sx={{paddingBottom: '30px', height: '100%'}}>
-
-          <Grid item xs={12} md={3}>
+        <Typography align='left' variant='h3' sx={{marginTop:'-100px', marginBottom:'20px'}}>Dashboard</Typography>
+        <Box sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px',
+  gridAutoRows: 'minmax(100px, 140px)', marginBottom:'25px'}}>
+       < Card>
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
                 icon={Note}
@@ -106,8 +106,8 @@ export default function GeneralApp() {
                 chartData={[5, 18, 12, 51, 68, 11, 39, 37, 27, 20]}
               />
             }
-          </Grid>
-          <Grid item xs={12} md={3}>
+          </Card>
+          <Card>
             {statistics === null || statistics.twitterFollowersCount === null ?
               <AppWidgetSummary
                 title="Twitter Followers"
@@ -128,9 +128,8 @@ export default function GeneralApp() {
                 chartData={[20, 41, 63, 33, 28, 35, 50, 46, 11, 26]}
               />
             }
-          </Grid>
-
-          <Grid item xs={12} md={3}>
+          </Card>
+          <Card >
             {statistics === null || statistics.discordInfo === null ?
               <AppWidgetSummary
                 icon="logos:discord-icon"
@@ -151,13 +150,13 @@ export default function GeneralApp() {
                 chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
               />
             }
-          </Grid>
-          <Grid item xs={6} md={3}>
+          </Card>
+          <Card sx={{gridRow: 'span 2'}}>
             <MLPrediction
               title="ML Prediction"
             />
-          </Grid>
-          <Grid item xs={12} md={3}>
+          </Card>
+          <Card>
             {statistics === null || statistics.bluechipHolders === null ?
               <AppWidgetSummary
                 icon="emojione:blue-circle"
@@ -177,10 +176,8 @@ export default function GeneralApp() {
                 chartColor={theme.palette.primary.main}
                 chartData={[5, 18, 12, 51, 68, 11, 39, 37, 27, 20]}
               />
-            }
-          </Grid>
-
-          <Grid item xs={12} md={3} >
+            }</Card>
+             <Card >
             {statistics === null || statistics.whales === null ?
               <AppWidgetSummary
                 icon="fxemoji:whale"
@@ -202,9 +199,8 @@ export default function GeneralApp() {
               />
             }
 
-          </Grid>
-
-          <Grid item xs={12} md={3}>
+          </Card>
+          <Card >
             {statistics === null || statistics.bots === null ?
               <AppWidgetSummary
                 icon="noto:robot"
@@ -225,9 +221,9 @@ export default function GeneralApp() {
                 chartData={[8, 9, 31, 8, 16, 37, 8, 33, 46, 31]}
               />
             }
-          </Grid>
-        </Grid>
+          </Card>
 
+        </Box>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4} lg={4} sx={{height: '362px'}}>
 

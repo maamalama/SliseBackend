@@ -60,24 +60,9 @@ export default function  AppWidgetSummary({ title, percent, total, chartColor, c
     <Card sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', p: 3 }}>
       <Box sx={{ flexGrow: 1 }}>
       <IconStyle icon={icon} />
-        <Typography textAlign="center" variant="subtitle2">{title}</Typography>
+        <Typography textAlign="center" sx={{marginBottom:'5px'}} variant="subtitle2">{title}</Typography>
 
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
-         {/* <IconWrapperStyle
-            sx={{
-              ...(percent < 0 && {
-                color: 'error.main',
-                bgcolor: alpha(theme.palette.error.main, 0.16),
-              }),
-            }}
-          >
-            <Iconify width={16} height={16} icon={percent >= 0 ? 'eva:trending-up-fill' : 'eva:trending-down-fill'} />
-          </IconWrapperStyle>*/}
-         {/* <Typography  component="span" variant="subtitle2">
-            {percent > 0 && '+'}
-            {fPercent(percent)}
-          </Typography>*/}
-        </Stack>
+     
         {total === null ? <Typography textAlign="center" variant="h3">No data</Typography> : <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography>}
 
       </Box>

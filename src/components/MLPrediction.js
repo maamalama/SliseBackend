@@ -11,8 +11,8 @@ import axios from '../utils/axios';
 import {fShortenNumber} from '../utils/formatNumber';
 
 const IconStyle = styled(Iconify)(({theme}) => ({
-  width: 15,
-  height: 15,
+  width: 18,
+  height: 18,
 
 }));
 // ----------------------------------------------------------------------
@@ -88,10 +88,10 @@ export default function MLPrediction({title}) {
 
 
   return (
-    <Card sx={{justifyContent: 'center', p: 3, backgroundColor: '#DDFF55', fontFamily: 'Public Sans', height: '100px'}}>
-      <Typography textAlign="left" variant="subtitle1">{title}</Typography>
-      <Typography textAlign="left" variant="subtitle2">MINT PRICE</Typography>
-      <Typography textAlign='left' variant="subtitle1">
+    <Card sx={{justifyContent: 'center', p: 3, backgroundColor: '#DDFF55', fontFamily: 'Public Sans', height: '100%'}}>
+      <Typography textAlign="left" variant="h6" sx={{marginTop:'-10px'}}>{title}</Typography>
+      <Typography textAlign="left" variant="subtitle2"sx={{marginTop:'10px'}}  >MINT PRICE</Typography>
+      <Typography textAlign='left' variant="h6">
         <IconStyle icon="codicon:three-bars"/>{price}
       </Typography>
       <Slider
@@ -104,8 +104,8 @@ export default function MLPrediction({title}) {
         valueLabelDisplay="auto"
         aria-labelledby="non-linear-slider"
       />
-      <Typography textAlign="left" variant="subtitle2">COLLECTION SIZE</Typography>
-      <Typography textAlign='left' variant="subtitle1">{collectionSize}</Typography>
+      <Typography textAlign="left" variant="subtitle2" >COLLECTION SIZE</Typography>
+      <Typography textAlign='left' variant="h6">{collectionSize}</Typography>
       <Slider
         sx={{color: 'black'}}
         value={collectionSize}
@@ -117,7 +117,7 @@ export default function MLPrediction({title}) {
         aria-labelledby="non-linear-slider"
 
       />
-      <Typography textAlign="center" variant="subtitle2">PROBABILITY OF SOLD OUT</Typography>
+      <Typography textAlign="center" variant="subtitle2" >PROBABILITY OF SOLD OUT</Typography>
       <Stack direction='row' spacing={2} justifyContent="center" alignItems="center">
         <Typography textAlign="center" variant="h4">{mintShare > 0 ? fShortenNumber(mintShare) : '???'}%</Typography>
 
