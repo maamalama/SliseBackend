@@ -3,14 +3,19 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
+const filledVariantMapping = {
+  warning: '#FFCF55',
+  error: '#FF7C55',
+  success: '#DDFF55',
+};
 
 const RootStyle = styled('span')(({ theme, ownerState }) => {
   const isLight = theme.palette.mode === 'light';
   const { color, variant } = ownerState;
 
   const styleFilled = (color) => ({
-    color: theme.palette[color].contrastText,
-    backgroundColor: theme.palette[color].main,
+    color: '#212B36',
+    backgroundColor: filledVariantMapping[color],
   });
 
   const styleOutlined = (color) => ({
@@ -28,7 +33,7 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
     height: 22,
     minWidth: 22,
     lineHeight: 0,
-    borderRadius: 8,
+    borderRadius: 6,
     cursor: 'default',
     alignItems: 'center',
     whiteSpace: 'nowrap',
