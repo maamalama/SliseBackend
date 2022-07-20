@@ -6,13 +6,22 @@ export class TopHoldersResponse {
   nfts: number;
   portfolio: number;
   label: string;
+  avgNFTPrice: number;
+  alsoHold: AlsoHold;
+  nftsTotalPrice: number;
 }
+
 export class MutualHoldingsResponse {
   address: string;
   name: string;
   totalholdings: number;
   percent: number
   holdings?: CollectionInfoResponse;
+}
+
+export class AlsoHold {
+  collectionIfo?: CollectionInfoResponse;
+  total?: number;
 }
 
 export class CollectionInfoResponse {

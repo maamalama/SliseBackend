@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, TokenHolder, Waitlist } from '@prisma/client';
+import { Token, TokenHolder, Waitlist, TokenType } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import {
   HolderInfo,
@@ -126,8 +126,8 @@ export class AnalyticsService {
         order by "TokenHolder"."totalBalanceUsd" desc
         limit 10;`,
         this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
-        where "TokenTransfer"."waitlistId" = ${id} and "contractType" = 'ERC721'
-        and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()}
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} 
+        and "contractType" = 'ERC721'
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
         limit 10;`
@@ -146,6 +146,7 @@ export class AnalyticsService {
           holder.label = 'mixed';
           holder.whale = false;
         }
+        holder.avgNFTPrice = holder.portfolio / holder.nfts;
       });
 
       let failed: string[] = [];
@@ -176,6 +177,8 @@ export class AnalyticsService {
           }
         }
       ));
+
+      await this.redis.set(`${id} mutualHolders`, mutualHoldings);
 
       this.logger.debug('complete');
 
@@ -238,7 +241,18 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-    const a = await this.fetchTotalSupply('0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d');
+    const a = await this.prisma.tokenHolder.findFirst({
+      where: {
+        id: '0106c35a-892d-4537-8a5a-8e6abd92d8e5'
+      },include: {
+        tokens: {
+          where: {
+            contractType: TokenType.ERC721
+          },
+          take: 3
+        }
+      }
+    });
     const b = a;
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
 
