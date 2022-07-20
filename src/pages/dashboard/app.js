@@ -69,7 +69,7 @@ export default function GeneralApp() {
         alignItems="center"
         justifyContent="center"
         style={{minHeight: '60vh'}}
-        sx={{backgroundColor:'#F3F4EF'}}
+      
       >
 
         <Grid item xs={3}>
