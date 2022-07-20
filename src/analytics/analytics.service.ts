@@ -64,11 +64,11 @@ export class AnalyticsService {
       keyFilename: path.join(process.cwd(), 'configs/slise-355804-95d4d7714e5a.json')
     });
 
-    this.Moralis.start({
-      serverUrl: process.env.MORALIS_SERVER_URL,
-      appId: process.env.MORALIS_APP_ID,
-      masterKey: process.env.MORALIS_MASTER_KEY
-    });
+    // this.Moralis.start({
+    //   serverUrl: process.env.MORALIS_SERVER_URL,
+    //   appId: process.env.MORALIS_APP_ID,
+    //   masterKey: process.env.MORALIS_MASTER_KEY
+    // });
 
     this.redlock = new Redlock([redis]);
 
@@ -117,6 +117,7 @@ export class AnalyticsService {
         this.getTwitterFollowersCount(whitelist.twitter),
         this.getDiscordInfo(whitelist.discord)]);
 
+      this.logger.debug('fetching topHolders and mutualHolders');
       const [topHolders, mutualHoldings] = await Promise.all([
         this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd", count(DISTINCT TT.address) as nfts from "TokenHolder"
         inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
@@ -136,6 +137,7 @@ export class AnalyticsService {
       const bluechipHolders = 48;
       const bots = 318;
 
+      this.logger.debug('topHolders processing');
       topHolders.map((holder) => {
         if (holder.portfolio >= 2000000) {
           holder.label = 'whale';
@@ -151,6 +153,9 @@ export class AnalyticsService {
         return b.totalholdings - a.totalholdings;
       });
 
+      this.logger.debug('NFT port requests');
+      let initPercent = 100;
+      let initValue: number;
       //TODO: add default logo
       await Promise.all(mutualHoldings.map(async (holding, idx) => {
           try {
@@ -170,9 +175,8 @@ export class AnalyticsService {
         }
       ));
 
-      let initPercent = 100;
-      let initValue: number;
 
+      this.logger.debug('complete');
 
       if (failed.length > 0) {
         this.logger.debug(`${failed} failed parsing mutual holdings`);

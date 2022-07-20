@@ -9,7 +9,10 @@ import { join } from 'path';
 @Module({
   imports: [BullModule.registerQueue({
     name: 'waitlist',
-  }), PrismaModule, HttpModule],
+  }), PrismaModule, HttpModule.register({
+    timeout: 8000,
+    maxRedirects: 5,
+  })],
   providers: [AnalyticsService, AnalyticsController],
   exports: [AnalyticsService, AnalyticsController]
 })
