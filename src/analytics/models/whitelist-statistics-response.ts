@@ -9,24 +9,33 @@ export class TopHoldersResponse {
   avgNFTPrice: number;
   alsoHold: AlsoHold;
   nftsTotalPrice: number;
+  holdingTimeLabel: string;
+  tradingVolume: number;
 }
 
 export class MutualHoldingsResponse {
   address: string;
   name: string;
   totalholdings: number;
+  totalHolders: number;
   percent: number
   holdings?: CollectionInfoResponse;
 }
 
 export class AlsoHold {
-  collectionIfo?: CollectionInfoResponse;
+  collectionInfo?: CollectionInfoResponse[];
   total?: number;
 }
 
 export class CollectionInfoResponse {
   totalSupply?: number;
   logo?: string;
+  stats?: CollectionStats;
+}
+export class CollectionStats {
+  floor: number;
+  supply: number;
+  mintPrice: number;
 }
 
 export class WhitelistStatisticsResponse {

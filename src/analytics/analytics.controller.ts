@@ -7,7 +7,11 @@ import { AnalyticsService } from './analytics.service';
 import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { WhitelistStatisticsResponse } from './models/whitelist-statistics-response';
+import {
+  MutualHoldingsResponse,
+  TopHoldersResponse,
+  WhitelistStatisticsResponse
+} from './models/whitelist-statistics-response';
 
 @ApiTags('Slice')
 @UseInterceptors(SentryInterceptor)
@@ -112,6 +116,20 @@ export class AnalyticsController {
   @UseInterceptors(TransformInterceptor)
   async getWhitelistStatistics(@Query('id') id: string): Promise<WhitelistStatisticsResponse> {
     const response = await this.analyticsService.getWhitelistStatistics(id);
+    return response;
+  }
+
+  @Get('getTopHolders')
+  @UseInterceptors(TransformInterceptor)
+  async getTopHolders(@Query('id') id: string): Promise<TopHoldersResponse[]> {
+    const response = await this.analyticsService.getTopHolders(id);
+    return response;
+  }
+
+  @Get('getMutualHoldings')
+  @UseInterceptors(TransformInterceptor)
+  async getMutualHoldings(@Query('id') id: string): Promise<MutualHoldingsResponse[]> {
+    const response = await this.analyticsService.getMutualHoldings(id);
     return response;
   }
 }

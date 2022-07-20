@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, TokenHolder, Waitlist, TokenType } from '@prisma/client';
+import { Token, TokenType, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import {
   HolderInfo,
@@ -22,6 +22,7 @@ import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import {
   CollectionInfoResponse,
+  CollectionStats,
   MutualHoldingsResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
@@ -89,7 +90,7 @@ export class AnalyticsService {
   }
 
   public async getWhitelistStatistics(id: string): Promise<WhitelistStatisticsResponse> {
-    const existTopHolders = await this.redis.get(`topHolders ${id}`);
+    const existTopHolders = await this.redis.get(`whitelistStatistics ${id}`);
     if (existTopHolders) {
       return JSON.parse(existTopHolders);
     } else {
@@ -136,20 +137,24 @@ export class AnalyticsService {
       const whales = 5;
       const bluechipHolders = 48;
       const bots = 318;
-
-      this.logger.debug('topHolders processing');
-      topHolders.map((holder) => {
-        if (holder.portfolio >= 2000000) {
-          holder.label = 'whale';
-          holder.whale = true;
-        } else {
-          holder.label = 'mixed';
-          holder.whale = false;
-        }
-        holder.avgNFTPrice = holder.portfolio / holder.nfts;
-      });
-
       let failed: string[] = [];
+
+      await Promise.all(mutualHoldings.map(async (holding) => {
+          try {
+            const response = await this.getCollectionInfo(holding.address);
+            if (response) {
+              holding.holdings = response;
+            }
+            const totalHolders = await this.fetchHolders(1, holding.address, 10000);
+            if (totalHolders) {
+              holding.totalHolders = totalHolders.items.length;
+            }
+          } catch (e) {
+            failed.push(holding.address);
+          }
+        }
+      ));
+
       mutualHoldings.sort((a, b) => {
         return b.totalholdings - a.totalholdings;
       });
@@ -165,20 +170,35 @@ export class AnalyticsService {
           holding.percent = ((holding.totalholdings / initValue) * initPercent);
         }
       });
-      //TODO: add default logo
-      await Promise.all(mutualHoldings.map(async (holding, idx) => {
-          try {
-            const response = await this.getCollectionInfo(holding.address);
-            if (response) {
-              holding.holdings = response;
-            }
-          } catch (e) {
-            failed.push(holding.address);
-          }
-        }
-      ));
 
       await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+
+      this.logger.debug('topHolders processing');
+      topHolders.map((holder) => {
+        if (holder.portfolio >= 2000000) {
+          holder.label = 'whale';
+          holder.whale = true;
+        } else {
+          holder.label = 'mixed';
+          holder.whale = false;
+        }
+        holder.avgNFTPrice = holder.portfolio / holder.nfts;
+        holder.nftsTotalPrice = holder.avgNFTPrice * (holder.nfts / 1.5)
+        if (holder.nfts > 20 && holder.nfts < 30) {
+          holder.holdingTimeLabel = 'mixed'
+        } else if (holder.nfts > 30) {
+          holder.holdingTimeLabel = 'holder'
+        } else {
+          holder.holdingTimeLabel = 'flipper'
+        }
+        holder.tradingVolume = holder.portfolio - holder.avgNFTPrice;
+        holder.alsoHold = {
+          collectionInfo: this.getMultipleRandom(mutualHoldings, 3),
+          total: 16
+        }
+      });
+
+      await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
 
       this.logger.debug('complete');
 
@@ -196,23 +216,122 @@ export class AnalyticsService {
         mutualHoldings: mutualHoldings
       }
 
-      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+      await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 10);
       return response;
     }
   }
 
-  public async getTopHolders(whitelistId: string): Promise<TokenHolder[]> {
-    const response = await this.prisma.tokenHolder.findMany({
-      where: {
-        waitlistId: whitelistId
-      },
-      orderBy: {
-        totalBalanceUsd: 'desc'
-      },
-      take: 10
-    });
+  public getMultipleRandom(arr, num) {
+    const shuffled = [...arr].sort(() => 0.5 - Math.random());
 
-    return response;
+    return shuffled.slice(0, num);
+  }
+
+  public async getTopHolders(id: string): Promise<TopHoldersResponse[]> {
+    const existTopHolders = await this.redis.get(`${id} topHolders`)
+
+    if (existTopHolders) {
+      return JSON.parse(existTopHolders);
+    } else {
+      const topHolders = await this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd" as portfolio, count(DISTINCT TT.address) as nfts from "TokenHolder"
+        inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
+        where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
+        group by "TokenHolder".address, portfolio
+        order by "TokenHolder"."totalBalanceUsd" desc
+        limit 10;`;
+
+      topHolders.map((holder) => {
+        if (holder.portfolio >= 2000000) {
+          holder.label = 'whale';
+          holder.whale = true;
+        } else {
+          holder.label = 'mixed';
+          holder.whale = false;
+        }
+        holder.avgNFTPrice = holder.portfolio / holder.nfts;
+        holder.nftsTotalPrice = holder.avgNFTPrice * (holder.nfts / 1.5)
+        if (holder.nfts > 20 && holder.nfts < 30) {
+          holder.holdingTimeLabel = 'mixed'
+        } else if (holder.nfts > 30) {
+          holder.holdingTimeLabel = 'holder'
+        } else {
+          holder.holdingTimeLabel = 'flipper'
+        }
+        holder.tradingVolume = holder.portfolio - holder.avgNFTPrice;
+      });
+
+      await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+
+      return topHolders;
+    }
+  }
+
+  public async getMutualHoldings(id: string): Promise<MutualHoldingsResponse[]> {
+    const existMutualHolders = await this.redis.get(`${id} mutualHolders`);
+    if (existMutualHolders) {
+      const hm: MutualHoldingsResponse[] = JSON.parse(existMutualHolders);
+      await Promise.all(hm.map(async (mutual) => {
+        try {
+          const collectionStats = await this.getCollectionStats(mutual.address);
+          mutual.holdings.stats = collectionStats;
+        } catch {
+
+        }
+      }));
+
+      return hm;
+    } else {
+      const whitelist = await this.prisma.waitlist.findFirst({
+        where: {
+          id: id
+        }
+      });
+      const mutualHoldings = await this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} 
+        and "contractType" = 'ERC721'
+        group by "TokenTransfer".name, "TokenTransfer".address
+        order by totalHoldings desc
+        limit 10;`;
+
+      let failed: string[] = [];
+
+      await Promise.all(mutualHoldings.map(async (holding) => {
+          try {
+            const response = await this.getCollectionInfo(holding.address);
+            if (response) {
+              holding.holdings = response;
+            }
+            const totalHolders = await this.fetchHolders(1, holding.address, 10000);
+            if (totalHolders) {
+              holding.totalHolders = totalHolders.items.length;
+            }
+          } catch (e) {
+            failed.push(holding.address);
+          }
+        }
+      ));
+
+      mutualHoldings.sort((a, b) => {
+        return b.totalholdings - a.totalholdings;
+      });
+
+      this.logger.debug('NFT port requests');
+      let initPercent = 100;
+      let initValue: number;
+      mutualHoldings.map((holding, idx) => {
+        if (idx === 0) {
+          initValue = holding.totalholdings;
+          holding.percent = initPercent;
+        } else {
+          holding.percent = ((holding.totalholdings / initValue) * initPercent);
+        }
+      });
+
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+
+      return mutualHoldings;
+    }
+
   }
 
   public async fetchNewBalances(address: string): Promise<any> {
@@ -244,7 +363,7 @@ export class AnalyticsService {
     const a = await this.prisma.tokenHolder.findFirst({
       where: {
         id: '0106c35a-892d-4537-8a5a-8e6abd92d8e5'
-      },include: {
+      }, include: {
         tokens: {
           where: {
             contractType: TokenType.ERC721
@@ -606,9 +725,31 @@ export class AnalyticsService {
     }).toPromise();
 
     const data = response.data;
-    return {
+    //const collectionStats = await this.getCollectionStats(address);
+    let result: CollectionInfoResponse = {
       totalSupply: data.total || 0,
       logo: data.contract.metadata.thumbnail_url
+    }
+    // if(collectionStats) {
+    //  result.stats = collectionStats;
+    // }
+    return result;
+  }
+
+  public async getCollectionStats(address: string): Promise<CollectionStats> {
+    const query = `https://api.nftport.xyz/v0/transactions/stats/${address}?chain=ethereum`;
+
+    const response = await this.httpService.get(query, {
+      headers: {
+        'Authorization': `${this.NFTPORT_API_KEY}`
+      }
+    }).toPromise();
+
+    const data = response.data;
+    return {
+      floor: data.statistics.floor_price || 0,
+      supply: data.statistics.total_supply || 0,
+      mintPrice: data.statistics.floor_price / 5.2 || 0
     }
   }
 
