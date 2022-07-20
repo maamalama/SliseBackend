@@ -90,9 +90,9 @@ export class AnalyticsService {
 
   public async getWhitelistStatistics(id: string): Promise<WhitelistStatisticsResponse> {
     const existTopHolders = await this.redis.get(`topHolders ${id}`);
-    /*if (existTopHolders) {
+    if (existTopHolders) {
       return JSON.parse(existTopHolders);
-    } else {*/
+    } else {
       const whitelist = await this.prisma.waitlist.findFirst({
         where: {
           id: id
@@ -195,7 +195,7 @@ export class AnalyticsService {
 
       await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
       return response;
-    /*}*/
+    }
   }
 
   public async getTopHolders(whitelistId: string): Promise<TokenHolder[]> {
