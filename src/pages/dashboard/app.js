@@ -5,16 +5,16 @@ import Page from 'src/components/Page';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Layout from 'src/layouts';
 import axiosInstance from 'src/utils/axios';
-import BluechipHolders from './widgets/BluechipHolders';
-import BotsIdentified from './widgets/BotsIdentified';
-import DiscordMembers from './widgets/DiscordMembers';
-import MlPrediction from './widgets/MlPrediction';
-import MutualHolders from './widgets/MutualHolders';
-import TargetWallets from './widgets/TargetWallets';
-import TopHolders from './widgets/TopHolders';
-import TwitterFollowers from './widgets/TwitterFollowers';
-import Whales from './widgets/Whales';
-import WhitelistSize from './widgets/WhitelistSize';
+import BluechipHolders from 'src/widgets/BluechipHolders';
+import BotsIdentified from 'src/widgets/BotsIdentified';
+import DiscordMembers from 'src/widgets/DiscordMembers';
+import MlPrediction from 'src/widgets/MlPrediction';
+import MutualHolders from 'src/widgets/MutualHolders';
+import TargetWallets from 'src/widgets/TargetWallets';
+import TopHolders from 'src/widgets/TopHolders';
+import TwitterFollowers from 'src/widgets/TwitterFollowers';
+import Whales from 'src/widgets/Whales';
+import WhitelistSize from 'src/widgets/WhitelistSize';
 
 const CardsGrid = styled('div')(() => ({
   display: 'grid',
