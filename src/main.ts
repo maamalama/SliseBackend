@@ -8,13 +8,13 @@ const port = process.env.PORT;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: false });
-  app.enableCors(
+ /* app.enableCors(
     {
       origin: ['https://app.slise.xyz'],
       methods: ['POST', 'PUT', 'DELETE', 'GET'],
       allowedHeaders: ['Access-Control-Allow-Origin'],
     }
-  );
+  );*/
   const config = new DocumentBuilder()
     .setTitle('Slice')
     .setDescription('Slice API description')
