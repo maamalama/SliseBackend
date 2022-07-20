@@ -193,7 +193,7 @@ export class AnalyticsService {
         mutualHoldings: mutualHoldings
       }
 
-      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 5);
+      await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
       return response;
     }
   }
