@@ -72,7 +72,7 @@ export default function TopHolders({data}) {
               <TableRow key={row.address}>
                 <TableCell> <Box sx={{ display: 'flex' }}> {row.whale === true ? <IconStyle icon={'fxemoji:whale'} /> : <></>} <a style={{ textDecoration: 'none', color: 'inherit'}} target={'_blank'} href={`https://etherscan.io/address/${row.address}`}><Typography>{row.address.substring(0,6)}</Typography></a></Box></TableCell>
                 <TableCell align={'center'}><Typography>{row.nfts}</Typography></TableCell>
-                <TableCell align={'center'}><Typography>{nFormatter(row.totalBalanceUsd)}</Typography></TableCell>
+                <TableCell align={'center'}><Typography>{nFormatter(row.portfolio)}</Typography></TableCell>
 
 
                 <TableCell>
