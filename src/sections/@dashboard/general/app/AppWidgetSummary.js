@@ -38,7 +38,7 @@ AppWidgetSummary.propTypes = {
   icon: PropTypes.string.isRequired,
 };
 
-export default function  AppWidgetSummary({ title, percent, total, chartColor, chartData, icon }) {
+export default function  AppWidgetSummary({ title, percent, total, chartColor, chartData, icon, color }) {
   const theme = useTheme();
 
   const chartOptions = {
@@ -60,7 +60,7 @@ export default function  AppWidgetSummary({ title, percent, total, chartColor, c
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', justifyContent:'center', p: 3 }}>
       <Box sx={{ flexGrow: 1 }}>
-      <IconStyle icon={icon} />
+      <IconStyle icon={icon} backgroundColor={color}/>
         <Typography textAlign="center" sx={{marginBottom:'5px'}} variant="subtitle2">{title}</Typography>
 
      

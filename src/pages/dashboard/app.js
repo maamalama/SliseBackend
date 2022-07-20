@@ -21,7 +21,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 // ----------------------------------------------------------------------
 
 GeneralApp.getLayout = function getLayout(page) {
-  return <Layout>{page}</Layout>;
+  return <Layout >{page}</Layout>;
 };
 
 // function NoteIcon() {
@@ -81,8 +81,10 @@ export default function GeneralApp() {
 
   return (
     <Page title="Dashboard">
-      <Container>
-        <Typography align='left' variant='h3' sx={{marginTop:'-100px', marginBottom:'20px'}}>Dashboard</Typography>
+      <Container sx={{backgroundColor:'#F3F4EF', marginTop:'-100px', paddingTop:'40px', paddingBottom:'100px', marginBottom:'-88px'}}>
+        <Box>
+        <Typography align='left' variant='h3' sx={{ marginBottom:'20px'}}>Dashboard</Typography>
+        </Box>
         <Box sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px',
   gridAutoRows: 'minmax(100px, 140px)', marginBottom:'25px'}}>
        < Card>
@@ -159,7 +161,8 @@ export default function GeneralApp() {
           <Card>
             {statistics === null || statistics.bluechipHolders === null ?
               <AppWidgetSummary
-                icon="emojione:blue-circle"
+                icon="bxs:badge-check"
+                color="blue"
                 title="Bluechip Holders"
                 percent={2.6}
                 total={null}
