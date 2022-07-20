@@ -39,8 +39,8 @@ HomePage.getLayout = function getLayout(page) {
 
 export default function HomePage() {
   return (
-    <Page title="The starting point for your next project">
-      <RootStyle>
+    <Page title="The starting point for your next project" >
+      <RootStyle sx={{backgroundColor:'#F3F4EF'}}>
         <HomeHero />
         <ContentStyle>
           <HomeMinimal />

@@ -69,6 +69,7 @@ export default function GeneralApp() {
         alignItems="center"
         justifyContent="center"
         style={{minHeight: '60vh'}}
+        sx={{backgroundColor:'#F3F4EF'}}
       >
 
         <Grid item xs={3}>
@@ -80,13 +81,13 @@ export default function GeneralApp() {
   }
 
   return (
-    <Page title="Dashboard">
-      <Container sx={{backgroundColor:'#F3F4EF', marginTop:'-100px', paddingTop:'40px', paddingBottom:'100px', marginBottom:'-88px'}}>
+    <Page title="Dashboard" sx={{marginRight:'-40px'}}>
+      <Container maxWidth sx={{backgroundColor:'#F3F4EF', marginTop:'-120px', paddingTop:'40px', paddingBottom:'80px', marginBottom:'-120px', marginRight:'-30px', marginLeft: '-20px', paddingRight:'100px'}}>
         <Box>
-        <Typography align='left' variant='h3' sx={{ marginBottom:'20px'}}>Dashboard</Typography>
+        <Typography align='left' variant='h3' sx={{ marginBottom:'20px', marginLeft:'20px'}}>Dashboard</Typography>
         </Box>
-        <Box sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px',
-  gridAutoRows: 'minmax(100px, 140px)', marginBottom:'25px'}}>
+        <Box sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px',
+  gridAutoRows: 'minmax(100px, 140px)', marginBottom:'25px', paddingRight:'20px', paddingLeft:'20px'}}>
        < Card>
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
@@ -227,7 +228,7 @@ export default function GeneralApp() {
           </Card>
 
         </Box>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{paddingRight:'20px', paddingLeft:'20px'}}>
           <Grid item xs={12} md={4} lg={4} sx={{height: '362px'}}>
 
             {statistics === null || statistics.topHolders === null ?
