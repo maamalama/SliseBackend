@@ -12,7 +12,7 @@ async function bootstrap() {
     {
       origin: ['https://app.slise.xyz'],
       methods: ['POST', 'PUT', 'DELETE', 'GET'],
-      allowedHeaders: ['*']
+      allowedHeaders: ['Access-Control-Allow-Origin'],
     }
   );
   const config = new DocumentBuilder()
