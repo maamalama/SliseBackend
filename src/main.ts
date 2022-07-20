@@ -8,6 +8,14 @@ const port = process.env.PORT;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: false });
+  const options = {
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204,
+    "credentials":true
+  };
+  app.enableCors(options);
  /* app.enableCors(
     {
       origin: ['https://app.slise.xyz'],
