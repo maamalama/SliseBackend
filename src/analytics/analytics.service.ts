@@ -139,7 +139,7 @@ export class AnalyticsService {
 
       this.logger.debug('topHolders processing');
       topHolders.map((holder) => {
-        if (holder.portfolio >= 2000000) {
+        if (holder.portfolio >= 200000) {
           holder.label = 'whale';
           holder.whale = true;
         } else {
