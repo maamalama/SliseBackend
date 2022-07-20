@@ -103,14 +103,14 @@ export class AnalyticsService {
         whitelistSize = await this.getWaitlistSize(id);
       } else {
         whitelistSize = whitelist.size;
-        await this.prisma.waitlist.update({
+        /*await this.prisma.waitlist.update({
           where: {
             id: id
           },
           data: {
             size: whitelistSize
           }
-        })
+        })*/
       }
       const [twitterFollowersCount, discordInfo]
         = await Promise.all([
@@ -147,6 +147,9 @@ export class AnalyticsService {
       });
 
       let failed: string[] = [];
+      mutualHoldings.sort((a, b) => {
+        return b.totalholdings - a.totalholdings;
+      });
 
       //TODO: add default logo
       await Promise.all(mutualHoldings.map(async (holding, idx) => {
@@ -154,6 +157,12 @@ export class AnalyticsService {
             const response = await this.getCollectionInfo(holding.address);
             if (response) {
               holding.holdings = response;
+            }
+            if (idx === 0) {
+              initValue = holding.totalholdings;
+              holding.percent = initPercent;
+            } else {
+              holding.percent = ((holding.totalholdings / initValue) * initPercent);
             }
           } catch (e) {
             failed.push(holding.address);
@@ -164,18 +173,6 @@ export class AnalyticsService {
       let initPercent = 100;
       let initValue: number;
 
-      mutualHoldings.sort((a, b) => {
-        return b.totalholdings - a.totalholdings;
-      });
-
-      mutualHoldings.map((holding, idx) => {
-        if (idx === 0) {
-          initValue = holding.totalholdings;
-          holding.percent = initPercent;
-        } else {
-          holding.percent = ((holding.totalholdings / initValue) * initPercent);
-        }
-      });
 
       if (failed.length > 0) {
         this.logger.debug(`${failed} failed parsing mutual holdings`);
