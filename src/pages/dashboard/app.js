@@ -26,12 +26,20 @@ const CardsGrid = styled('div')(() => ({
   gridTemplateRows: '1fr 1fr',
   gap: 24,
   marginBottom: 24,
+  minHeight: 0,
+  '& > *': {
+    minHeight: 0,
+  },
 }));
 
 const BigCardsGrid = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr 1fr',
   gap: 24,
+  minHeight: 0,
+  '& > *': {
+    minHeight: 0,
+  },
 }));
 
 const DashboardIndex = () => {
@@ -77,7 +85,14 @@ const DashboardIndex = () => {
   }
 
   return (
-    <Page sx={{ height: '100%', display: 'grid', gridTemplateRows: 'max-content max-content 1fr' }} title="Dashboard">
+    <Page
+      sx={{
+        height: 'calc(100vh - 60px)',
+        display: 'grid',
+        gridTemplateRows: 'min-content min-content 1fr',
+      }}
+      title="Dashboard"
+    >
       <Typography align="left" variant="h3" mb={'14px'}>
         Dashboard
       </Typography>
@@ -92,7 +107,7 @@ const DashboardIndex = () => {
       </CardsGrid>
       <BigCardsGrid>
         <TopHolders data={statistics?.topHolders ?? []} />
-        <MutualHolders />
+        <MutualHolders data={statistics?.mutualHoldings ?? []} />
         <TargetWallets />
       </BigCardsGrid>
     </Page>

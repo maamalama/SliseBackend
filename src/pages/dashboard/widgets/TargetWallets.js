@@ -9,6 +9,7 @@ const Root = styled('div')(() => ({
   borderRadius: 16,
   padding: 16,
   color: '#fff',
+  overflow: 'hidden',
 }));
 const Img = styled('img')(() => ({
   display: 'block',

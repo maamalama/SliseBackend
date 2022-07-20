@@ -46,7 +46,6 @@ const labelVariantMap = {
 };
 
 const TopHolders = ({ data = [] }) => {
-  console.log('🚀 ~ file: TopHolders.js ~ line 42 ~ TopHolders ~ data', data);
   return (
     <Root>
       <Typography variant="h6" align="left">
@@ -81,9 +80,9 @@ const TopHolders = ({ data = [] }) => {
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
                 <SBodyTableCell>
-                  <Stack direction={'row'}>
-                    {row.whale && <img {...WhaleIcon} />}
-                    {row.nfts > 10 && <img {...BluechipIcon} />}
+                  <Stack direction={'row'} alignItems="center" gap={0.25}>
+                    {row.whale && <img src={WhaleIcon.src} width={16} height={16} />}
+                    {row.nfts > 10 && <img src={BluechipIcon.src} width={16} height={16} />}
                     <a
                       style={{ textDecoration: 'none', color: 'inherit' }}
                       target={'_blank'}
