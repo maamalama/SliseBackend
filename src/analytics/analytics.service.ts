@@ -178,7 +178,7 @@ export class AnalyticsService {
         }
       ));
 
-      await this.redis.set(`${id} mutualHolders`, mutualHoldings);
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
 
       this.logger.debug('complete');
 
