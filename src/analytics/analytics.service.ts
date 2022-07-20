@@ -90,9 +90,9 @@ export class AnalyticsService {
 
   public async getWhitelistStatistics(id: string): Promise<WhitelistStatisticsResponse> {
     const existTopHolders = await this.redis.get(`topHolders ${id}`);
-    if (existTopHolders) {
+    /*if (existTopHolders) {
       return JSON.parse(existTopHolders);
-    } else {
+    } else {*/
       const whitelist = await this.prisma.waitlist.findFirst({
         where: {
           id: id
@@ -119,10 +119,10 @@ export class AnalyticsService {
 
       this.logger.debug('fetching topHolders and mutualHolders');
       const [topHolders, mutualHoldings] = await Promise.all([
-        this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd", count(DISTINCT TT.address) as nfts from "TokenHolder"
+        this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd" as portfolio, count(DISTINCT TT.address) as nfts from "TokenHolder"
         inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
         where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
-        group by "TokenHolder".address, "TokenHolder"."totalBalanceUsd"
+        group by "TokenHolder".address, portfolio
         order by "TokenHolder"."totalBalanceUsd" desc
         limit 10;`,
         this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
@@ -139,7 +139,7 @@ export class AnalyticsService {
 
       this.logger.debug('topHolders processing');
       topHolders.map((holder) => {
-        if (holder.portfolio >= 200000) {
+        if (holder.portfolio >= 2000000) {
           holder.label = 'whale';
           holder.whale = true;
         } else {
@@ -195,7 +195,7 @@ export class AnalyticsService {
 
       await this.redis.set(`topHolders ${id}`, JSON.stringify(response), 'EX', 60 * 10);
       return response;
-    }
+    /*}*/
   }
 
   public async getTopHolders(whitelistId: string): Promise<TokenHolder[]> {
