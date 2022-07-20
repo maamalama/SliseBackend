@@ -13,7 +13,7 @@ const Root = styled('div')(() => ({
   padding: 16,
 }));
 
-const Whales = () => {
+const Whales = ({ value }) => {
   return (
     <Root>
       <Stack direction="column" alignItems="center">
@@ -21,7 +21,7 @@ const Whales = () => {
         <Typography variant="subtitle2" mb={1} mt={0.5}>
           Whales
         </Typography>
-        <Typography variant="h3">{formatNumber(20)}</Typography>
+        <Typography variant="h3">{formatNumber(value)}</Typography>
       </Stack>
     </Root>
   );

@@ -13,6 +13,8 @@ const Root = styled('div')(() => ({
 const Img = styled('img')(() => ({
   display: 'block',
   width: '100%',
+  maxWidth: '90%',
+  margin: '0 auto',
 }));
 
 const TargetWallets = () => {

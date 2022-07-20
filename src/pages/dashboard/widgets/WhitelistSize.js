@@ -13,7 +13,7 @@ const Root = styled('div')(() => ({
   padding: 16,
 }));
 
-const WhitelistSize = () => {
+const WhitelistSize = ({ value }) => {
   return (
     <Root>
       <Stack direction="column" alignItems="center">
@@ -21,7 +21,7 @@ const WhitelistSize = () => {
         <Typography variant="subtitle2" mb={1} mt={0.5}>
           Whitelist Size
         </Typography>
-        <Typography variant="h3">{formatNumber(5325)}</Typography>
+        <Typography variant="h3">{formatNumber(value)}</Typography>
       </Stack>
     </Root>
   );

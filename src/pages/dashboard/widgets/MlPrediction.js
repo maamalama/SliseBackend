@@ -53,6 +53,17 @@ const useStyles = makeStyles(
       background: '#131F0F',
       width: 0,
     },
+    markSize: {
+      display: 'none',
+      '&:nth-child(100n+3)': {
+        display: 'block',
+        background: '#F2F3ED',
+      },
+    },
+    markSizeActive: {
+      background: '#131F0F',
+      width: 0,
+    },
   }))
 );
 
@@ -148,13 +159,13 @@ const MlPrediction = () => {
           COLLECTION SIZE
         </Typography>
         <Typography align="left" variant="h6" mb={0}>
-          {formatNumber(collectionSizeSliderValue ** 2)}
+          {formatNumber(collectionSizeSliderValue)}
         </Typography>
         <Slider
           value={collectionSizeSliderValue}
           min={10}
-          step={1}
-          max={100}
+          step={10}
+          max={10000}
           onChange={handleCollectionSizeChange}
           valueLabelDisplay="off"
           marks
@@ -162,8 +173,8 @@ const MlPrediction = () => {
             rail: styles.rail,
             track: styles.track,
             root: styles.root,
-            mark: styles.markPrice,
-            markActive: styles.markPriceActive,
+            mark: styles.markSize,
+            markActive: styles.markSizeActive,
             thumb: styles.thumb,
           }}
         />

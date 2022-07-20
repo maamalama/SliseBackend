@@ -13,7 +13,7 @@ const Root = styled('div')(() => ({
   padding: 16,
 }));
 
-const BluechipHolders = () => {
+const BluechipHolders = ({ value }) => {
   return (
     <Root>
       <Stack direction="column" alignItems="center">
@@ -21,7 +21,7 @@ const BluechipHolders = () => {
         <Typography variant="subtitle2" mb={1} mt={0.5}>
           Bluechip Holders
         </Typography>
-        <Typography variant="h3">{formatNumber(66)}</Typography>
+        <Typography variant="h3">{formatNumber(value)}</Typography>
       </Stack>
     </Root>
   );

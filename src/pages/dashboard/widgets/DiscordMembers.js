@@ -14,7 +14,7 @@ const Root = styled('div')(() => ({
   padding: 16,
 }));
 
-const DiscordMembers = () => {
+const DiscordMembers = ({ value }) => {
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleConnect = () => {
@@ -33,7 +33,7 @@ const DiscordMembers = () => {
           Discord Members
         </Typography>
         {connected ? (
-          <Typography variant="h3">{formatNumber(1290)}</Typography>
+          <Typography variant="h3">{formatNumber(value)}</Typography>
         ) : (
           <ConnectButton onClick={handleConnect} disabled={loading} />
         )}

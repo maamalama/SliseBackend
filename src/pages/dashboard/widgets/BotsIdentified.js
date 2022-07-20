@@ -13,7 +13,7 @@ const Root = styled('div')(() => ({
   padding: 16,
 }));
 
-const BotsIdentified = () => {
+const BotsIdentified = ({ value }) => {
   return (
     <Root>
       <Stack direction="column" alignItems="center">
@@ -21,7 +21,7 @@ const BotsIdentified = () => {
         <Typography variant="subtitle2" mb={1} mt={0.5}>
           Bots identified
         </Typography>
-        <Typography variant="h3">{formatNumber(671)}</Typography>
+        <Typography variant="h3">{formatNumber(value)}</Typography>
       </Stack>
     </Root>
   );
