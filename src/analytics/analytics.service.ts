@@ -101,16 +101,16 @@ export class AnalyticsService {
       let whitelistSize: any;
       if (whitelist.size === null) {
         whitelistSize = await this.getWaitlistSize(id);
-      } else {
-        whitelistSize = whitelist.size;
-        /*await this.prisma.waitlist.update({
+        await this.prisma.waitlist.update({
           where: {
             id: id
           },
           data: {
             size: whitelistSize
           }
-        })*/
+        })
+      } else {
+        whitelistSize = whitelist.size;
       }
       const [twitterFollowersCount, discordInfo]
         = await Promise.all([
