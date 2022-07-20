@@ -12,10 +12,10 @@ import MLPrediction from '../../components/MLPrediction'
 import TopHolders from '../../components/TopHolders'
 import MutualHolders from '../../components/MutualHolders'
 // sections
-import {AppWidgetSummary,} from '../../sections/@dashboard/general/app';
+import {AppWidget, AppWidgetSummary,} from '../../sections/@dashboard/general/app';
 import useIsMountedRef from "../../hooks/useIsMountedRef";
 import axios from '../../utils/axios';
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 
 // ----------------------------------------------------------------------
@@ -80,7 +80,7 @@ export default function GeneralApp() {
   }
 
   return (
-    <Page title="General: App">
+    <Page title="Dashboard">
       <Container>
         <Typography align='left' variant='h3' sx={{marginTop:'-100px', marginBottom:'20px'}}>Dashboard</Typography>
         <Box sx={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px',
@@ -88,7 +88,7 @@ export default function GeneralApp() {
        < Card>
             {statistics === null || statistics.whitelistSize === null ?
               <AppWidgetSummary
-                icon={Note}
+                icon="twemoji:spiral-notepad"
                 title="Whitelist Size"
                 percent={2.6}
                 total={null}
@@ -98,7 +98,7 @@ export default function GeneralApp() {
 
               :
               <AppWidgetSummary
-                icon=''
+                icon="twemoji:spiral-notepad"
                 title="Whitelist Size"
                 percent={2.6}
                 total={statistics.whitelistSize}
