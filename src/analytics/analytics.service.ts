@@ -98,10 +98,22 @@ export class AnalyticsService {
           id: id
         }
       });
-
-      const [whitelistSize, twitterFollowersCount, discordInfo]
+      let whitelistSize: any;
+      if (whitelist.size === null) {
+        whitelistSize = await this.getWaitlistSize(id);
+      } else {
+        whitelistSize = whitelist.size;
+        await this.prisma.waitlist.update({
+          where: {
+            id: id
+          },
+          data: {
+            size: whitelistSize
+          }
+        })
+      }
+      const [twitterFollowersCount, discordInfo]
         = await Promise.all([
-        this.getWaitlistSize(id),
         this.getTwitterFollowersCount(whitelist.twitter),
         this.getDiscordInfo(whitelist.discord)]);
 

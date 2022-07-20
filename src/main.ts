@@ -8,7 +8,14 @@ const port = process.env.PORT;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: false });
-  app.enableCors();
+  app.enableCors(
+    {
+      origin: ['*'],
+      methods: ['POST', 'PUT', 'DELETE', 'GET'],
+      credentials: true,
+      allowedHeaders: ['*']
+    }
+  );
   const config = new DocumentBuilder()
     .setTitle('Slice')
     .setDescription('Slice API description')
