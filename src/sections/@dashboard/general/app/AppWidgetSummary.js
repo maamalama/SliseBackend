@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 // @mui
 import {alpha, styled, useTheme} from '@mui/material/styles';
-import {Box, Card, Stack, Typography} from '@mui/material';
+import {Box, Card, Stack, Typography, Button} from '@mui/material';
+import KeyIcon from '@mui/icons-material/Key';
 // utils
 import {fNumber} from '../../../../utils/formatNumber';
 // components
@@ -63,7 +64,8 @@ export default function  AppWidgetSummary({ title, percent, total, chartColor, c
         <Typography textAlign="center" sx={{marginBottom:'5px'}} variant="subtitle2">{title}</Typography>
 
      
-        {total === null ? <Typography textAlign="center" variant="h3">No data</Typography> : <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography>}
+        {total === null ? <Box textAlign='center'><Button align='center' variant='contained' textAlign='center' startIcon={<KeyIcon />} sx={{ boxShadow:'none',backgroundColor:'#DFE3E8', color:'black', ':hover':{opacity: '.6', backgroundColor:'#DFE3E8'}}}>Connect
+</Button></Box> : <Typography textAlign="center" variant="h3">{fNumber(total)}</Typography>}
 
       </Box>
 
