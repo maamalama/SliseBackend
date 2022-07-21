@@ -167,7 +167,9 @@ export class AnalyticsService {
         }
       });
 
-      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+      if (mutualHoldings.length > 10) {
+        await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+      }
 
       this.logger.debug('topHolders processing');
       topHolders.map((holder) => {
@@ -194,7 +196,9 @@ export class AnalyticsService {
         }
       });
 
-      await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+      if (topHolders.length > 10) {
+        await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+      }
 
       this.logger.debug('complete');
 
@@ -212,12 +216,14 @@ export class AnalyticsService {
         mutualHoldings: mutualHoldings
       }
 
-      await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+      if (response.mutualHoldings.length > 10 && response.topHolders.length > 10) {
+        await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+      }
       return response;
     }
   }
 
-  public getMultipleRandom(arr, num) {
+  private getMultipleRandom(arr, num) {
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
 
     return shuffled.slice(0, num);
