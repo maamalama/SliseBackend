@@ -35,7 +35,7 @@ const navConfig = [
         path: PATH_DASHBOARD.general.app,
         icon: ICONS.dashboard,
       },
-      { title: 'Whitelist', path: PATH_DASHBOARD.general.whitelist, icon: ICONS.analytics },
+      { title: 'Mint List', path: PATH_DASHBOARD.general.mintlist, icon: ICONS.analytics },
       { title: 'Social Data', path: PATH_DASHBOARD.general.banking, icon: ICONS.chat },
       { title: 'Mutual Holders', path: PATH_DASHBOARD.general.booking, icon: ICONS.social },
       { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.user },

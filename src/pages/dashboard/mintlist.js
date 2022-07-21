@@ -3,10 +3,10 @@ import { styled } from '@mui/system';
 import React from 'react';
 import Page from 'src/components/Page';
 import Layout from 'src/layouts';
-import CirclePercentageCard from './widgets/CirclePercentageCard';
-import BluechipBg from './widgets/img/bluechipBg.svg';
-import BotBg from './widgets/img/botBg.svg';
-import WhaleBg from './widgets/img/whaleBg.svg';
+import CirclePercentageCard from 'src/widgets/CirclePercentageCard';
+import BluechipBg from 'src/widgets/img/bluechipBg.svg';
+import BotBg from 'src/widgets/img/botBg.svg';
+import WhaleBg from 'src/widgets/img/whaleBg.svg';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
@@ -19,7 +19,7 @@ const Cards = styled('div')(() => ({
   marginBottom: 24,
 }));
 
-const Whitelist = () => {
+const MintList = () => {
   return (
     <Page
       sx={{
@@ -27,10 +27,10 @@ const Whitelist = () => {
         display: 'grid',
         gridTemplateRows: 'min-content min-content min-content 1fr',
       }}
-      title="Whitelist"
+      title="Mint List"
     >
       <Typography align="left" variant="h3" mb={'14px'}>
-        Whitelist
+        Mint List
       </Typography>
       <Cards>
         <CirclePercentageCard percent={0.01} count={55} title="Blue Chip Holders" bg={BluechipBg.src} />
@@ -41,8 +41,8 @@ const Whitelist = () => {
   );
 };
 
-Whitelist.getLayout = function getLayout(page) {
+MintList.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
-export default Whitelist;
+export default MintList;
