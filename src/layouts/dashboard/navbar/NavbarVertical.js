@@ -114,7 +114,7 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-         <UploadCollection close= {handleClose}/>
+         <UploadCollection close= {handleClose} />
         </Box>
       </Modal>
       </Box>
