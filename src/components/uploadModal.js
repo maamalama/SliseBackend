@@ -69,7 +69,7 @@ export default function UploadSingleFile(props) {
       Upload the *.csv file of your whitelist. <br/> Max size of 3.1 MB
       </Typography>
       <Box textAlign='right' sx={{marginTop:'40px'}}>
-      <Button variant="outlined" sx={{backgroundColor:'white', color:'black', marginRight:'15px',border: '1px solid rgba(236, 236, 236, .95)',':hover':{opacity: '.6', backgroundColor:'white',border: '1px solid rgba(236, 236, 236, .9)'}}}>
+      <Button variant="outlined"onClick={props.close} sx={{backgroundColor:'white', color:'black', marginRight:'15px',border: '1px solid rgba(236, 236, 236, .95)',':hover':{opacity: '.6', backgroundColor:'white',border: '1px solid rgba(236, 236, 236, .9)'}}}>
   Cancel
 </Button>
 <Button variant="contained" sx={{backgroundColor:'grey'}} disabled>
