@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 // next
 import { useRouter } from 'next/router';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Stack, Drawer } from '@mui/material';
+import { Box, Stack, Drawer, Button, Modal, Typography} from '@mui/material';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 import useCollapseDrawer from '../../../hooks/useCollapseDrawer';
@@ -16,6 +16,7 @@ import { NAVBAR } from '../../../config';
 import Logo from '../../../components/Logo';
 import Scrollbar from '../../../components/Scrollbar';
 import { NavSectionVertical } from '../../../components/nav-section';
+import UploadCollection from '../../../components/uploadModal'
 //
 import navConfig from './NavConfig';
 import NavbarDocs from './NavbarDocs';
@@ -41,6 +42,23 @@ NavbarVertical.propTypes = {
 };
 
 export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }) {
+  //Modal states/style
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '440px',
+    height:'432px',
+    bgcolor: '#FFFFFF',  
+    p: 3,
+    borderRadius: '25px'
+  };
+
   const theme = useTheme();
 
   const { pathname } = useRouter();
@@ -49,6 +67,7 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }) {
 
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
     useCollapseDrawer();
+    
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -86,7 +105,19 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }) {
       </Stack>
 
       <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
-
+      <Box textAlign="center">
+      <Button onClick={handleOpen} variant="contained" sx={{color:'black', backgroundColor: '#DDFF55', marginTop:'100px',':hover':{opacity: '.6', backgroundColor:'#DDFF55'}}}>Add Your Collection</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+         <UploadCollection/>
+        </Box>
+      </Modal>
+      </Box>
       <Box sx={{ flexGrow: 1 }} />
 
       {!isCollapse}

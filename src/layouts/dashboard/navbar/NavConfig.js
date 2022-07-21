@@ -39,7 +39,7 @@ const navConfig = [
       { title: 'Social Data', path: PATH_DASHBOARD.general.banking, icon: ICONS.chat },
       { title: 'Mutual Holders', path: PATH_DASHBOARD.general.booking, icon: ICONS.social },
       { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.user },
-      { title: 'ML Targeting', path: PATH_DASHBOARD.general.mltargeting, icon: ICONS.components },
+      { title: 'ML Targeting', path: PATH_DASHBOARD.general.mltargeting, icon: ICONS.components }
     ],
   },
 
