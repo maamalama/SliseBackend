@@ -49,7 +49,7 @@ export class SchedulerService {
         await Promise.all(tokenBalance.map(async (balance) => {
           balance.balances.map(async (token) => {
             const tokenTransfer = {
-              address: token.currency.address.toLowerCase(),
+              address: token.currency.address !== undefined ? token.currency.address.toLowerCase()  : 'none',
               tokenId: BigInt.parse(token.currency.tokenId),
               amount: token.value,
               contractType: mapTokenType(token.currency.tokenType),
@@ -78,7 +78,11 @@ export class SchedulerService {
             }
           });
           this.logger.debug(`holder ${tokenHolder.address} saved with transfers: ${savedTransfers.length}`);
-        });
+        },
+          {
+            maxWait: 5000, // default: 2000
+            timeout: 10000, // default: 5000
+          });
       } catch (e) {
         await this.prisma.tokenHolder.update({
           where: {
@@ -124,9 +128,14 @@ export class SchedulerService {
               processedBalance: true,
               processedBalanceFail: false
             }
-          });
+          },
+            );
           this.logger.debug(`holder ${holder.address} fetched balance`);
-        });
+        },
+          {
+            maxWait: 5000, // default: 2000
+            timeout: 10000, // default: 5000
+          });
       }
       catch (e){
         await this.prisma.tokenHolder.update({

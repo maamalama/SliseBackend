@@ -65,11 +65,11 @@ export class AnalyticsService {
       keyFilename: path.join(process.cwd(), 'configs/slise-355804-95d4d7714e5a.json')
     });
 
-    // this.Moralis.start({
-    //   serverUrl: process.env.MORALIS_SERVER_URL,
-    //   appId: process.env.MORALIS_APP_ID,
-    //   masterKey: process.env.MORALIS_MASTER_KEY
-    // });
+    this.Moralis.start({
+      serverUrl: process.env.MORALIS_SERVER_URL,
+      appId: process.env.MORALIS_APP_ID,
+      masterKey: process.env.MORALIS_MASTER_KEY
+    });
 
     this.redlock = new Redlock([redis]);
 
@@ -366,18 +366,7 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-    const a = await this.prisma.tokenHolder.findFirst({
-      where: {
-        id: '0106c35a-892d-4537-8a5a-8e6abd92d8e5'
-      }, include: {
-        tokens: {
-          where: {
-            contractType: TokenType.ERC721
-          },
-          take: 3
-        }
-      }
-    });
+    const a = await this.getTokensByAddresses(['0x566ac1ca3ebb8c157f2c0b3f9fd1f7ce5fbec45e']);
     const b = a;
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
 
@@ -471,16 +460,17 @@ export class AnalyticsService {
     //TODO: change to map in map
     let addresses: string[] = [];
     parsedCsv.data.map((subarray) => subarray.map((address) => {
-      return addresses.push(address);
+      addresses.push(address);
     }));
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: waitlistRequest.collectionName,
-        contractAddress: waitlistRequest.contractAddress
+        contractAddress: waitlistRequest.contractAddress,
+        mainWaitlist: false
       }
     });
     const holdersRequest = {
-      //addresses: waitlistRequest.addresses,
+      addresses: addresses,
       waitlistId: waitlist.id
     };
     const job = await this.holdersQueue.add('parseAndStore', {
@@ -790,7 +780,7 @@ export class AnalyticsService {
       }
     }).toPromise();
 
-    return await response.data.data.ethereum.address;
+    return response.data.data.ethereum.address;
   }
 
   public async getNFTsByAddress(address: string): Promise<any> {
