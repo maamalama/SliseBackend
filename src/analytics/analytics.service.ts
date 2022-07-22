@@ -284,6 +284,7 @@ export class AnalyticsService {
 
         }
       }));
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(hm), 'EX', 60 * 10 * 5);
 
       return hm;
     } else {
