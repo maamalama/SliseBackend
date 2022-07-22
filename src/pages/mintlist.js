@@ -178,10 +178,11 @@ const MintList = () => {
   const toggleMlWallets = () => setMlWallets((s) => !s);
   const toggleBotsFilter = () => setBotsFilter((s) => !s);
   const [topHolders, setTopHolders] = useState([]);
-  const [bots, setBots] = useState(null);
-  const [whales, setWhales] = useState(null);
-  const [bluechip, setBluechips] = useState(null);
+  const [bots, setBots] = useState(0);
+  const [whales, setWhales] = useState(0);
+  const [bluechip, setBluechips] = useState(0);
   const isMountedRef = useIsMountedRef();
+  const [size, setSize] = useState(0);
 
   const getTopHolders = useCallback(async () => {
     const whitelistId = window.localStorage.getItem('whitelistId');
@@ -197,11 +198,20 @@ const MintList = () => {
         holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
         holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
       });*/
+      response.data.data.topHolders.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings.stats?.floor.toFixed(2) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
+      });
       setTopHolders(response.data.data.topHolders);
       setBots(response.data.data.bots);
       setWhales(response.data.data.whales);
       setBluechips(response.data.data.bluechipHolders);
-      console.log(response.data.data.topHolders);
+      setSize(response.data.data.size);
+      console.log(bots);
     } else {
       const response = await axiosInstance.get(
         `https://daoanalytics.herokuapp.com/api/analytics/getTopHolders?id=afd7626f-388e-4f98-9f36-123d54688936`
@@ -215,6 +225,7 @@ const MintList = () => {
         holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
       });*/
       setTopHolders(response.data.data.topHolders);
+      setSize(response.data.data.size);
     }
   }, [isMountedRef]);
 
@@ -234,9 +245,9 @@ const MintList = () => {
         Mint List
       </Typography>
       <Cards>
-        <CirclePercentageCard percent={0.01} count={55} title="Blue Chip Holders" bg={BluechipBg.src} />
-        <CirclePercentageCard percent={0.004} count={20} title="Whales" bg={WhaleBg.src} />
-        <CirclePercentageCard percent={0.128} count={671} title="Bots" bg={BotBg.src} />
+        <CirclePercentageCard percent={((bluechip) / size).toFixed(1)} count={bluechip} title="Blue Chip Holders" bg={BluechipBg.src} />
+        <CirclePercentageCard percent={((whales) / size).toFixed(1)} count={whales} title="Whales" bg={WhaleBg.src} />
+        <CirclePercentageCard percent={((bots)  / size).toFixed(1)} count={bots} title="Bots" bg={BotBg.src} />
       </Cards>
       <SwitchCards>
         <SwitchCard
@@ -247,7 +258,7 @@ const MintList = () => {
         <SwitchCard title="Filter out wallets identified as bots" value={botsFilter} onChange={toggleBotsFilter} />
       </SwitchCards>
       <TableCard>
-        <Datagrid columns={columns} rows={_mintList} />
+        <Datagrid columns={columns} rows={topHolders} />
       </TableCard>
     </Page>
   );
