@@ -22,7 +22,8 @@ import { getFollowerCount } from 'follower-count';
 import {
   CollectionInfoResponse,
   CollectionStats,
-  MutualHoldingsResponse, TopHoldersDashboardResponse,
+  MutualHoldingsResponse,
+  TopHoldersDashboardResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
 } from './models/whitelist-statistics-response';
@@ -167,7 +168,7 @@ export class AnalyticsService {
       });
 
       if (mutualHoldings.length > 8) {
-        await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+        await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings));
       }
 
       this.logger.debug('topHolders processing');
@@ -204,7 +205,7 @@ export class AnalyticsService {
       }
 
       if (topHolders.length > 8) {
-        await this.redis.set(`${id} topHolders`, JSON.stringify(topHoldersDashboard), 'EX', 60 * 10 * 5);
+        await this.redis.set(`${id} topHolders`, JSON.stringify(topHoldersDashboard));
       }
 
       this.logger.debug('complete');
@@ -224,7 +225,7 @@ export class AnalyticsService {
       }
 
       if (response.mutualHoldings.length > 8 && response.topHolders.length > 8) {
-        await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 10 * 5);
+        await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response));
       }
       return response;
     }
@@ -254,8 +255,11 @@ export class AnalyticsService {
           id: id
         }
       });
-
-
+      const existMutualHolders = await this.redis.get(`${id} mutualHolders`);
+      let hm: MutualHoldingsResponse[];
+      if (existMutualHolders) {
+        hm = JSON.parse(existMutualHolders);
+      }
 
       topHolders.map((holder) => {
         if (holder.portfolio >= 2000000) {
@@ -275,6 +279,10 @@ export class AnalyticsService {
           holder.holdingTimeLabel = 'flipper'
         }
         holder.tradingVolume = holder.portfolio - holder.avgNFTPrice;
+        holder.alsoHold = {
+          collectionInfo: this.getMultipleRandom(hm, 3),
+          total: 16
+        }
       });
 
       const response: TopHoldersDashboardResponse = {
@@ -285,7 +293,7 @@ export class AnalyticsService {
         size: whitelist.size
       }
 
-      await this.redis.set(`${id} topHolders`, JSON.stringify(response), 'EX', 60 * 10 * 5);
+      await this.redis.set(`${id} topHolders`, JSON.stringify(response));
 
       return response;
     }
@@ -311,7 +319,7 @@ export class AnalyticsService {
 
         }
       }));
-      await this.redis.set(`${id} mutualHolders`, JSON.stringify(hm), 'EX', 60 * 10 * 5);
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(hm));
 
       return hm;
     } else {
@@ -363,7 +371,7 @@ export class AnalyticsService {
         }
       });
 
-      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings));
 
       return mutualHoldings;
     }
