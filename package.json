@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "heroku-postbuild" : "mkdir uploads",
+    "heroku-postbuild": "mkdir uploads",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "npm run prisma:migrate:up && npm run prisma:generate && nest start",
     "start:watch": "npm run prisma:migrate:up && npm run prisma:silent-watch && nest start --watch",
@@ -53,6 +53,8 @@
     "follower-count": "^0.5.0",
     "ioredis": "^4.28.5",
     "moralis": "^1.8.1",
+    "multer": "^1.4.5-lts.1",
+    "nest-aws-sdk": "^2.1.0",
     "oraq": "^0.2.4",
     "papaparse": "^5.3.2",
     "pg": "^8.7.3",

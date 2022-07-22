@@ -12,6 +12,8 @@ import {
   TopHoldersResponse,
   WhitelistStatisticsResponse
 } from './models/whitelist-statistics-response';
+import { S3 } from 'aws-sdk';
+import { memoryStorage} from 'multer';
 
 @ApiTags('Slice')
 @UseInterceptors(SentryInterceptor)
@@ -88,6 +90,9 @@ export class AnalyticsController {
        return response;
    }*/
 
+
+
+
   @Get('parseHolders')
   @UseInterceptors(TransformInterceptor)
   async parseHolders(
@@ -99,7 +104,9 @@ export class AnalyticsController {
   @Post('storeWhitelist')
   @UseInterceptors(
     TransformInterceptor,
-    FileInterceptor('file'))
+    FileInterceptor('file', {
+      storage: memoryStorage()
+    }))
   async storeWhitelist(@Body(new ValidationPipe()) request: WhitelistInfoRequest, @UploadedFile() file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     const response = await this.analyticsService.storeWaitlist(request, file);
     return response;

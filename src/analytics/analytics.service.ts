@@ -451,7 +451,7 @@ export class AnalyticsService {
     /* const addresses = hldrs.items.map((item) => {
        return item.address;
      });*/
-    const csvFile = readFileSync(`uploads/${file.filename}`);
+    const csvFile = file.buffer;
     const parsedCsv = await papaparse.parse(csvFile.toString(), {
       header: false,
       skipEmptyLines: true,
