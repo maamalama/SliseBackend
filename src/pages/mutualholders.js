@@ -11,6 +11,7 @@ import { formatNumber } from 'src/widgets/utils';
 import nft1 from 'src/assets/nft1.svg';
 import nft2 from 'src/assets/nft2.svg';
 import nft3 from 'src/assets/nft3.svg';
+import MutualHoldersCard from 'src/widgets/MutualHoldersCard';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
@@ -49,8 +50,8 @@ const _mutualHolders = [...Array(36)].map((_, index) => ({
   maxMutualHolders: 1_000,
   totalHolders: Math.floor(Math.random() * 10_000),
   supply: Math.floor(Math.random() * 10_000),
-  floorPrice: Math.floor(Math.random() * 10_000),
-  mintPrice: Math.floor(Math.random() * 10_000),
+  floorPrice: (Math.random() * 100).toFixed(2),
+  mintPrice: (Math.random() * 100).toFixed(2),
   twitterFollowers: Math.floor(Math.random() * 1_000_000),
 }));
 
@@ -113,7 +114,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({ value }) => `Ξ ${value}`,
   },
   {
     field: 'mintPrice',
@@ -125,7 +126,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({ value }) => `Ξ ${value}`,
   },
   {
     field: 'twitterFollowers',
@@ -154,7 +155,11 @@ const MutualHolders = () => {
       <Typography align="left" variant="h3" mb={'14px'}>
         Mutual Holders
       </Typography>
-      <Cards>123</Cards>
+      <Cards>
+        <MutualHoldersCard image={nft3} title="Bored Ape Yacht Club" value={412} />
+        <MutualHoldersCard image={nft1} title="CryptoPunks" value={234} />
+        <MutualHoldersCard image={nft2} title="MeeBits" value={221} />
+      </Cards>
       <TableCard>
         <Datagrid columns={columns} rows={_mutualHolders} />
       </TableCard>
