@@ -168,7 +168,7 @@ export class AnalyticsService {
       });
 
       if (mutualHoldings.length > 8) {
-        await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+        await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 2);
       }
 
       this.logger.debug('topHolders processing');
@@ -197,7 +197,7 @@ export class AnalyticsService {
       });
 
       if (topHolders.length > 8) {
-        await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+        await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 2);
       }
 
       this.logger.debug('complete');
@@ -217,7 +217,7 @@ export class AnalyticsService {
       }
 
       if (response.mutualHoldings.length > 8 && response.topHolders.length > 8) {
-        await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 10);
+        await this.redis.set(`whitelistStatistics ${id}`, JSON.stringify(response), 'EX', 60 * 2);
       }
       return response;
     }
@@ -284,7 +284,7 @@ export class AnalyticsService {
 
         }
       }));
-      await this.redis.set(`${id} mutualHolders`, JSON.stringify(hm), 'EX', 60 * 10 * 5);
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(hm), 'EX', 60 * 10 * 2);
 
       return hm;
     } else {
@@ -334,7 +334,7 @@ export class AnalyticsService {
         }
       });
 
-      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 5);
+      await this.redis.set(`${id} mutualHolders`, JSON.stringify(mutualHoldings), 'EX', 60 * 10 * 2);
 
       return mutualHoldings;
     }
