@@ -22,7 +22,7 @@ import { getFollowerCount } from 'follower-count';
 import {
   CollectionInfoResponse,
   CollectionStats,
-  MutualHoldingsResponse,
+  MutualHoldingsResponse, TopHoldersDashboardResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
 } from './models/whitelist-statistics-response';
@@ -195,8 +195,15 @@ export class AnalyticsService {
         }
       });
 
+      const topHoldersDashboard: TopHoldersDashboardResponse = {
+        tpHolders: topHolders,
+        bots: whitelist.bots,
+        bluechipHolders: whitelist.bluechipHolders,
+        whales: whitelist.whales
+      }
+
       if (topHolders.length > 8) {
-        await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+        await this.redis.set(`${id} topHolders`, JSON.stringify(topHoldersDashboard), 'EX', 60 * 10 * 5);
       }
 
       this.logger.debug('complete');
@@ -228,7 +235,7 @@ export class AnalyticsService {
     return shuffled.slice(0, num);
   }
 
-  public async getTopHolders(id: string): Promise<TopHoldersResponse[]> {
+  public async getTopHolders(id: string): Promise<TopHoldersDashboardResponse> {
     const existTopHolders = await this.redis.get(`${id} topHolders`)
 
     if (existTopHolders) {
@@ -240,6 +247,14 @@ export class AnalyticsService {
         group by "TokenHolder".address, portfolio
         order by "TokenHolder"."totalBalanceUsd" desc
         limit 10;`;
+
+      const whitelist = await this.prisma.waitlist.findFirst({
+        where: {
+          id: id
+        }
+      });
+
+
 
       topHolders.map((holder) => {
         if (holder.portfolio >= 2000000) {
@@ -261,9 +276,16 @@ export class AnalyticsService {
         holder.tradingVolume = holder.portfolio - holder.avgNFTPrice;
       });
 
-      await this.redis.set(`${id} topHolders`, JSON.stringify(topHolders), 'EX', 60 * 10 * 5);
+      const response: TopHoldersDashboardResponse = {
+        tpHolders: topHolders,
+        bots: whitelist.bots,
+        bluechipHolders: whitelist.bluechipHolders,
+        whales: whitelist.whales
+      }
 
-      return topHolders;
+      await this.redis.set(`${id} topHolders`, JSON.stringify(response), 'EX', 60 * 10 * 5);
+
+      return response;
     }
   }
 
