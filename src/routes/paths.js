@@ -30,6 +30,12 @@ export const PATH_PAGE = {
   page404: '/404',
   page500: '/500',
   components: '/components',
+
+  app: '/app',
+  mintlist: '/mintlist',
+  mutualholders: '/mutualholders',
+  mltargeting: '/mltargeting',
+  upload: '/upload',
 };
 
 export const PATH_DASHBOARD = {

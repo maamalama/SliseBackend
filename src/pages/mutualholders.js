@@ -8,9 +8,9 @@ import Datagrid from 'src/components/Datagrid';
 import CollectionNameCell from 'src/components/DatagridCells/CollectionNameCell';
 import MutualHoldersCell from 'src/components/DatagridCells/MutualHoldersCell';
 import { formatNumber } from 'src/widgets/utils';
-import nft1 from './nft1.svg';
-import nft2 from './nft2.svg';
-import nft3 from './nft3.svg';
+import nft1 from 'src/assets/nft1.svg';
+import nft2 from 'src/assets/nft2.svg';
+import nft3 from 'src/assets/nft3.svg';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
