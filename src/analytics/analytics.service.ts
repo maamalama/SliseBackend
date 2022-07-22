@@ -196,7 +196,7 @@ export class AnalyticsService {
       });
 
       const topHoldersDashboard: TopHoldersDashboardResponse = {
-        tpHolders: topHolders,
+        topHolders: topHolders,
         bots: whitelist.bots,
         bluechipHolders: whitelist.bluechipHolders,
         whales: whitelist.whales
@@ -277,7 +277,7 @@ export class AnalyticsService {
       });
 
       const response: TopHoldersDashboardResponse = {
-        tpHolders: topHolders,
+        topHolders: topHolders,
         bots: whitelist.bots,
         bluechipHolders: whitelist.bluechipHolders,
         whales: whitelist.whales

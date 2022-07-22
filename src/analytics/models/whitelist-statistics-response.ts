@@ -14,7 +14,7 @@ export class TopHoldersResponse {
 }
 
 export class TopHoldersDashboardResponse {
-  tpHolders: TopHoldersResponse[];
+  topHolders: TopHoldersResponse[];
   bots: number;
   whales: number;
   bluechipHolders: number;
