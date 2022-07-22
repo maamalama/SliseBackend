@@ -12,7 +12,7 @@ const Root = styled('div')(() => ({
   background: '#DDFF55',
   boxShadow: '0px 0px 2px rgba(145, 158, 171, 0.2), 0px 12px 24px -4px rgba(145, 158, 171, 0.12)',
   borderRadius: 16,
-  padding: '12px 24px 16px',
+  padding: '12px 24px',
   color: '#131F0F',
 }));
 
@@ -130,12 +130,14 @@ const MlPrediction = () => {
         ML Prediction
       </Typography>
       <Group>
-        <Typography align="left" variant="overline" mb={0}>
-          MINT PRICE
-        </Typography>
-        <Typography align="left" variant="h6" mb={0}>
-          Ξ {priceSliderValue}
-        </Typography>
+        <Stack direction={'row'} alignItems="flex-start" justifyContent={'space-between'}>
+          <Typography align="left" variant="overline" mb={0}>
+            MINT PRICE
+          </Typography>
+          <Typography align="right" variant="h6" lineHeight={1} mb={0}>
+            Ξ {priceSliderValue}
+          </Typography>
+        </Stack>
         <Slider
           value={priceSliderValue}
           min={0}
@@ -155,12 +157,14 @@ const MlPrediction = () => {
         />
       </Group>
       <Group>
-        <Typography align="left" variant="overline" mb={0}>
-          COLLECTION SIZE
-        </Typography>
-        <Typography align="left" variant="h6" mb={0}>
-          {formatNumber(collectionSizeSliderValue)}
-        </Typography>
+        <Stack direction={'row'} alignItems="flex-start" justifyContent={'space-between'}>
+          <Typography align="left" variant="overline" mb={0}>
+            COLLECTION SIZE
+          </Typography>
+          <Typography align="right" variant="h6" lineHeight={1} mb={0}>
+            {formatNumber(collectionSizeSliderValue)}
+          </Typography>
+        </Stack>
         <Slider
           value={collectionSizeSliderValue}
           min={10}
