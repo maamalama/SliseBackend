@@ -17,7 +17,6 @@ const SMuiDataGrid = styled(MuiDataGrid)(() => ({
 const MutualHoldersDatagrid = ({ columns, rows }) => {
   return (
     <SMuiDataGrid
-      onCellClick={}
       columns={columns}
       rows={rows}
       components={{
