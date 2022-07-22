@@ -211,7 +211,6 @@ const MintList = () => {
       setWhales(response.data.data.whales);
       setBluechips(response.data.data.bluechipHolders);
       setSize(response.data.data.size);
-      console.log(bots);
     } else {
       const response = await axiosInstance.get(
         `https://daoanalytics.herokuapp.com/api/analytics/getTopHolders?id=afd7626f-388e-4f98-9f36-123d54688936`
@@ -224,7 +223,18 @@ const MintList = () => {
         holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
         holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
       });*/
+      response.data.data.topHolders.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.holdings = holding.alsoHold;
+        holding.avgNftPrice = holding.avgNFTPrice ?? (Math.random() * 100).toFixed(2);
+        holding.balance = holding.nftsTotalPrice ?? (Math.random() * 100).toFixed(2);
+        holding.holdingTime = holding.label;
+        holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
+      });
       setTopHolders(response.data.data.topHolders);
+      setBots(response.data.data.bots);
+      setWhales(response.data.data.whales);
+      setBluechips(response.data.data.bluechipHolders);
       setSize(response.data.data.size);
     }
   }, [isMountedRef]);
