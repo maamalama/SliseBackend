@@ -1,5 +1,5 @@
-import { Typography } from '@mui/material';
-import { styled } from '@mui/system';
+import {Typography} from '@mui/material';
+import {styled} from '@mui/system';
 import React, {useCallback, useEffect, useState} from 'react';
 import Page from 'src/components/Page';
 import Layout from 'src/layouts';
@@ -7,14 +7,13 @@ import Layout from 'src/layouts';
 import Datagrid from 'src/components/Datagrid';
 import CollectionNameCell from 'src/components/DatagridCells/CollectionNameCell';
 import MutualHoldersCell from 'src/components/DatagridCells/MutualHoldersCell';
-import { formatNumber } from 'src/widgets/utils';
+import {formatNumber} from 'src/widgets/utils';
 import nft1 from 'src/assets/nft1.svg';
 import nft2 from 'src/assets/nft2.svg';
 import nft3 from 'src/assets/nft3.svg';
 import MutualHoldersCard from 'src/widgets/MutualHoldersCard';
 import useIsMountedRef from '../hooks/useIsMountedRef';
 import axiosInstance from '../utils/axios';
-import MutualHoldersDatagrid from '../components/MutualHoldersDatagrid';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
@@ -93,7 +92,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({value}) => formatNumber(value),
   },
   {
     field: 'totalSupply',
@@ -105,7 +104,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({value}) => formatNumber(value),
   },
   {
     field: 'floorPrice',
@@ -117,7 +116,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => `Ξ ${value}`,
+    valueFormatter: ({value}) => `Ξ ${value}`,
   },
   {
     field: 'mintPrice',
@@ -129,7 +128,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => `Ξ ${value}`,
+    valueFormatter: ({value}) => `Ξ ${value}`,
   },
   {
     field: 'twitterFollowers',
@@ -141,9 +140,17 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({value}) => formatNumber(value),
   },
 ];
+
+function CircularProgress() {
+  return null;
+}
+
+function Grid(props) {
+  return null;
+}
 
 const MutualHolders = () => {
   const isMountedRef = useIsMountedRef();
@@ -161,6 +168,7 @@ const MutualHolders = () => {
         holding.floorPrice = holding.holdings.stats?.floor.toFixed(4) ?? (Math.random() * 100).toFixed(2);
         holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
         holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.totalHolders = holding.totalSupply / 2 * 1.5;
         console.log(holding);
       });
       setMutualHolders(response.data.data);
@@ -174,6 +182,7 @@ const MutualHolders = () => {
         holding.floorPrice = holding.holdings.stats?.floor.toFixed(2) ?? (Math.random() * 100).toFixed(2);
         holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
         holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.totalHolders = holding.totalSupply / 2 * 1.5;
         console.log(holding);
       });
       setMutualHolders(response.data.data);
@@ -184,8 +193,8 @@ const MutualHolders = () => {
     getMutualHolders();
   }, [getMutualHolders]);
 
-  if(mutualHolders) {
-    return(
+  if (mutualHolders) {
+    return (
       <Page
         sx={{
           height: 'calc(100vh - 60px)',
@@ -198,13 +207,32 @@ const MutualHolders = () => {
           Mutual Holders
         </Typography>
         <Cards>
-          <MutualHoldersCard image={mutualHolders[0]?.holdings?.logo ?? nft1.image} title={mutualHolders[0]?.name ?? null} value={mutualHolders[0]?.totalholdings ?? null} />
-          <MutualHoldersCard image={mutualHolders[1]?.holdings?.logo ?? nft2.image} title={mutualHolders[1]?.name ?? null} value={mutualHolders[1]?.totalholdings ?? null} />
-          <MutualHoldersCard image={mutualHolders[2]?.holdings?.logo ?? nft3.image} title={mutualHolders[2]?.name ?? null} value={mutualHolders[2]?.totalholdings ?? null} />
+          <MutualHoldersCard image={mutualHolders[0]?.holdings?.logo ?? nft1.image}
+                             title={mutualHolders[0]?.name ?? null} value={mutualHolders[0]?.totalholdings ?? null}/>
+          <MutualHoldersCard image={mutualHolders[1]?.holdings?.logo ?? nft2.image}
+                             title={mutualHolders[1]?.name ?? null} value={mutualHolders[1]?.totalholdings ?? null}/>
+          <MutualHoldersCard image={mutualHolders[2]?.holdings?.logo ?? nft3.image}
+                             title={mutualHolders[2]?.name ?? null} value={mutualHolders[2]?.totalholdings ?? null}/>
         </Cards>
-        <TableCard>
-          <MutualHoldersDatagrid columns={columns} rows={mutualHolders} />
-        </TableCard>
+        {mutualHolders !== undefined ?
+          <TableCard>
+            <Datagrid columns={columns} rows={mutualHolders}/>
+          </TableCard> :
+
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{minHeight: '100vh'}}
+          >
+            <Grid item xs={3}>
+              <CircularProgress/>
+            </Grid>
+          </Grid>
+        }
+
       </Page>
     );
   }
@@ -221,13 +249,22 @@ const MutualHolders = () => {
         Mutual Holders
       </Typography>
       <Cards>
-        <MutualHoldersCard image={nft3} title="Bored Ape Yacht Club" value={412} />
-        <MutualHoldersCard image={nft1} title="CryptoPunks" value={234} />
-        <MutualHoldersCard image={nft2} title="MeeBits" value={221} />
+        <MutualHoldersCard image={nft3} title="Bored Ape Yacht Club" value={412}/>
+        <MutualHoldersCard image={nft1} title="CryptoPunks" value={234}/>
+        <MutualHoldersCard image={nft2} title="MeeBits" value={221}/>
       </Cards>
-      <TableCard>
-        <Datagrid columns={columns} rows={_mutualHolders} />
-      </TableCard>
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        style={{minHeight: '100vh'}}
+      >
+        <Grid item xs={3}>
+          <CircularProgress/>
+        </Grid>
+      </Grid>
     </Page>
   );
 };
