@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Token, TokenType, Waitlist } from '@prisma/client';
+import { Token, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
 import {
   HolderInfo,
@@ -17,7 +17,6 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import path from 'path';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
-import { readFileSync } from 'fs';
 import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import {
@@ -274,11 +273,15 @@ export class AnalyticsService {
       const hm: MutualHoldingsResponse[] = JSON.parse(existMutualHolders);
       await Promise.all(hm.map(async (mutual) => {
         try {
-          const collectionStats = await this.getCollectionStats(mutual.address);
-          mutual.holdings.stats = collectionStats;
-          const totalHolders = await this.fetchHolders(1, mutual.address, 10000);
-          if (totalHolders) {
-            mutual.totalHolders = totalHolders.items.length;
+          if (mutual.holdings.stats === null) {
+            const collectionStats = await this.getCollectionStats(mutual.address);
+            mutual.holdings.stats = collectionStats;
+          }
+          if (mutual.totalHolders) {
+            const totalHolders = await this.fetchHolders(1, mutual.address, 10000);
+            if (totalHolders) {
+              mutual.totalHolders = totalHolders.items.length;
+            }
           }
         } catch {
 
