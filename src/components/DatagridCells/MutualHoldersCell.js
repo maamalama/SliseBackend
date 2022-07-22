@@ -30,13 +30,12 @@ const Bar = styled('div')((props) => ({
 }));
 
 const MutualHoldersCell = ({ value, row }) => {
-  const percent = (value / row.maxMutualHolders) * 100;
   return (
     <Root>
       <Wrapper>
-        <Bar sx={{ width: `${percent}%` }} />
+        <Bar sx={{ width: `${row.percent}%` }} />
       </Wrapper>
-      <Typography variant="body2">{formatNumber(value)}</Typography>
+      <Typography variant="body2">{value}</Typography>
     </Root>
   );
 };

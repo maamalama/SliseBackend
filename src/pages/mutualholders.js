@@ -72,7 +72,7 @@ const columns = [
     renderCell: CollectionNameCell,
   },
   {
-    field: 'mutualHolders',
+    field: 'totalholdings',
     headerName: 'Mutual Holders',
     flex: 1,
     align: 'left',
@@ -96,7 +96,7 @@ const columns = [
     valueFormatter: ({ value }) => formatNumber(value),
   },
   {
-    field: 'supply',
+    field: 'holdings',
     headerName: 'Supply',
     flex: 1,
     align: 'left',
@@ -105,7 +105,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value),
+    valueFormatter: ({ value }) => formatNumber(value.totalSupply),
   },
   {
     field: 'floorPrice',
