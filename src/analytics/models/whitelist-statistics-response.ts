@@ -18,6 +18,7 @@ export class TopHoldersDashboardResponse {
   bots: number;
   whales: number;
   bluechipHolders: number;
+  size: number;
 }
 
 export class MutualHoldingsResponse {

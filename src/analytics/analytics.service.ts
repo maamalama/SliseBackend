@@ -199,7 +199,8 @@ export class AnalyticsService {
         topHolders: topHolders,
         bots: whitelist.bots,
         bluechipHolders: whitelist.bluechipHolders,
-        whales: whitelist.whales
+        whales: whitelist.whales,
+        size: whitelistSize
       }
 
       if (topHolders.length > 8) {
@@ -238,9 +239,9 @@ export class AnalyticsService {
   public async getTopHolders(id: string): Promise<TopHoldersDashboardResponse> {
     const existTopHolders = await this.redis.get(`${id} topHolders`)
 
-    if (existTopHolders) {
+   /* if (existTopHolders) {
       return JSON.parse(existTopHolders);
-    } else {
+    } else {*/
       const topHolders = await this.prisma.$queryRaw<TopHoldersResponse[]>`select "TokenHolder".address, "TokenHolder"."totalBalanceUsd" as portfolio, count(DISTINCT TT.address) as nfts from "TokenHolder"
         inner join "TokenTransfer" TT on "TokenHolder".id = TT."holderId"
         where "TokenHolder"."waitlistId" = ${id} and "contractType" = 'ERC721'
@@ -280,13 +281,14 @@ export class AnalyticsService {
         topHolders: topHolders,
         bots: whitelist.bots,
         bluechipHolders: whitelist.bluechipHolders,
-        whales: whitelist.whales
+        whales: whitelist.whales,
+        size: whitelist.size
       }
 
       await this.redis.set(`${id} topHolders`, JSON.stringify(response), 'EX', 60 * 10 * 5);
 
       return response;
-    }
+   /* }*/
   }
 
   public async getMutualHoldings(id: string): Promise<MutualHoldingsResponse[]> {
