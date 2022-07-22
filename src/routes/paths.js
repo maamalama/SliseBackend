@@ -36,6 +36,7 @@ export const PATH_PAGE = {
   mutualholders: '/mutualholders',
   mltargeting: '/mltargeting',
   upload: '/upload',
+  socialdata:'/socialdata'
 };
 
 export const PATH_DASHBOARD = {
@@ -47,6 +48,7 @@ export const PATH_DASHBOARD = {
     analytics: path(ROOTS_DASHBOARD, '/analytics'),
     banking: path(ROOTS_DASHBOARD, '/banking'),
     booking: path(ROOTS_DASHBOARD, '/booking'),
+    socialdata: path(ROOTS_DASHBOARD, '/socialdata'),
     mltargeting: path(ROOTS_DASHBOARD, '/mltargeting'),
     upload: path(ROOTS_DASHBOARD, '/upload'),
   },
