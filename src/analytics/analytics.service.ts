@@ -270,7 +270,7 @@ export class AnalyticsService {
 
   public async getMutualHoldings(id: string): Promise<MutualHoldingsResponse[]> {
     const existMutualHolders = await this.redis.get(`${id} mutualHolders`);
-    if (existMutualHolders) {
+    if (!existMutualHolders) {
       const hm: MutualHoldingsResponse[] = JSON.parse(existMutualHolders);
       await Promise.all(hm.map(async (mutual) => {
         try {
