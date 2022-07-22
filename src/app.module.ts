@@ -35,9 +35,7 @@ import { MulterModule } from '@nestjs/platform-express';
     }),
     SchedulerModule, ScheduleModule.forRoot(),
     TokenProcessorModule,
-    MulterModule.register({
-      dest: './uploads',
-    })
+    MulterModule.register()
     // SentryModule.forRoot({
     //   dsn: 'sentry_io_dsn',
     //   debug: true,
