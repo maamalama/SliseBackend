@@ -145,7 +145,7 @@ export default function GeneralBooking() {
   }
   return (
     <Page title="ML Targeting" sx={{marginRight:'-40px'}} >
-      <Container maxWidth={themeStretch ? false : 'xl'} sx={{marginTop:'-115px', backgroundColor:'#F3F4EF', paddingBottom:'100px', marginBottom:'-120px', marginLeft: '-20px'}}>
+      <Container maxWidth={themeStretch ? false : 'xl'} sx={{ backgroundColor:'#F3F4EF', paddingBottom:'100px', marginBottom:'-120px', marginLeft: '-20px'}}>
         <Typography variant="h3" sx={{ paddingTop:'25px', marginBottom:'20px', paddingLeft:'20px'}}>ML Targeting</Typography>
         <Grid container spacing={2} alignItems="stretch" sx={{paddingRight:'20px', paddingLeft:'20px'}}>
             <Grid item sm={12} md={8} lg={8} >
