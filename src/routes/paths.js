@@ -37,7 +37,7 @@ export const PATH_DASHBOARD = {
   general: {
     app: path(ROOTS_DASHBOARD, '/app'),
     mintlist: path(ROOTS_DASHBOARD, '/mintlist'),
-    ecommerce: path(ROOTS_DASHBOARD, '/ecommerce'),
+    mutualholders: path(ROOTS_DASHBOARD, '/mutualholders'),
     analytics: path(ROOTS_DASHBOARD, '/analytics'),
     banking: path(ROOTS_DASHBOARD, '/banking'),
     booking: path(ROOTS_DASHBOARD, '/booking'),

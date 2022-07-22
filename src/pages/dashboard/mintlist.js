@@ -1,7 +1,6 @@
-import { IconButton, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
-import Iconify from 'src/components/Iconify';
 import Page from 'src/components/Page';
 import Layout from 'src/layouts';
 import CirclePercentageCard from 'src/widgets/CirclePercentageCard';
@@ -9,17 +8,16 @@ import BluechipBg from 'src/widgets/img/bluechipBg.svg';
 import BotBg from 'src/widgets/img/botBg.svg';
 import WhaleBg from 'src/widgets/img/whaleBg.svg';
 import SwitchCard from 'src/widgets/SwitchCard';
-import { CustomDatagridToolbar } from 'src/components/grid-toolbar';
 
+import Datagrid from 'src/components/Datagrid';
+import AddressCell from 'src/components/DatagridCells/AddressCell';
+import AvgNtfPrice from 'src/components/DatagridCells/AvgNtfPrice';
+import HoldingTimeCell from 'src/components/DatagridCells/HoldingTimeCell';
+import NftStackCell from 'src/components/DatagridCells/NftStackCell';
+import { formatNumber } from 'src/widgets/utils';
 import nft1 from './nft1.svg';
 import nft2 from './nft2.svg';
 import nft3 from './nft3.svg';
-import Datagrid from 'src/components/Datagrid';
-import AddressCell from 'src/components/DatagridCells/AddressCell';
-import { formatNumber } from 'src/widgets/utils';
-import HoldingTimeCell from 'src/components/DatagridCells/HoldingTimeCell';
-import NftStackCell from 'src/components/DatagridCells/NftStackCell';
-import AvgNtfPrice from 'src/components/DatagridCells/AvgNtfPrice';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
