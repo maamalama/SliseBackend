@@ -155,11 +155,17 @@ const MutualHolders = () => {
       const response = await axiosInstance.get(
         `https://daoanalytics.herokuapp.com/api/analytics/getMutualHoldings?id=${whitelistId}`
       );
+      response.data.data.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+      });
       setMutualHolders(response.data.data);
     } else {
       const response = await axiosInstance.get(
         `https://daoanalytics.herokuapp.com/api/analytics/getMutualHoldings?id=afd7626f-388e-4f98-9f36-123d54688936`
       );
+      response.data.data.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+      });
       setMutualHolders(response.data.data);
     }
   }, [isMountedRef]);
@@ -187,7 +193,7 @@ const MutualHolders = () => {
           <MutualHoldersCard image={mutualHolders[2]?.holdings?.logo ?? nft3.image} title={mutualHolders[2]?.name ?? null} value={mutualHolders[2]?.totalholdings ?? null} />
         </Cards>
         <TableCard>
-          <MutualHoldersDatagrid columns={columns} rows={_mutualHolders} />
+          <MutualHoldersDatagrid columns={columns} rows={mutualHolders} />
         </TableCard>
       </Page>
     );
