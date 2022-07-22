@@ -28,13 +28,14 @@ const OneAvatar = ({ src, alt, index, children }) => {
 const NftCell = ({ value, colDef }) => {
   const width = colDef.computedWidth - 20;
   const avatarImgCount = Math.floor((width - 32) / 28);
-
+const firstNum = Math.floor(Math.random() * 5) 
+const secondNum = firstNum +1
   return (
     <Stack >
-      {value.slice(0, 1).map((av, index) => (
+      {value.slice(firstNum, secondNum).map((av, index) => (
         <OneAvatar {...av} index={index} />
       ))}
-      {avatarImgCount < 1 && <OneAvatar index={avatarImgCount}>+{1 - avatarImgCount}</OneAvatar>}
+
     </Stack>
   );
 };

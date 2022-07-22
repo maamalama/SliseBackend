@@ -1,10 +1,9 @@
 
 // @mui
 import {styled} from '@mui/material/styles';
-import {Card, Slider, Stack,Grid, Typography, Container, Box, CardContent} from '@mui/material';
+import {Card, Stack,Grid, Typography, Container, Box, CardContent, Avatar} from '@mui/material';
 import Datagrid from 'src/components/Datagrid';
 import Page from 'src/components/Page';
-
 import Layout from 'src/layouts';
 import Icon from './icons/upward.svg'
 import Chart from './icons/chart.svg'
@@ -43,7 +42,7 @@ const _mintList = [...Array(36)].map((_, index) => ({
 
   pfp: [nft1, nft2, nft3, nft1, nft2, nft3, nft1, nft2, nft3],
   discordMessages: 12 + Math.floor(Math.random() * 29),
-  followers: 3432 + Math.floor(Math.random() * 29),
+  followers: 432 + Math.floor(Math.random() * 29),
   twitter: ['@ruleconcept1', '@flipper', '@holder34', '@tomas', '@ape232', '@mironn', '@Kbalika2', '@cryptocraze', '@buscador', '@wayne3'][Math.floor(Math.random() * 10)],
   twitterInteractions: 400 + Math.floor(Math.random() * 10),
   discordUsername:['rule.eth#5454', 'ape423#121', 'punk#1253', 'miron#4523', 'davidCrypt#5325', 'rave#5323', 'Kbalika#2432', 'crazape#5234', 'buscador#4329', 'wayne3#8887'][Math.floor(Math.random() * 10)],
@@ -53,7 +52,7 @@ const columns = [
     field: 'pfp',
     headerName: 'PFP',
     // width: 92,
-    flex: 1,
+    flex: 0,
     align: 'left',
     headerAlign: 'left',
     sortable: false,
@@ -102,12 +101,10 @@ const columns = [
   {
     field: 'twitterInteractions',
     headerName: 'Twitter Interactions',
-    // width: 128,
     flex: 2,
     align: 'left',
     headerAlign: 'left',
     sortable: false,
-
     disableColumnMenu: true,
     disableReorder: true,
   },
@@ -162,6 +159,7 @@ Twitter Followers
       <Stack direction="row" spacing={1}>
         <Box sx={{marginTop:'7px'}}>  <img {...Icon} /></Box>
     
+    
       <Typography variant="subtitle2">
 2.6%
       </Typography>
@@ -190,7 +188,7 @@ Discord Members
 1,290
       </Typography>
       <Stack direction="row" spacing={1}>
-        <Box sx={{marginTop:'7px'}}>  <img {...Icon} /></Box>
+        <Box sx={{marginTop:'7px'}}>  <img  {...Icon} /></Box>
     
       <Typography variant="subtitle2">
 10.1%
