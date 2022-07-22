@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Page from 'src/components/Page';
 import Layout from 'src/layouts';
 import CirclePercentageCard from 'src/widgets/CirclePercentageCard';
@@ -18,6 +18,8 @@ import { formatNumber } from 'src/widgets/utils';
 import nft1 from 'src/assets/nft1.svg';
 import nft2 from 'src/assets/nft2.svg';
 import nft3 from 'src/assets/nft3.svg';
+import axiosInstance from '../utils/axios';
+import useIsMountedRef from '../hooks/useIsMountedRef';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
@@ -175,6 +177,50 @@ const MintList = () => {
   const [botsFilter, setBotsFilter] = useState(true);
   const toggleMlWallets = () => setMlWallets((s) => !s);
   const toggleBotsFilter = () => setBotsFilter((s) => !s);
+  const [topHolders, setTopHolders] = useState([]);
+  const [bots, setBots] = useState(null);
+  const [whales, setWhales] = useState(null);
+  const [bluechip, setBluechips] = useState(null);
+  const isMountedRef = useIsMountedRef();
+
+  const getTopHolders = useCallback(async () => {
+    const whitelistId = window.localStorage.getItem('whitelistId');
+    if (whitelistId) {
+      const response = await axiosInstance.get(
+        `https://daoanalytics.herokuapp.com/api/analytics/getTopHolders?id=${whitelistId}`
+      );
+     /* response.data.data.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings.stats?.floor.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
+      });*/
+      setTopHolders(response.data.data.topHolders);
+      setBots(response.data.data.bots);
+      setWhales(response.data.data.whales);
+      setBluechips(response.data.data.bluechipHolders);
+      console.log(response.data.data.topHolders);
+    } else {
+      const response = await axiosInstance.get(
+        `https://daoanalytics.herokuapp.com/api/analytics/getTopHolders?id=afd7626f-388e-4f98-9f36-123d54688936`
+      );
+     /* response.data.data.map((holding) => {
+        holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings.stats?.floor.toFixed(2) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
+      });*/
+      setTopHolders(response.data.data.topHolders);
+    }
+  }, [isMountedRef]);
+
+  useEffect(() => {
+    getTopHolders();
+  }, [getTopHolders]);
 
   return (
     <Page
