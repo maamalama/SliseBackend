@@ -11,6 +11,7 @@ import { BullModule } from '@nestjs/bull';
 import { TokenProcessorModule } from './tokenprocessor/tokenprocessor.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterModule } from '@nestjs/platform-express';
+import { memoryStorage} from 'multer';
 
 @Module({
   imports: [AuthModule, AnalyticsModule, PrismaModule, RedisModule.forRoot({
@@ -35,7 +36,9 @@ import { MulterModule } from '@nestjs/platform-express';
     }),
     SchedulerModule, ScheduleModule.forRoot(),
     TokenProcessorModule,
-    MulterModule.register()
+    MulterModule.register({
+      storage: memoryStorage()
+    })
     // SentryModule.forRoot({
     //   dsn: 'sentry_io_dsn',
     //   debug: true,
