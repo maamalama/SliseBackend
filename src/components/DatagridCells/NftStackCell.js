@@ -1,7 +1,9 @@
 import { Avatar, Stack, Typography } from '@mui/material';
 import React from 'react';
+import nft1 from 'src/assets/nft1.svg';
 
-const OneAvatar = ({ src, alt, index, children }) => {
+const OneAvatar = ({ holdings, alt, index, children }) => {
+  console.log(holdings);
   return (
     <div style={{ position: 'relative', zIndex: 1000 - index, transform: `translateX(-${index * 4}px)` }}>
       <div
@@ -16,7 +18,7 @@ const OneAvatar = ({ src, alt, index, children }) => {
           zIndex: 1000 - index,
         }}
       />
-      <Avatar sx={{ width: 32, height: 32, zIndex: 1000 - index, bgcolor: '#DDFF55' }} src={src} alt={alt}>
+      <Avatar sx={{ width: 32, height: 32, zIndex: 1000 - index, bgcolor: '#DDFF55' }} src={holdings?.logo || 'https://lh3.googleusercontent.com/Ju9CkWtV-1Okvf45wo8UctR-M9He2PjILP0oOvxE89AyiPPGtrR3gysu1Zgy0hjd2xKIgjJJtWIc0ybj4Vd7wv8t3pxDGHoJBzDB=s120'} alt={alt}>
         <Typography color="#131F0F" variant="caption">
           {children}
         </Typography>
@@ -27,14 +29,14 @@ const OneAvatar = ({ src, alt, index, children }) => {
 
 const NftStackCell = ({ value, colDef }) => {
   const width = colDef.computedWidth - 20;
-  const avatarImgCount = Math.floor((width - 32) / 28);
+  const avatarImgCount = 3;
 
   return (
     <Stack direction={'row'}>
-      {value.slice(0, avatarImgCount).map((av, index) => (
+      {value.collectionInfo.map((av, index) => (
         <OneAvatar {...av} index={index} />
       ))}
-      {avatarImgCount < value.length && <OneAvatar index={avatarImgCount}>+{value.length - avatarImgCount}</OneAvatar>}
+      <OneAvatar index={avatarImgCount}>+{value.total}</OneAvatar>
     </Stack>
   );
 };

@@ -200,10 +200,10 @@ const MintList = () => {
       });*/
       response.data.data.topHolders.map((holding) => {
         holding.id = Math.floor(Math.random() * 1000).toString(16);
-        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
-        holding.floorPrice = holding.holdings.stats?.floor.toFixed(2) ?? (Math.random() * 100).toFixed(2);
-        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
-        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        holding.holdings = holding.alsoHold;
+        holding.avgNftPrice = holding.avgNFTPrice ?? (Math.random() * 100).toFixed(2);
+        holding.balance = holding.nftsTotalPrice ?? (Math.random() * 100).toFixed(2);
+        holding.holdingTime = holding.label;
         holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
       });
       setTopHolders(response.data.data.topHolders);
