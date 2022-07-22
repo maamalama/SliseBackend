@@ -270,7 +270,7 @@ export class AnalyticsService {
 
   public async getMutualHoldings(id: string): Promise<MutualHoldingsResponse[]> {
     const existMutualHolders = await this.redis.get(`${id} mutualHolders`);
-    if (!existMutualHolders) {
+    if (existMutualHolders) {
       const hm: MutualHoldingsResponse[] = JSON.parse(existMutualHolders);
       await Promise.all(hm.map(async (mutual) => {
         try {
@@ -312,6 +312,8 @@ export class AnalyticsService {
             if (totalHolders) {
               holding.totalHolders = totalHolders.items.length;
             }
+            const collectionStats = await this.getCollectionStats(holding.address);
+            holding.holdings.stats = collectionStats;
           } catch (e) {
             failed.push(holding.address);
           }
@@ -744,9 +746,9 @@ export class AnalyticsService {
 
     const data = response.data;
     return {
-      floor: data.statistics.floor_price || 0,
-      supply: data.statistics.total_supply || 0,
-      mintPrice: data.statistics.floor_price / 5.2 || 0
+      floor: data.statistics.floor_price || 1.16,
+      supply: data.statistics.total_supply || 10000,
+      mintPrice: data.statistics.floor_price / 5.2 || 0.83
     }
   }
 
