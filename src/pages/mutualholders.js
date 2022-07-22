@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import React from 'react';
+import React, {useCallback} from 'react';
 import Page from 'src/components/Page';
 import Layout from 'src/layouts';
 
@@ -12,6 +12,8 @@ import nft1 from 'src/assets/nft1.svg';
 import nft2 from 'src/assets/nft2.svg';
 import nft3 from 'src/assets/nft3.svg';
 import MutualHoldersCard from 'src/widgets/MutualHoldersCard';
+import useIsMountedRef from '../hooks/useIsMountedRef';
+import axiosInstance from '../utils/axios';
 
 const Cards = styled('div')(() => ({
   display: 'grid',
@@ -143,6 +145,25 @@ const columns = [
 ];
 
 const MutualHolders = () => {
+  const isMountedRef = useIsMountedRef();
+  const [mutualHolders, setMutualHolders] = useState(null);
+
+  const getMutualHolders = useCallback(async () => {
+    const whitelistId = window.localStorage.getItem('whitelistId');
+    if (whitelistId) {
+      const response = await axiosInstance.get(
+        `https://daoanalytics.herokuapp.com/api/analytics/getWhitelistStatistics?id=${whitelistId}`
+      );
+      window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
+      setStatistics(response.data.data);
+    } else {
+      const response = await axios.get(
+        `https://daoanalytics.herokuapp.com/api/analytics/getWhitelistStatistics?id=afd7626f-388e-4f98-9f36-123d54688936`
+      );
+      window.localStorage.setItem('whitelistSize', response.data.data.whitelistSize);
+      setStatistics(response.data.data);
+    }
+  }, [isMountedRef]);
   return (
     <Page
       sx={{
