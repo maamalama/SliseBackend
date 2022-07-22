@@ -16,6 +16,7 @@ const SMuiDataGrid = styled(MuiDataGrid)(() => ({
 const Datagrid = ({ columns, rows }) => {
   return (
     <SMuiDataGrid
+      autoHeight
       columns={columns}
       rows={rows}
       components={{

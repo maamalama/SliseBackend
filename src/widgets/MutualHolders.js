@@ -62,7 +62,7 @@ const MutualHolders = ({ data = [] }) => {
           <TableBody>
             {Array.from(data).map((row) => (
               <TableRow key={row.address}>
-                <SBodyTableCell size="small" style={{ width: '50%', paddingRight: 16 }}>
+                <SBodyTableCell size="small" style={{ width: '50%', paddingRight: 8 }}>
                   <Stack direction="row" alignItems="flex-start" spacing={1}>
                     <a
                       style={{ textDecoration: 'none', color: 'inherit' }}
@@ -80,7 +80,9 @@ const MutualHolders = ({ data = [] }) => {
                       target={'_blank'}
                       href={`https://etherscan.io/address/${row.address}`}
                     >
-                      <Typography variant="subtitle2">{row.name}</Typography>
+                      <Typography whiteSpace={'nowrap'} variant="subtitle2">
+                        {row.name}
+                      </Typography>
                     </a>
                   </Stack>
                 </SBodyTableCell>

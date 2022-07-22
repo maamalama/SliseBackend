@@ -179,7 +179,6 @@ const MintList = () => {
   return (
     <Page
       sx={{
-        height: 'calc(100vh - 60px)',
         display: 'grid',
         gridTemplateRows: 'min-content min-content min-content 1fr',
       }}
