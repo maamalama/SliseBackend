@@ -96,7 +96,7 @@ const columns = [
     valueFormatter: ({ value }) => formatNumber(value),
   },
   {
-    field: 'holdings',
+    field: 'totalSupply',
     headerName: 'Supply',
     flex: 1,
     align: 'left',
@@ -105,7 +105,7 @@ const columns = [
     resizable: false,
     disableColumnMenu: true,
     disableReorder: true,
-    valueFormatter: ({ value }) => formatNumber(value.totalSupply),
+    valueFormatter: ({ value }) => formatNumber(value),
   },
   {
     field: 'floorPrice',
@@ -157,6 +157,11 @@ const MutualHolders = () => {
       );
       response.data.data.map((holding) => {
         holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings.stats?.floor.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        console.log(holding);
       });
       setMutualHolders(response.data.data);
     } else {
@@ -165,6 +170,11 @@ const MutualHolders = () => {
       );
       response.data.data.map((holding) => {
         holding.id = Math.floor(Math.random() * 1000).toString(16);
+        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings.stats?.floor.toFixed(2) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
+        console.log(holding);
       });
       setMutualHolders(response.data.data);
     }
