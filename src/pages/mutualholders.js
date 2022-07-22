@@ -164,9 +164,9 @@ const MutualHolders = () => {
       );
       response.data.data.map((holding) => {
         holding.id = Math.floor(Math.random() * 1000).toString(16);
-        holding.totalSupply = holding.holdings.totalSupply ?? (Math.random() * 100).toFixed(2);
-        holding.floorPrice = holding.holdings.stats?.floor.toFixed(4) ?? (Math.random() * 100).toFixed(2);
-        holding.mintPrice = holding.holdings.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.totalSupply = holding.holdings?.totalSupply ?? (Math.random() * 100).toFixed(2);
+        holding.floorPrice = holding.holdings?.stats?.floor.toFixed(4) ?? (Math.random() * 100).toFixed(2);
+        holding.mintPrice = holding.holdings?.stats?.mintPrice.toFixed(4) ?? (Math.random() * 100).toFixed(2);
         holding.twitterFollowers = (Math.random() * 100000).toFixed(2);
         holding.totalHolders = holding.totalSupply !== undefined ? holding.totalSupply / 2 * 1.5 : (Math.random() * 100).toFixed(2);
       });

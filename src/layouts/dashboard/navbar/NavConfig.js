@@ -36,9 +36,9 @@ const navConfig = [
         icon: ICONS.dashboard,
       },
       { title: 'Mint List', path: PATH_PAGE.mintlist, icon: ICONS.analytics },
-      { title: 'Social Data', path: PATH_PAGE.socialdata, icon: ICONS.social },
+      { title: 'Social Data', path: PATH_PAGE.socialdata, icon: ICONS.chat },
       { title: 'Mutual Holders', path: PATH_PAGE.mutualholders, icon: ICONS.social },
-      { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.user },
+/*      { title: 'Community Insights', path: PATH_DASHBOARD.general.booking, icon: ICONS.user },*/
       { title: 'ML Targeting', path: PATH_PAGE.mltargeting, icon: ICONS.components },
     ],
   },

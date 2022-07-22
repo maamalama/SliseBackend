@@ -18,7 +18,7 @@ const OneAvatar = ({holdings, alt, index, children}) => {
         }}
       />
       {index >= 3 ? <Avatar sx={{width: 32, height: 32, zIndex: 1000 - index, bgcolor: '#DDFF55'}}
-                           alt={alt}>
+                            alt={alt}>
           <Typography color="#131F0F" variant="caption">
             {children}
           </Typography>
