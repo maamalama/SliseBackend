@@ -13,12 +13,12 @@ const MutualHoldersCard = ({ title, value, image }) => {
   return (
     <Root>
       <Stack direction={'row'} gap={3} alignItems="center">
-        <Avatar src={image.src} sx={{ width: 64, height: 64 }}>
+        <Avatar src={image} sx={{ width: 64, height: 64 }}>
           {title}
         </Avatar>
         <div>
-          <Typography variant="h5">{title}</Typography>
-          <Typography variant="subtitle2">{value} Mutual Holders</Typography>
+          <Typography variant="h5"> {title === null ? 'Loading..' : title}</Typography>
+          <Typography variant="subtitle2">{value === null ? 'Loading..' : `${value} Mutual Holders`} </Typography>
         </div>
       </Stack>
     </Root>
