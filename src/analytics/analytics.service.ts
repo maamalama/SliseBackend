@@ -127,7 +127,7 @@ export class AnalyticsService {
         order by "TokenHolder"."totalBalanceUsd" desc
         limit 10;`,
         this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
-        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} 
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} and "TokenTransfer".address <> '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d'
         and "contractType" = 'ERC721'
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
@@ -239,7 +239,6 @@ export class AnalyticsService {
 
   public async getTopHolders(id: string): Promise<TopHoldersDashboardResponse> {
     const existTopHolders = await this.redis.get(`${id} topHolders`)
-
     if (existTopHolders) {
       return JSON.parse(existTopHolders);
     } else {
@@ -279,9 +278,11 @@ export class AnalyticsService {
           holder.holdingTimeLabel = 'flipper'
         }
         holder.tradingVolume = holder.portfolio - holder.avgNFTPrice;
-        holder.alsoHold = {
-          collectionInfo: this.getMultipleRandom(hm, 3),
-          total: 16
+        if (hm) {
+          holder.alsoHold = {
+            collectionInfo: this.getMultipleRandom(hm, 3),
+            total: 16
+          }
         }
       });
 
@@ -329,7 +330,7 @@ export class AnalyticsService {
         }
       });
       const mutualHoldings = await this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
-        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} 
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} and "TokenTransfer".address <> '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d'
         and "contractType" = 'ERC721'
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
