@@ -488,10 +488,13 @@ export class AnalyticsService {
 
   public async storeWaitlist(waitlistRequest: WhitelistInfoRequest, file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     this.logger.debug(`collection: ${waitlistRequest.collectionName} received for processing`);
-
-    const uploadedFile = await this.storage.upload(file);
-    const s3File = await this.storage.getFile(uploadedFile.key);
-
+    let s3File;
+    try {
+      const uploadedFile = await this.storage.upload(file);
+      s3File = await this.storage.getFile(uploadedFile.key);
+    } catch (e) {
+      this.logger.debug(`error uploading file ${e.toString()}`)
+    }
     const csvFile = s3File.Body;
     const parsedCsv = await papaparse.parse(csvFile.toString(), {
       header: false,
