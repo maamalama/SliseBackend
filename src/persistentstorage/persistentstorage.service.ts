@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class PersistentStorageService {
+  private readonly logger = new Logger(PersistentStorageService.name);
   public async upload(file): Promise<any> {
     const filename = file.originalname;
     const bucketS3 = 'bucketeer-97d78e08-2ff3-4666-a58b-8bb699a71923';
@@ -21,7 +22,7 @@ export class PersistentStorageService {
         return res;
       })
       .catch(e => {
-        console.log(e)
+        this.logger.debug(e.toString())
         return null;
       });
     return data;
