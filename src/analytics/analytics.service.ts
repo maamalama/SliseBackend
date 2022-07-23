@@ -406,7 +406,7 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-    const a = await this.getTokensByAddresses(['0x566ac1ca3ebb8c157f2c0b3f9fd1f7ce5fbec45e']);
+    const a = await this.fetchHolders(1,'0x79fcdef22feed20eddacbb2587640e45491b757f',10000);
     const b = a;
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
 
