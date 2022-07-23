@@ -458,7 +458,6 @@ export class AnalyticsService {
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: request.collectionName,
-        contractAddress: request.contractAddress.toLowerCase()
       }
     });
     const holdersRequest = {
@@ -502,7 +501,6 @@ export class AnalyticsService {
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: waitlistRequest.collectionName,
-        contractAddress: waitlistRequest.contractAddress,
         mainWaitlist: false
       }
     });
