@@ -514,7 +514,7 @@ export class AnalyticsService {
     });
     this.logger.debug(`collection: ${holdersRequest.waitlistId} will be processed with jobId: ${job.id}`);
     return {
-      contractAddress: waitlist.contractAddress,
+      name: waitlistRequest.collectionName,
       id: waitlist.id
     };
   }
