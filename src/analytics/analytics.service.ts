@@ -29,6 +29,7 @@ import {
 } from './models/whitelist-statistics-response';
 import Redlock from 'redlock';
 import { Network } from '@zoralabs/zdk/dist/queries/queries-sdk';
+import { PersistentStorageService } from '../persistentstorage/persistentstorage.service';
 
 @Injectable()
 export class AnalyticsService {
@@ -52,7 +53,8 @@ export class AnalyticsService {
     @InjectRedis() private readonly redis: Redis,
     private readonly prisma: PrismaService,
     private readonly httpService: HttpService,
-    @InjectQueue('waitlist') private readonly holdersQueue: Queue
+    @InjectQueue('waitlist') private readonly holdersQueue: Queue,
+    private readonly storage: PersistentStorageService
   ) {
     this.web3 = new this.web3(
       new this.web3.providers.HttpProvider(
@@ -486,11 +488,11 @@ export class AnalyticsService {
 
   public async storeWaitlist(waitlistRequest: WhitelistInfoRequest, file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     this.logger.debug(`collection: ${waitlistRequest.collectionName} received for processing`);
-    //const hldrs = await this.fetchHolders(1, waitlistRequest.contractAddress, waitlistRequest.waitlistSize);
-    /* const addresses = hldrs.items.map((item) => {
-       return item.address;
-     });*/
-    const csvFile = file.buffer;
+
+    const uploadedFile = await this.storage.upload(file);
+    const s3File = await this.storage.getFile(uploadedFile.key);
+
+    const csvFile = s3File.Body;
     const parsedCsv = await papaparse.parse(csvFile.toString(), {
       header: false,
       skipEmptyLines: true,

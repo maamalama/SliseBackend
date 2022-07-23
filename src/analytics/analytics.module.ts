@@ -5,6 +5,7 @@ import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
 import { BullModule } from '@nestjs/bull';
 import { join } from 'path';
+import { PersistentStorageModule } from '../persistentstorage/persistentstorage.module';
 
 @Module({
   imports: [BullModule.registerQueue({
@@ -12,7 +13,7 @@ import { join } from 'path';
   }), PrismaModule, HttpModule.register({
     timeout: 8000,
     maxRedirects: 5,
-  })],
+  }), PersistentStorageModule],
   providers: [AnalyticsService, AnalyticsController],
   exports: [AnalyticsService, AnalyticsController]
 })

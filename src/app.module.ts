@@ -12,6 +12,7 @@ import { TokenProcessorModule } from './tokenprocessor/tokenprocessor.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage} from 'multer';
+import { PersistentStorageModule } from './persistentstorage/persistentstorage.module';
 
 @Module({
   imports: [AuthModule, AnalyticsModule, PrismaModule, RedisModule.forRoot({
@@ -38,7 +39,8 @@ import { memoryStorage} from 'multer';
     TokenProcessorModule,
     MulterModule.register({
       storage: memoryStorage()
-    })
+    }),
+    PersistentStorageModule
     // SentryModule.forRoot({
     //   dsn: 'sentry_io_dsn',
     //   debug: true,
