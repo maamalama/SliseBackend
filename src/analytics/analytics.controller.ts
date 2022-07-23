@@ -104,9 +104,7 @@ export class AnalyticsController {
   @Post('storeWhitelist')
   @UseInterceptors(
     TransformInterceptor,
-    FileInterceptor('file', {
-      storage: memoryStorage()
-    }))
+    FileInterceptor('file'))
   async storeWhitelist(@Body(new ValidationPipe()) request: WhitelistInfoRequest, @UploadedFile() file: Express.Multer.File): Promise<WhitelistInfoResponse> {
     const response = await this.analyticsService.storeWaitlist(request, file);
     return response;

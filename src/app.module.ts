@@ -37,9 +37,7 @@ import { PersistentStorageModule } from './persistentstorage/persistentstorage.m
     }),
     SchedulerModule, ScheduleModule.forRoot(),
     TokenProcessorModule,
-    MulterModule.register({
-      storage: memoryStorage()
-    }),
+    MulterModule.register(),
     PersistentStorageModule
     // SentryModule.forRoot({
     //   dsn: 'sentry_io_dsn',
