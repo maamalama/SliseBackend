@@ -5,6 +5,8 @@ import { AnalyticsService } from '../analytics/analytics.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import Redlock from 'redlock';
+import papaparse from 'papaparse';
+import { readFileSync } from 'fs';
 
 @Processor({ name: 'waitlist', scope: Scope.DEFAULT })
 export class TokenProcessorService {
@@ -29,8 +31,20 @@ export class TokenProcessorService {
     const holders = job.data.holdersRequest;
 
     try {
+      const file = holders.file;
+      const data = Buffer.from(file.Body).toString('utf8');
+      const parsedCsv = await papaparse.parse(data, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => results.data
+      });
+      //TODO: change to map in map
+      let addresses: string[] = [];
+      parsedCsv.data.map((subarray) => subarray.map((address) => {
+        addresses.push(address);
+      }));
       let savedHolders: any[] = [];
-      holders.addresses.map((tokenHolder) => {
+      addresses.map((tokenHolder) => {
         const dataHolder = {
           address: tokenHolder.toLowerCase(),
           totalBalanceTokens: 0,

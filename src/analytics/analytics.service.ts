@@ -17,7 +17,6 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import path from 'path';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
-import papaparse from 'papaparse';
 import { getFollowerCount } from 'follower-count';
 import {
   CollectionInfoResponse,
@@ -500,16 +499,6 @@ export class AnalyticsService {
     }
     this.logger.debug(JSON.stringify(s3File));
     this.logger.debug(`has body`);
-    const parsedCsv = await papaparse.parse(s3File.Body.toString(), {
-      header: false,
-      skipEmptyLines: true,
-      complete: (results) => results.data
-    });
-    //TODO: change to map in map
-    let addresses: string[] = [];
-    parsedCsv.data.map((subarray) => subarray.map((address) => {
-      addresses.push(address);
-    }));
     const waitlist = await this.prisma.waitlist.create({
       data: {
         name: waitlistRequest.collectionName,
@@ -517,8 +506,9 @@ export class AnalyticsService {
         mainWaitlist: false
       }
     });
+
     const holdersRequest = {
-      addresses: addresses,
+      file: s3File,
       waitlistId: waitlist.id
     };
     const job = await this.holdersQueue.add('parseAndStore', {
