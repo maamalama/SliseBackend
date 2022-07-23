@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Token, Waitlist } from '@prisma/client';
 import { HttpService } from '@nestjs/axios';
@@ -494,6 +494,9 @@ export class AnalyticsService {
       s3File = await this.storage.getFile(uploadedFile.key);
     } catch (e) {
       this.logger.debug(`error uploading file ${e.toString()}`)
+    }
+    if(!s3File.Body){
+      throw new BadRequestException(`no body`);
     }
     const csvFile = s3File.Body;
     const parsedCsv = await papaparse.parse(csvFile.toString(), {
