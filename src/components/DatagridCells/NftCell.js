@@ -35,7 +35,7 @@ const secondNum = firstNum +1
       {value.slice(firstNum, secondNum).map((av, index) => (
         <OneAvatar {...av} index={index} />
       ))}
-
+      {avatarImgCount < 1 && <OneAvatar index={avatarImgCount}>+{1 - avatarImgCount}</OneAvatar>}
     </Stack>
   );
 };
