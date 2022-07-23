@@ -451,7 +451,7 @@ export class AnalyticsService {
 
   public async parseHolders(request: WhitelistInfoRequest): Promise<string> {
     this.logger.debug(`collection: ${request.collectionName} received for processing`);
-    const hldrs = await this.fetchHolders(1, request.contractAddress, 10000);
+    const hldrs = await this.fetchHolders(1, '', 10000);
     const addresses = hldrs.items.map((item) => {
       return item.address;
     });
