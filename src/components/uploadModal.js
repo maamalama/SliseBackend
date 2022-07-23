@@ -21,7 +21,7 @@ UploadSingleFile.propTypes = {
 
 export default function UploadSingleFile(props) {
   const isMountedRef = useIsMountedRef();
-  const {acceptedFiles, getRootProps, getInputProps} = useDropzone();
+  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone();
   const [whitelistName, setWhitelistName] = useState(null);
   const [fileUploaded, setFileUploaded] = useState(false);
   const handleChange = useMemo(
@@ -38,7 +38,7 @@ export default function UploadSingleFile(props) {
   });
   const upload = useCallback(async () => {
     var formData = new FormData();
-    console.log(acceptedFiles[0].name);
+    console.log(acceptedFiles);
     formData.append('file', acceptedFiles[0], acceptedFiles[0].name);
     formData.append('collectionName', whitelistName);
     const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData, {
@@ -56,6 +56,7 @@ export default function UploadSingleFile(props) {
       };
 
       window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
+      window.location.reload(false);
     }
   }, [isMountedRef]);
 
