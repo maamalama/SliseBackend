@@ -27,17 +27,18 @@ export default function UploadSingleFile(props) {
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-        setFiles(acceptedFiles[0]);
-        console.log(fileU);
+        var formData = new FormData();
+        formData.append("file", file, file.name);
+        formData.append('collectionName', whitelistName);
       }
       reader.readAsArrayBuffer(file)
     })
   }, []);
   const isMountedRef = useIsMountedRef();
-  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone(/*{onDrop}*/);
-  const [whitelistName, setWhitelistName] = useState('');
+  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone({onDrop});
+  const [whitelistName, setWhitelistName] = useState(null);
   const [fileUploaded, setFileUploaded] = useState(false);
-  const [fileU, setFiles] = useState();
+  const [fileU, setFiles] = useState([]);
   const handleChange = useMemo(
     () => (event) => setWhitelistName(event.target.value),
     []
@@ -52,11 +53,11 @@ export default function UploadSingleFile(props) {
       setFileUploaded(false);
     }
   });
-
-
   const upload = useCallback(async () => {
-    var formData = new FormData();
-    formData.append("file", acceptedFiles[0]);
+
+    console.log(file);
+
+    formData.append("file", file, file.name);
 
     formData.append('collectionName', whitelistName);
     const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData, {
@@ -66,14 +67,11 @@ export default function UploadSingleFile(props) {
       data: formData
     });
     if (response.data.data) {
-      const name = response.data.data.name;
-      console.log(response.data.data);
-      const id = response.data.data.id;
       const storedWhitelists = {
         whitelists: [
           {
-            id: id,
-            name: name
+            id: response.data.data.id,
+            name: response.data.data.name
           }
         ]
       };
