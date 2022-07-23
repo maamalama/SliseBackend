@@ -63,16 +63,26 @@ export default function UploadSingleFile(props) {
       data: formData
     });
     if (response.data.data) {
-      const storedWhitelists = {
-        whitelists: [
-          {
-            id: response.data.data.id,
-            name: response.data.data.name
-          }
-        ]
-      };
-
-      window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
+      const existStoredWhitelists = JSON.parse(window.localStorage.getItem('storedWhitelists'));
+      let storedWhitelists;
+      const whitelist = {
+        id: response.data.data.id,
+        name: response.data.data.name
+      }
+      if (existStoredWhitelists) {
+        existStoredWhitelists.whitelists.push(whitelist);
+        window.localStorage.setItem('storedWhitelists', JSON.stringify(existStoredWhitelists));
+      } else {
+        storedWhitelists = {
+          whitelists: [
+            {
+              id: response.data.data.id,
+              name: response.data.data.name
+            }
+          ]
+        };
+        window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
+      }
       window.location.reload(false);
     }
   }, [uploadedFile]);
