@@ -36,12 +36,17 @@ export default function UploadSingleFile(props) {
       setFileUploaded(false);
     }
   });
-  const upload  = useCallback(async () => {
-    const formData = new FormData();
-    formData.append('file', acceptedFiles[0]);
+  const upload = useCallback(async () => {
+    var formData = new FormData();
+    console.log(acceptedFiles[0].name);
+    formData.append('file', acceptedFiles[0], acceptedFiles[0].name);
     formData.append('collectionName', whitelistName);
-    const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData);
-    if(response.data.data){
+    const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+    });
+    if (response.data.data) {
       const storedWhitelists = {
         whitelists: [
           {
@@ -52,7 +57,7 @@ export default function UploadSingleFile(props) {
 
       window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
     }
-  },[isMountedRef]);
+  }, [isMountedRef]);
 
   const handleChangeData = (props) => {
     console.log(props.target.value);
@@ -76,7 +81,8 @@ export default function UploadSingleFile(props) {
         noValidate
         autoComplete="off"
       >
-        <TextField required={true} onChange={handleChangeData} fullWidth placeholder="Collection Name" color="grey" variant="outlined"/>
+        <TextField required={true} onChange={handleChangeData} fullWidth placeholder="Collection Name" color="grey"
+                   variant="outlined"/>
 
       </Box>
       <Box sx={{
@@ -117,9 +123,9 @@ export default function UploadSingleFile(props) {
           Cancel
         </Button>
 
-          <Button onClick={upload} type="submit" variant="contained" sx={{backgroundColor: 'grey'}}>
-            Add
-          </Button>
+        <Button onClick={upload} type="submit" variant="contained" sx={{backgroundColor: 'grey'}}>
+          Add
+        </Button>
 
       </Box>
     </Box>
