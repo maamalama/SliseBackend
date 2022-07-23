@@ -498,7 +498,9 @@ export class AnalyticsService {
     if(!s3File.Body){
       throw new BadRequestException(`no body`);
     }
+    this.logger.debug(JSON.stringify(s3File));
     const csvFile = s3File.Body;
+    this.logger.debug(`has body`);
     const parsedCsv = await papaparse.parse(csvFile.toString(), {
       header: false,
       skipEmptyLines: true,
