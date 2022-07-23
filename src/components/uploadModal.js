@@ -3,7 +3,7 @@ import {useDropzone} from 'react-dropzone';
 import axiosInstance from 'src/utils/axios';
 // @mui
 import {Box, Button, TextField, Typography} from '@mui/material';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useState} from 'react';
 import useIsMountedRef from '../hooks/useIsMountedRef';
 
 
@@ -20,45 +20,41 @@ UploadSingleFile.propTypes = {
 };
 
 export default function UploadSingleFile(props) {
-  const onDrop = useCallback((acceptedFiles) => {
+  let formData = new FormData();
+  const [whitelistName, setWhitelistName] = useState('');
+  const [errors, setErrors] = useState("");
+  const [uploadedFile, setUploadedFile] = useState(null);
+
+  const onDropFile = useCallback((acceptedFiles) => {
+    setUploadedFile(acceptedFiles[0]);
+    console.log(whitelistName.length);
+    // if (whitelistName.length === 0) {
+    //   setErrors('Enter collection name!');
+    // }
     acceptedFiles.forEach((file) => {
       const reader = new FileReader()
 
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-        var formData = new FormData();
-        formData.append("file", file, file.name);
-        formData.append('collectionName', whitelistName);
+        // if (!formData.get('file')) {
+        //   formData.append("file", file, file.name);
+        // }
       }
       reader.readAsArrayBuffer(file)
     })
-  }, []);
+  }, [whitelistName]);
+
   const isMountedRef = useIsMountedRef();
-  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone({onDrop});
-  const [whitelistName, setWhitelistName] = useState(null);
-  const [fileUploaded, setFileUploaded] = useState(false);
-  const [fileU, setFiles] = useState([]);
-  const handleChange = useMemo(
-    () => (event) => setWhitelistName(event.target.value),
-    []
-  );
-
-
-
-  useEffect(() => {
-    if (acceptedFiles.length > 0) {
-      setFileUploaded(true);
-    } else {
-      setFileUploaded(false);
-    }
+  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone({
+    onDrop: onDropFile,
+    multiple: false
   });
+
+
   const upload = useCallback(async () => {
-
-    console.log(file);
-
-    formData.append("file", file, file.name);
-
+    console.log(uploadedFile);
+    formData.append('file', uploadedFile);
     formData.append('collectionName', whitelistName);
     const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData, {
       headers: {
@@ -79,10 +75,12 @@ export default function UploadSingleFile(props) {
       window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
       window.location.reload(false);
     }
-  }, [isMountedRef]);
+  }, [uploadedFile]);
+
 
   const handleChangeData = (props) => {
-    console.log(props.target.value);
+    setWhitelistName(props.target.value);
+    console.log(whitelistName);
   }
 
   const files = acceptedFiles.map(file => (
@@ -103,7 +101,8 @@ export default function UploadSingleFile(props) {
         noValidate
         autoComplete="off"
       >
-        <TextField required={true} onChange={handleChangeData} fullWidth placeholder="Collection Name" color="grey"
+        <TextField required={true} value={whitelistName} onChange={handleChangeData} fullWidth
+                   placeholder="Collection Name" color="grey"
                    variant="outlined"/>
 
       </Box>
@@ -122,6 +121,7 @@ export default function UploadSingleFile(props) {
       }}>
         <div {...getRootProps()}>
           <input {...getInputProps()} />
+
           <Typography variant="h5" sx={{paddingBottom: '10px'}}>Drop or Select file</Typography>
           <Typography sx={{fontSize: '14px'}}>Drop the file here or click <u>browse</u> through your
             machine</Typography>
@@ -129,6 +129,9 @@ export default function UploadSingleFile(props) {
         <aside>
 
           <ul>{files}</ul>
+          <p style={{color: "red", padding: 5, margin: 0, fontSize: 14}}>
+            {errors}
+          </p>
         </aside>
       </Box>
       <Typography align='center' sx={{fontSize: '12px', paddingTop: '26px'}}>
