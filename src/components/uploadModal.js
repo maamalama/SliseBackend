@@ -20,14 +20,30 @@ UploadSingleFile.propTypes = {
 };
 
 export default function UploadSingleFile(props) {
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader()
+
+      reader.onabort = () => console.log('file reading was aborted')
+      reader.onerror = () => console.log('file reading has failed')
+      reader.onload = () => {
+        setFiles(acceptedFiles[0]);
+        console.log(fileU);
+      }
+      reader.readAsArrayBuffer(file)
+    })
+  }, []);
   const isMountedRef = useIsMountedRef();
-  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone();
-  const [whitelistName, setWhitelistName] = useState(null);
+  const {acceptedFiles, getRootProps, getInputProps, fileRejections} = useDropzone(/*{onDrop}*/);
+  const [whitelistName, setWhitelistName] = useState('');
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [fileU, setFiles] = useState();
   const handleChange = useMemo(
     () => (event) => setWhitelistName(event.target.value),
     []
   );
+
+
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -36,21 +52,28 @@ export default function UploadSingleFile(props) {
       setFileUploaded(false);
     }
   });
+
+
   const upload = useCallback(async () => {
     var formData = new FormData();
-    console.log(acceptedFiles);
-    formData.append('file', acceptedFiles[0], acceptedFiles[0].name);
+    formData.append("file", acceptedFiles[0]);
+
     formData.append('collectionName', whitelistName);
     const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
+      data: formData
     });
     if (response.data.data) {
+      const name = response.data.data.name;
+      console.log(response.data.data);
+      const id = response.data.data.id;
       const storedWhitelists = {
         whitelists: [
           {
-            id: response.data.data.id
+            id: id,
+            name: name
           }
         ]
       };
