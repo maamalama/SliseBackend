@@ -3,7 +3,7 @@ import {useDropzone} from 'react-dropzone';
 import axiosInstance from 'src/utils/axios';
 // @mui
 import {Box, Button, TextField, Typography} from '@mui/material';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import useIsMountedRef from '../hooks/useIsMountedRef';
 
 
@@ -36,15 +36,23 @@ export default function UploadSingleFile(props) {
       setFileUploaded(false);
     }
   });
-  const upload = async () => {
+  const upload  = useCallback(async () => {
     const formData = new FormData();
     formData.append('file', acceptedFiles[0]);
     formData.append('collectionName', whitelistName);
     const response = await axiosInstance.post('https://daoanalytics.herokuapp.com/api/analytics/storeWhitelist', formData);
     if(response.data.data){
+      const storedWhitelists = {
+        whitelists: [
+          {
+            id: response.data.data.id
+          }
+        ]
+      };
 
+      window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
     }
-  }
+  },[isMountedRef]);
 
   const handleChangeData = (props) => {
     console.log(props.target.value);
@@ -108,12 +116,10 @@ export default function UploadSingleFile(props) {
         }}>
           Cancel
         </Button>
-        {fileUploaded ? <Button type="submit" variant="contained" sx={{backgroundColor: 'grey'}}>
+
+          <Button onClick={upload} type="submit" variant="contained" sx={{backgroundColor: 'grey'}}>
             Add
-          </Button> :
-          <Button type="submit" variant="contained" sx={{backgroundColor: 'grey'}} disabled>
-            Add
-          </Button>}
+          </Button>
 
       </Box>
     </Box>
