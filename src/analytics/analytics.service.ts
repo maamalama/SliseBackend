@@ -128,7 +128,7 @@ export class AnalyticsService {
         order by "TokenHolder"."totalBalanceUsd" desc
         limit 10;`,
         this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
-        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} and lower("TokenTransfer".address) <> '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress?.toLowerCase() ?? ''} and lower("TokenTransfer".address) <> '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'
         and "contractType" = 'ERC721'
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
@@ -331,7 +331,7 @@ export class AnalyticsService {
         }
       });
       const mutualHoldings = await this.prisma.$queryRaw<MutualHoldingsResponse[]>`select DISTINCT "TokenTransfer".address, "TokenTransfer".name, count("TokenTransfer".name) as totalHoldings from "TokenTransfer"
-        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress.toLowerCase()} and lower("TokenTransfer".address) <> '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'
+        where "TokenTransfer"."waitlistId" = ${id}  and "TokenTransfer".address <> ${whitelist.contractAddress?.toLowerCase() ?? ''} and lower("TokenTransfer".address) <> '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'
         and "contractType" = 'ERC721'
         group by "TokenTransfer".name, "TokenTransfer".address
         order by totalHoldings desc
