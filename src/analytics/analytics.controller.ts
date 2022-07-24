@@ -8,7 +8,7 @@ import { WhitelistInfoRequest } from './requests/whitelist-info-request';
 import { WhitelistInfoResponse } from './models/whitelist-info-response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  MutualHoldingsResponse, TopHoldersDashboardResponse,
+  MutualHoldingsResponse, TargetingResponse, TopHoldersDashboardResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
 } from './models/whitelist-statistics-response';
@@ -128,6 +128,20 @@ export class AnalyticsController {
   @UseInterceptors(TransformInterceptor)
   async getTopHolders(@Query('id') id: string): Promise<TopHoldersDashboardResponse> {
     const response = await this.analyticsService.getTopHolders(id);
+    return response;
+  }
+
+  @Get('getExport')
+  @UseInterceptors(TransformInterceptor)
+  async getExport(@Query('id') id: string, @Query('vector') vector: number): Promise<TargetingResponse> {
+    const response = await this.analyticsService.exportTargets(id, vector);
+    return response;
+  }
+
+  @Get('getTargets')
+  @UseInterceptors(TransformInterceptor)
+  async getTargets(@Query('id') id: string, @Query('vector') vector: number): Promise<number> {
+    const response = await this.analyticsService.getTargets(id, vector);
     return response;
   }
 

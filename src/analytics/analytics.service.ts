@@ -21,7 +21,7 @@ import { getFollowerCount } from 'follower-count';
 import {
   CollectionInfoResponse,
   CollectionStats,
-  MutualHoldingsResponse,
+  MutualHoldingsResponse, TargetingResponse,
   TopHoldersDashboardResponse,
   TopHoldersResponse,
   WhitelistStatisticsResponse
@@ -29,6 +29,7 @@ import {
 import Redlock from 'redlock';
 import { Network } from '@zoralabs/zdk/dist/queries/queries-sdk';
 import { PersistentStorageService } from '../persistentstorage/persistentstorage.service';
+import { ExportToCsv } from 'export-to-csv';
 
 @Injectable()
 export class AnalyticsService {
@@ -238,6 +239,22 @@ export class AnalyticsService {
     return shuffled.slice(0, num);
   }
 
+  public async getTargets(id: string, vector: number): Promise<number> {
+    const result = await this.prisma.$queryRaw<any>`select count(*) as cnt from "TargetingHolders" where "waitlistId" = ${id} and vector <= ${vector}`;
+    return result.cnt;
+  }
+
+  public async exportTargets(id: string, vector: number): Promise<TargetingResponse> {
+    const result = await this.prisma.$queryRaw<any>`select address from "TargetingHolders" 
+    inner join "TokenHolder" TH on TH.id = "TargetingHolders"."holderId" 
+    where "TargetingHolders"."waitlistId" = ${id} and vector <= ${vector}`;
+
+
+    return {
+      address: result.address
+    };
+  }
+
   public async getTopHolders(id: string): Promise<TopHoldersDashboardResponse> {
     const existTopHolders = await this.redis.get(`${id} topHolders`)
     if (existTopHolders) {
@@ -406,8 +423,8 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-      const a = await this.httpService.get(`https://slise-ml.herokuapp.com/recs?whitelist_id=${'9c755944-d9f1-4ac3-9ea1-84d9648de6e8'}`).toPromise();
-    const b = a;
+   const a = await this.exportTargets('5d10518a-093c-48ef-a2dc-4269d70f6993', 1);
+   const b = a;
 
    /* const a = await this.fetchHolders(1,'0x79fcdef22feed20eddacbb2587640e45491b757f',10000);
     const b = a;*/

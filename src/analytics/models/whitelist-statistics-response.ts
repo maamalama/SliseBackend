@@ -71,3 +71,7 @@ export class WhitelistResponse {
   twitter?: string;
   discord?: string;
 }
+
+export class TargetingResponse {
+  address?: string[]
+}
