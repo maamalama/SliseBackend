@@ -14,6 +14,7 @@ import Page from 'src/components/Page';
 import useSettings from 'src/hooks/useSettings';
 import Layout from 'src/layouts';
 import {styled} from '@mui/system';
+import useIsMountedRef from '../hooks/useIsMountedRef'; 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const rand = (min, max) => {
@@ -136,9 +137,8 @@ const Root = styled('div')((props) => ({
   gridTemplateRows: 'min-content 1fr',
   gap: 13,
 }));
-import React, { useCallback, useEffect, useState } from 'react';
-import useIsMountedRef from '../hooks/useIsMountedRef';
-import axios from '../utils/axios';
+
+
 // ----------------------------------------------------------------------
 
 export default function GeneralBooking() {
@@ -160,10 +160,11 @@ export default function GeneralBooking() {
   };
 
   useEffect(() => {
+    const whitelistId = window.localStorage.getItem('whitelistId');
     const getData = setTimeout(() => {
         axiosInstance
           .get(
-            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?id=${+whitelistSize}`,
+            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?id=${whitelistId}&vector=${+newView}`,
             {
               headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -173,7 +174,7 @@ export default function GeneralBooking() {
           .then((response) => {
 
             console.log(response.data);
-            const mintShare = response.data;
+            /*const mintShare = response.data;
             setView(mintShare);
             console.log(mintShare);
             if (mintShare > 0.0 && mintShare < 0.05) {
@@ -183,17 +184,17 @@ export default function GeneralBooking() {
             } else {
               setSharePredict('??');
             }
-            setError('');
+            setError('');*/
           }).catch((error) => {
-            setError(error.message);
-            setOpen(true);
+            /*setError(error.message);
+            setOpen(true);*/
           }
         );
     }, 2000);
     return () => clearTimeout(getData);
   }, [newView]);
 
-  const getTargeting = useCallback(async () => {
+ /* const getTargeting = useCallback(async () => {
     const response = await axios.get('');
     if (isMountedRef.current) {
       const stored = JSON.parse(window.localStorage.getItem('storedWhitelists'));
@@ -211,7 +212,7 @@ export default function GeneralBooking() {
       }
     }
 
-  }, [isMountedRef]);
+  }, [isMountedRef]);*/
 
   return (
     <Page
