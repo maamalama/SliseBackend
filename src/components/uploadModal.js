@@ -120,7 +120,7 @@ export default function UploadSingleFile(props) {
         outline: 'none',
         overflow: 'hidden',
         position: 'relative',
-        paddingTop: '17px',
+        paddingTop: '15px',
         paddingLeft: '15px',
         paddingBottom: '20px',
         borderRadius: '10px',
@@ -144,7 +144,7 @@ export default function UploadSingleFile(props) {
           </p>
         </aside>
       </Box>
-      <Typography align='center' sx={{fontSize: '12px', paddingTop: '26px'}}>
+      <Typography align='center' sx={{fontSize: '12px', paddingTop: '16px'}}>
         Upload the *.csv file of your whitelist. <br/> Max size of 3.1 MB
       </Typography>
       <Box textAlign='right' sx={{marginTop: '40px'}}>
