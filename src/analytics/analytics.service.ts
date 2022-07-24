@@ -183,9 +183,9 @@ export class AnalyticsService {
         }
         holder.avgNFTPrice = holder.portfolio / holder.nfts;
         holder.nftsTotalPrice = holder.avgNFTPrice * (holder.nfts / 1.5)
-        if (holder.nfts > 20 && holder.nfts < 30) {
+        if (holder.nfts > 10 && holder.nfts < 25) {
           holder.holdingTimeLabel = 'mixed'
-        } else if (holder.nfts > 30) {
+        } else if (holder.nfts < 10) {
           holder.holdingTimeLabel = 'holder'
         } else {
           holder.holdingTimeLabel = 'flipper'
