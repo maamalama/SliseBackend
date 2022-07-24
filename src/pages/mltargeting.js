@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import Page from 'src/components/Page';
 import useSettings from 'src/hooks/useSettings';
 import Layout from 'src/layouts';
+import {styled} from '@mui/system';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const rand = (min, max) => {
@@ -123,6 +124,17 @@ const options = {
 GeneralBooking.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
+const Root = styled('div')((props) => ({
+  background: '#fff',
+  boxShadow: '0px 0px 2px rgba(145, 158, 171, 0.2), 0px 12px 24px -4px rgba(145, 158, 171, 0.12)',
+  borderRadius: 16,
+  padding: 16,
+  color: '#182415',
+
+  display: 'grid',
+  gridTemplateRows: 'min-content 1fr',
+  gap: 13,
+}));
 
 // ----------------------------------------------------------------------
 
@@ -143,15 +155,22 @@ export default function GeneralBooking() {
     setWallets(walletsPredicted);
   };
   return (
-    <Page title="ML Targeting" sx={{ marginRight: '-40px' }}>
+    <Page
+      sx={{
+        height: 'calc(100vh - 60px)',
+        display: 'grid',
+        gridTemplateRows: 'min-content min-content 1fr',
+      }}
+      title="Dashboard"
+    >
+      <Typography align="left" variant="h3" mb={'14px'}>
+        ML Targeting
+      </Typography>
       <Container
         maxWidth={themeStretch ? false : 'xl'}
-        sx={{ backgroundColor: '#F3F4EF', paddingBottom: '100px', marginBottom: '-120px', marginLeft: '-20px' }}
+        sx={{ backgroundColor: '#F3F4EF'}}
       >
-        <Typography variant="h3" sx={{ paddingTop: '25px', marginBottom: '20px', paddingLeft: '20px' }}>
-          ML Targeting
-        </Typography>
-        <Grid container spacing={2} alignItems="stretch" sx={{ paddingRight: '20px', paddingLeft: '20px' }}>
+        <Grid container spacing={2} alignItems="stretch" sx={{ paddingRight: '20px',}}>
           <Grid item sm={12} md={8} lg={8}>
             <Card sx={{ backgroundColor: 'white', height: '671px', padding: '30px' }}>
               <Typography variant="h6">Search space visualization</Typography>

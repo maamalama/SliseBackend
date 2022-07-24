@@ -20,7 +20,7 @@ SocialData.getLayout = function getLayout(page) {
 
 
 const Main1 = styled(Page)(() => ({
-  backgroundColor: '#E5E5E5',
+  backgroundColor: '#F3F4EF',
   width: '100%',
   height: '100%'
 }));
