@@ -1,8 +1,8 @@
 //@ts-check
-import { Typography, Slider, Stack } from '@mui/material';
-import { createStyles, makeStyles } from '@mui/styles';
-import { styled } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import {Alert, AlertTitle, Container, Slider, Stack, Typography} from '@mui/material';
+import {createStyles, makeStyles} from '@mui/styles';
+import {styled} from '@mui/system';
+import React, {useEffect, useState} from 'react';
 import Label from 'src/components/Label';
 import axiosInstance from 'src/utils/axios';
 
@@ -67,11 +67,11 @@ const useStyles = makeStyles(
   }))
 );
 
-const { format: formatNumber } = new Intl.NumberFormat('en-US', {
+const {format: formatNumber} = new Intl.NumberFormat('en-US', {
   useGrouping: true,
   notation: 'standard',
 });
-const { format: formatPercent } = new Intl.NumberFormat('en-US', {
+const {format: formatPercent} = new Intl.NumberFormat('en-US', {
   style: 'percent',
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
@@ -85,6 +85,7 @@ const MlPrediction = () => {
   function handlePriceChange(event, newNumber) {
     setPriceSliderValue(newNumber);
   }
+
   function handleCollectionSizeChange(event, newNumber) {
     setCollectionSizeSliderValue(newNumber);
   }
@@ -92,6 +93,7 @@ const MlPrediction = () => {
   const whitelistSize = window.localStorage.getItem('whitelistSize');
   const [mintShare, setMintShare] = useState(0);
   const [sharePredict, setSharePredict] = useState('???');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const getData = setTimeout(() => {
@@ -108,8 +110,8 @@ const MlPrediction = () => {
           console.log(
             `https://slise-ml.herokuapp.com/items?price=${priceSliderValue}&supply=${collectionSizeSliderValue}&whitelist=${+whitelistSize}`
           );
-          console.log(response);
-          const mintShare = response.data.mint_share[0].toFixed(2);
+          console.log(response.data);
+          const mintShare = response.data[0].toFixed(2);
           setMintShare(mintShare);
           console.log(mintShare);
           if (mintShare > 0.0 && mintShare < 0.05) {
@@ -119,10 +121,15 @@ const MlPrediction = () => {
           } else {
             setSharePredict('??');
           }
-        });
+          setError('');
+        }).catch((error) => {
+          setError(error.message)
+        }
+      );
     }, 2000);
     return () => clearTimeout(getData);
   }, [priceSliderValue, collectionSizeSliderValue]);
+
 
   return (
     <Root>
@@ -192,6 +199,12 @@ const MlPrediction = () => {
         </Typography>
         <Label variant="outlined">{sharePredict}</Label>
       </Stack>
+      {error.length > 0 ?
+          <Alert severity="error">
+            {error}
+          </Alert>
+        : <></>
+      }
     </Root>
   );
 };
