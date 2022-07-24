@@ -18,7 +18,7 @@ const WhitelistSize = ({ value }) => {
     <Root>
       <Stack direction="column" alignItems="center">
         <img {...Icon} />
-        <Typography variant="subtitle2">Whitelist Size</Typography>
+        <Typography variant="subtitle2">Mint list Size</Typography>
         <Typography variant="h3">{formatNumber(value)}</Typography>
       </Stack>
     </Root>
