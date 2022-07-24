@@ -1,5 +1,5 @@
 //@ts-check
-import {Alert, AlertTitle, Container, Slider, Stack, Typography} from '@mui/material';
+import {Alert, Slider, Snackbar, Stack, Typography} from '@mui/material';
 import {createStyles, makeStyles} from '@mui/styles';
 import {styled} from '@mui/system';
 import React, {useEffect, useState} from 'react';
@@ -94,38 +94,49 @@ const MlPrediction = () => {
   const [mintShare, setMintShare] = useState(0);
   const [sharePredict, setSharePredict] = useState('???');
   const [error, setError] = useState('');
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   useEffect(() => {
     const getData = setTimeout(() => {
-      axiosInstance
-        .get(
-          `https://slise-ml.herokuapp.com/items?price=${priceSliderValue}&supply=${collectionSizeSliderValue}&whitelist=${+whitelistSize}`,
-          {
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            },
+      if (priceSliderValue > 0.1 || collectionSizeSliderValue > 10)
+        axiosInstance
+          .get(
+            `https://slise-ml.herokuapp.com/items?price=${priceSliderValue}&supply=${collectionSizeSliderValue}&whitelist=${+whitelistSize}`,
+            {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            }
+          )
+          .then((response) => {
+            console.log(
+              `https://slise-ml.herokuapp.com/items?price=${priceSliderValue}&supply=${collectionSizeSliderValue}&whitelist=${+whitelistSize}`
+            );
+            console.log(response.data);
+            const mintShare = response.data[0].toFixed(2);
+            setMintShare(mintShare);
+            console.log(mintShare);
+            if (mintShare > 0.0 && mintShare < 0.05) {
+              setSharePredict('Low');
+            } else if (mintShare > 0.05) {
+              setSharePredict('High');
+            } else {
+              setSharePredict('??');
+            }
+            setError('');
+          }).catch((error) => {
+            setError(error.message);
+            setOpen(true);
           }
-        )
-        .then((response) => {
-          console.log(
-            `https://slise-ml.herokuapp.com/items?price=${priceSliderValue}&supply=${collectionSizeSliderValue}&whitelist=${+whitelistSize}`
-          );
-          console.log(response.data);
-          const mintShare = response.data[0].toFixed(2);
-          setMintShare(mintShare);
-          console.log(mintShare);
-          if (mintShare > 0.0 && mintShare < 0.05) {
-            setSharePredict('Low');
-          } else if (mintShare > 0.05) {
-            setSharePredict('High');
-          } else {
-            setSharePredict('??');
-          }
-          setError('');
-        }).catch((error) => {
-          setError(error.message)
-        }
-      );
+        );
     }, 2000);
     return () => clearTimeout(getData);
   }, [priceSliderValue, collectionSizeSliderValue]);
@@ -199,10 +210,12 @@ const MlPrediction = () => {
         </Typography>
         <Label variant="outlined">{sharePredict}</Label>
       </Stack>
-      {error.length > 0 ?
-          <Alert severity="error">
+      {open ?
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={{width: '50%'}}>
             {error}
-          </Alert>
+          < /Alert>
+        </Snackbar>
         : <></>
       }
     </Root>
