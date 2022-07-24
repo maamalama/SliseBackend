@@ -1,6 +1,7 @@
 // @mui
 import { Grid, Container, Typography, Card, Slider, Box, Button } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
+import { ExportJsonCsv } from 'react-export-json-csv';
 // hooks
 
 // layouts
@@ -148,7 +149,14 @@ export default function GeneralBooking() {
   const [newSer, setnewSer] = useState(moveData(serOrig, 1));
   const [newView, setView] = useState(0);
   const [wallets, setWallets] = useState(0);
+  const [data, setData] = useState([]);
   const handleChange = (event, newNumber) => {
+    if(newNumber === 100){
+      setWallets(5532);
+    }
+    if(newNumber === 0){
+      setWallets(0);
+    }
     const number = newNumber / 10;
     const newVal = forceNumber(number);
     const newSer = moveData(serOrig, newVal);
@@ -156,14 +164,13 @@ export default function GeneralBooking() {
     setView(newNumber);
     setValue(newVal);
     setnewSer(newSer);
-    setWallets(walletsPredicted);
   };
 
   useEffect(() => {
     const getData = setTimeout(() => {
         axiosInstance
           .get(
-            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?vector=${+newView}`,
+            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?vector=${+newView/100}`,
             {
               headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -172,7 +179,16 @@ export default function GeneralBooking() {
           )
           .then((response) => {
 
-            console.log(response.data);
+
+            if(value === 100){
+              setWallets(5532);
+            }
+            else if(value === 0){
+              setWallets(0);
+            }
+            else{
+              setWallets(response.data.data);
+            }
             /*const mintShare = response.data;
             setView(mintShare);
             console.log(mintShare);
@@ -189,6 +205,18 @@ export default function GeneralBooking() {
             setOpen(true);*/
           }
         );
+      axiosInstance
+        .get(
+          `https://daoanalytics.herokuapp.com/api/analytics/getExport?vector=${+newView/100}`,
+          {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
+          }
+        )
+        .then((response) => {
+          data
+        });
     }, 2000);
     return () => clearTimeout(getData);
   }, [newView]);
@@ -251,7 +279,7 @@ export default function GeneralBooking() {
                 <Slider
                   sx={{ color: 'black' }}
                   value={newView}
-                  min={1}
+                  min={0}
                   step={1}
                   defaultValue={1}
                   max={100}
