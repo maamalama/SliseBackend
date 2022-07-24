@@ -43,6 +43,14 @@ export class TokenProcessorService {
       parsedCsv.data.map((subarray) => subarray.map((address) => {
         addresses.push(address);
       }));
+      await this.prisma.waitlist.update({
+        where: {
+          id: holders.id
+        },
+        data:{
+          size: addresses.length
+        }
+      })
       let savedHolders: any[] = [];
       addresses.map((tokenHolder) => {
         const dataHolder = {

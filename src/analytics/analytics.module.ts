@@ -11,7 +11,7 @@ import { PersistentStorageModule } from '../persistentstorage/persistentstorage.
   imports: [BullModule.registerQueue({
     name: 'waitlist',
   }), PrismaModule, HttpModule.register({
-    timeout: 8000,
+    timeout: 50000,
     maxRedirects: 5,
   }), PersistentStorageModule],
   providers: [AnalyticsService, AnalyticsController],

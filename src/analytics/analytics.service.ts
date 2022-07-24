@@ -406,8 +406,11 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-    const a = await this.fetchHolders(1,'0x79fcdef22feed20eddacbb2587640e45491b757f',10000);
+      const a = await this.httpService.get(`https://slise-ml.herokuapp.com/recs?whitelist_id=${'9c755944-d9f1-4ac3-9ea1-84d9648de6e8'}`).toPromise();
     const b = a;
+
+   /* const a = await this.fetchHolders(1,'0x79fcdef22feed20eddacbb2587640e45491b757f',10000);
+    const b = a;*/
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
 
     /*  const balance = await this.Moralis.Web3API.account.getTokenBalances(options);
@@ -506,6 +509,7 @@ export class AnalyticsService {
     });
 
     const holdersRequest = {
+      id: waitlist.id,
       file: s3File,
       waitlistId: waitlist.id
     };
