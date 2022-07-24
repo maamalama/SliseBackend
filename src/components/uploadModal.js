@@ -68,7 +68,7 @@ export default function UploadSingleFile(props) {
       let storedWhitelists;
       const whitelist = {
         id: response.data.data.id,
-        name: response.data.data.name
+        name: whitelistName
       }
       if (existStoredWhitelists) {
         existStoredWhitelists.whitelists.push(whitelist);
@@ -78,7 +78,7 @@ export default function UploadSingleFile(props) {
           whitelists: [
             {
               id: response.data.data.id,
-              name: response.data.data.name
+              name: whitelistName
             }
           ]
         };
