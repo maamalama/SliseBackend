@@ -104,8 +104,9 @@ export default function NavbarVertical({isOpenSidebar, onCloseSidebar}) {
       </Stack>
 
       <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse}/>
-      <Button onClick={handleOpen} variant="contained" sx={{color:'black', backgroundColor: '#DDFF55', marginTop:'250px',':hover':{opacity: '.6', backgroundColor:'#DDFF55'}}}>Add Your Collection</Button>
-      <Modal
+      <Box textAlign="center">
+        <Button onClick={handleOpen} variant="contained" sx={{color:'black', backgroundColor: '#DDFF55', marginTop:'250px',':hover':{opacity: '.6', backgroundColor:'#DDFF55'}}}>Add Your Collection</Button>
+        <Modal
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
