@@ -79,7 +79,7 @@ const {format: formatPercent} = new Intl.NumberFormat('en-US', {
 
 const MlPrediction = () => {
   const styles = useStyles();
-  const [priceSliderValue, setPriceSliderValue] = useState(0.1);
+  const [priceSliderValue, setPriceSliderValue] = useState(0.01);
   const [collectionSizeSliderValue, setCollectionSizeSliderValue] = useState(10);
 
   function handlePriceChange(event, newNumber) {
