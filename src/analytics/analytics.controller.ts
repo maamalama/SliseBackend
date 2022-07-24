@@ -133,15 +133,15 @@ export class AnalyticsController {
 
   @Get('getExport')
   @UseInterceptors(TransformInterceptor)
-  async getExport(@Query('id') id: string, @Query('vector') vector: number): Promise<TargetingResponse> {
-    const response = await this.analyticsService.exportTargets(id, vector);
+  async getExport(@Query('vector') vector: number): Promise<TargetingResponse> {
+    const response = await this.analyticsService.exportTargets(vector);
     return response;
   }
 
   @Get('getTargets')
   @UseInterceptors(TransformInterceptor)
-  async getTargets(@Query('id') id: string, @Query('vector') vector: number): Promise<number> {
-    const response = await this.analyticsService.getTargets(id, vector);
+  async getTargets(@Query('vector') vector: number): Promise<number> {
+    const response = await this.analyticsService.getTargets(vector);
     return response;
   }
 
