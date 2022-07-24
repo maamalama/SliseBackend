@@ -240,14 +240,14 @@ export class AnalyticsService {
   }
 
   public async getTargets(vector: number): Promise<number> {
-    const result = await this.prisma.$queryRaw<any>`select count(*) from "TargetingHolders" where vector <= ${+vector}`;
+    const result = await this.prisma.$queryRaw<any>`select count(*) from "TargetingHolders" where vector <= cast(${vector}::text as double precision)`;
     return result[0].count;
   }
 
   public async exportTargets(vector: number): Promise<TargetingResponse> {
     const result = await this.prisma.$queryRaw<any>`select address from "TargetingHolders" 
     inner join "TokenHolder" TH on TH.id = "TargetingHolders"."holderId" 
-    where vector <= ${+vector}`;
+    where vector <= cast(${vector}::text as double precision)`;
 
 
     return {
