@@ -135,9 +135,9 @@ export class AnalyticsService {
         limit 10;`
       ]);
 
-      const whales = whitelist.whales ?? 5;
-      const bluechipHolders = whitelist.bluechipHolders ?? 48;
-      const bots = whitelist.bots ?? 318;
+      const whales = whitelist.whales ?? +((whitelist.size / 5).toFixed(0));
+      const bluechipHolders = whitelist.bluechipHolders ?? +((whitelist.size / 7).toFixed(0));
+      const bots = whitelist.bots ?? +((whitelist.size / 2).toFixed(0));
       let failed: string[] = [];
 
       await Promise.all(mutualHoldings.map(async (holding) => {
