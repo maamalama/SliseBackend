@@ -1,5 +1,6 @@
 // @mui
 import { Grid, Container, Typography, Card, Slider, Box, Button } from '@mui/material';
+import axiosInstance from 'src/utils/axios';
 // hooks
 
 // layouts
@@ -135,10 +136,13 @@ const Root = styled('div')((props) => ({
   gridTemplateRows: 'min-content 1fr',
   gap: 13,
 }));
-
+import React, { useCallback, useEffect, useState } from 'react';
+import useIsMountedRef from '../hooks/useIsMountedRef';
+import axios from '../utils/axios';
 // ----------------------------------------------------------------------
 
 export default function GeneralBooking() {
+  const isMountedRef = useIsMountedRef();
   const { themeStretch } = useSettings();
   const [value, setValue] = useState(0);
   const [newSer, setnewSer] = useState(moveData(serOrig, 1));
@@ -154,6 +158,61 @@ export default function GeneralBooking() {
     setnewSer(newSer);
     setWallets(walletsPredicted);
   };
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+        axiosInstance
+          .get(
+            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?id=${+whitelistSize}`,
+            {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            }
+          )
+          .then((response) => {
+
+            console.log(response.data);
+            const mintShare = response.data;
+            setView(mintShare);
+            console.log(mintShare);
+            if (mintShare > 0.0 && mintShare < 0.05) {
+              setSharePredict('Low');
+            } else if (mintShare > 0.05) {
+              setSharePredict('High');
+            } else {
+              setSharePredict('??');
+            }
+            setError('');
+          }).catch((error) => {
+            setError(error.message);
+            setOpen(true);
+          }
+        );
+    }, 2000);
+    return () => clearTimeout(getData);
+  }, [newView]);
+
+  const getTargeting = useCallback(async () => {
+    const response = await axios.get('');
+    if (isMountedRef.current) {
+      const stored = JSON.parse(window.localStorage.getItem('storedWhitelists'));
+      if(stored){
+        console.log(stored);
+        response.data.data.push(...stored.whitelists);
+      }
+      setWhitelists(response.data.data);
+      const existWhitelist = window.localStorage.getItem('whitelistId');
+      if (!existWhitelist) {
+        setWhitelist(response.data.data[0].name);
+        window.localStorage.setItem('whitelistId', response.data.data[0].id);
+      } else {
+        setWhitelist(findWhitelistById(response.data.data, existWhitelist));
+      }
+    }
+
+  }, [isMountedRef]);
+
   return (
     <Page
       sx={{
