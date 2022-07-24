@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import {useDropzone} from 'react-dropzone';
 import axiosInstance from 'src/utils/axios';
 // @mui
-import {Box, Button, TextField, Typography} from '@mui/material';
-import {useCallback, useState} from 'react';
+import {Box, Button, CircularProgress, Grid, TextField, Typography} from '@mui/material';
+import React, {useCallback, useState} from 'react';
 import useIsMountedRef from '../hooks/useIsMountedRef';
 
 
@@ -24,6 +24,7 @@ export default function UploadSingleFile(props) {
   const [whitelistName, setWhitelistName] = useState('');
   const [errors, setErrors] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   const onDropFile = useCallback((acceptedFiles) => {
     setUploadedFile(acceptedFiles[0]);
@@ -83,7 +84,12 @@ export default function UploadSingleFile(props) {
         };
         window.localStorage.setItem('storedWhitelists', JSON.stringify(storedWhitelists));
       }
-      window.location.reload(false);
+      setLoader(true);
+      setTimeout(() => {
+        setLoader(false);
+        window.location.reload(false);
+      }, 10000);
+
     }
   }, [uploadedFile]);
 
@@ -98,6 +104,25 @@ export default function UploadSingleFile(props) {
       {file.path} - {file.size} bytes
     </li>
   ));
+
+  if(loader){
+    return(
+      <Box sx={{width: '100%'}}>
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          style={{ minHeight: '50vh' }}
+        >
+          <Grid item xs={3}>
+            <CircularProgress />
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{width: '100%'}}>
