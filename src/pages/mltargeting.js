@@ -258,7 +258,7 @@ export default function GeneralBooking() {
           <Grid item sm={12} md={8} lg={8}>
             <Card sx={{backgroundColor: 'white', height: '671px', padding: '30px'}}>
               <Typography variant="h6">Search space visualization</Typography>
-              <Chart options={options} series={newSer} type="scatter"/>
+              <Chart style={{marginTop:'100px'}} options={options} series={newSer} type="scatter"/>
             </Card>
           </Grid>
           <Grid item sm={12} md={4} lg={4}>
