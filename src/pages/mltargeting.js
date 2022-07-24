@@ -1,22 +1,20 @@
 // @mui
-import { Grid, Container, Typography, Card, Slider, Box, Button } from '@mui/material';
+import {Box, Button, Card, Container, Grid, Slider, Typography} from '@mui/material';
 import axiosInstance from 'src/utils/axios';
-import { ExportJsonCsv } from 'react-export-json-csv';
+import {ExportJsonCsv} from 'react-export-json-csv';
 // hooks
-
 // layouts
-
 // components
-
 import forceNumber from 'force-number';
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Page from 'src/components/Page';
 import useSettings from 'src/hooks/useSettings';
 import Layout from 'src/layouts';
 import {styled} from '@mui/system';
-import useIsMountedRef from '../hooks/useIsMountedRef'; 
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+import useIsMountedRef from '../hooks/useIsMountedRef';
+
+const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 
 const rand = (min, max) => {
   return Math.random() * (max - min) + min;
@@ -94,8 +92,8 @@ const options = {
         return parseFloat(val).toFixed(1);
       },
     },
-    axisBorder: { show: false },
-    labels: { show: false },
+    axisBorder: {show: false},
+    labels: {show: false},
   },
   legend: {
     show: false,
@@ -110,8 +108,8 @@ const options = {
         return parseFloat(val).toFixed(1);
       },
     },
-    axisBorder: { show: false },
-    labels: { show: false },
+    axisBorder: {show: false},
+    labels: {show: false},
   },
   legend: {
     show: false,
@@ -144,17 +142,15 @@ const Root = styled('div')((props) => ({
 
 export default function GeneralBooking() {
   const isMountedRef = useIsMountedRef();
-  const { themeStretch } = useSettings();
+  const {themeStretch} = useSettings();
   const [value, setValue] = useState(0);
   const [newSer, setnewSer] = useState(moveData(serOrig, 1));
   const [newView, setView] = useState(0);
   const [wallets, setWallets] = useState(0);
   const [data, setData] = useState([]);
   const handleChange = (event, newNumber) => {
-    if(newNumber === 100){
-      setWallets(5532);
-    }
-    if(newNumber === 0){
+
+    if (newNumber === 0) {
       setWallets(0);
     }
     const number = newNumber / 10;
@@ -165,49 +161,17 @@ export default function GeneralBooking() {
     setValue(newVal);
     setnewSer(newSer);
   };
-
+  const headers = [
+    {
+      key: 'address',
+      name: 'Address',
+    }
+  ]
   useEffect(() => {
     const getData = setTimeout(() => {
-        axiosInstance
-          .get(
-            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?vector=${+newView/100}`,
-            {
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-              },
-            }
-          )
-          .then((response) => {
-
-
-            if(value === 100){
-              setWallets(5532);
-            }
-            else if(value === 0){
-              setWallets(0);
-            }
-            else{
-              setWallets(response.data.data);
-            }
-            /*const mintShare = response.data;
-            setView(mintShare);
-            console.log(mintShare);
-            if (mintShare > 0.0 && mintShare < 0.05) {
-              setSharePredict('Low');
-            } else if (mintShare > 0.05) {
-              setSharePredict('High');
-            } else {
-              setSharePredict('??');
-            }
-            setError('');*/
-          }).catch((error) => {
-            /*setError(error.message);
-            setOpen(true);*/
-          }
-        );
       axiosInstance
         .get(
-          `https://daoanalytics.herokuapp.com/api/analytics/getExport?vector=${+newView/100}`,
+          `https://daoanalytics.herokuapp.com/api/analytics/getTargets?vector=${+newView / 100}`,
           {
             headers: {
               'Access-Control-Allow-Origin': '*',
@@ -215,31 +179,64 @@ export default function GeneralBooking() {
           }
         )
         .then((response) => {
-          data
+
+
+          if (value === 0) {
+            setWallets(0);
+          } else {
+            setWallets(response.data.data);
+          }
+          /*const mintShare = response.data;
+          setView(mintShare);
+          console.log(mintShare);
+          if (mintShare > 0.0 && mintShare < 0.05) {
+            setSharePredict('Low');
+          } else if (mintShare > 0.05) {
+            setSharePredict('High');
+          } else {
+            setSharePredict('??');
+          }
+          setError('');*/
+        }).catch((error) => {
+          /*setError(error.message);
+          setOpen(true);*/
+        }
+      );
+      axiosInstance
+        .get(
+          `https://daoanalytics.herokuapp.com/api/analytics/getExport?vector=${+newView / 100}`,
+          {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
+          }
+        )
+        .then((response) => {
+          setData(response.data.data.address)
         });
     }, 2000);
     return () => clearTimeout(getData);
   }, [newView]);
 
- /* const getTargeting = useCallback(async () => {
-    const response = await axios.get('');
-    if (isMountedRef.current) {
-      const stored = JSON.parse(window.localStorage.getItem('storedWhitelists'));
-      if(stored){
-        console.log(stored);
-        response.data.data.push(...stored.whitelists);
-      }
-      setWhitelists(response.data.data);
-      const existWhitelist = window.localStorage.getItem('whitelistId');
-      if (!existWhitelist) {
-        setWhitelist(response.data.data[0].name);
-        window.localStorage.setItem('whitelistId', response.data.data[0].id);
-      } else {
-        setWhitelist(findWhitelistById(response.data.data, existWhitelist));
-      }
-    }
+  /* const getTargeting = useCallback(async () => {
+     const response = await axios.get('');
+     if (isMountedRef.current) {
+       const stored = JSON.parse(window.localStorage.getItem('storedWhitelists'));
+       if(stored){
+         console.log(stored);
+         response.data.data.push(...stored.whitelists);
+       }
+       setWhitelists(response.data.data);
+       const existWhitelist = window.localStorage.getItem('whitelistId');
+       if (!existWhitelist) {
+         setWhitelist(response.data.data[0].name);
+         window.localStorage.setItem('whitelistId', response.data.data[0].id);
+       } else {
+         setWhitelist(findWhitelistById(response.data.data, existWhitelist));
+       }
+     }
 
-  }, [isMountedRef]);*/
+   }, [isMountedRef]);*/
 
   return (
     <Page
@@ -255,29 +252,29 @@ export default function GeneralBooking() {
       </Typography>
       <Container
         maxWidth={themeStretch ? false : 'xl'}
-        sx={{ backgroundColor: '#F3F4EF'}}
+        sx={{backgroundColor: '#F3F4EF'}}
       >
-        <Grid container spacing={2} alignItems="stretch" sx={{ paddingRight: '20px',}}>
+        <Grid container spacing={2} alignItems="stretch" sx={{paddingRight: '20px',}}>
           <Grid item sm={12} md={8} lg={8}>
-            <Card sx={{ backgroundColor: 'white', height: '671px', padding: '30px' }}>
+            <Card sx={{backgroundColor: 'white', height: '671px', padding: '30px'}}>
               <Typography variant="h6">Search space visualization</Typography>
-              <Chart options={options} series={newSer} type="scatter" />
+              <Chart options={options} series={newSer} type="scatter"/>
             </Card>
           </Grid>
           <Grid item sm={12} md={4} lg={4}>
-            <Card sx={{ backgroundColor: 'white', height: '671px' }}>
-              <Typography variant="h6" sx={{ padding: '25px' }}>
+            <Card sx={{backgroundColor: 'white', height: '671px'}}>
+              <Typography variant="h6" sx={{padding: '25px'}}>
                 Find similar wallets to your whitelist
               </Typography>
-              <Typography variant="subtitle2" sx={{ marginLeft: '25px', paddingBottom: '15px' }}>
+              <Typography variant="subtitle2" sx={{marginLeft: '25px', paddingBottom: '15px'}}>
                 SIMILARITY THRESHOLD
               </Typography>
-              <Typography variant="h6" sx={{ marginLeft: '25px' }}>
+              <Typography variant="h6" sx={{marginLeft: '25px'}}>
                 {newView + '%'}
               </Typography>
-              <Box sx={{ marginRight: '25px', marginLeft: '25px', marginBottom: '250px' }}>
+              <Box sx={{marginRight: '25px', marginLeft: '25px', marginBottom: '250px'}}>
                 <Slider
-                  sx={{ color: 'black' }}
+                  sx={{color: 'black'}}
                   value={newView}
                   min={0}
                   step={1}
@@ -291,9 +288,10 @@ export default function GeneralBooking() {
               <Typography variant="h2" align="center">
                 {wallets}
               </Typography>
-              <Typography variant="subtitle1" align="center" sx={{ opacity: '.72', marginBottom: '50px' }}>
+              <Typography variant="subtitle1" align="center" sx={{opacity: '.72', marginBottom: '50px'}}>
                 Target wallets identified
               </Typography>
+
               <Button
                 align="center"
                 size="large"
@@ -303,12 +301,30 @@ export default function GeneralBooking() {
                   width: '90%',
                   marginLeft: '5%',
                   marginBottom: '25px',
-                  ':hover': { opacity: '.6', backgroundColor: '#DDFF55' },
+                  ':hover': {opacity: '.6', backgroundColor: '#DDFF55'},
                 }}
                 variant="contained"
               >
-                Export Wallets
+                <ExportJsonCsv style={{
+                  backgroundColor: '#DDFF55',
+                  color: 'black',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  marginLeft: '5%',
+                  height: '100%',
+                  width: '100%',
+
+                  ':hover': {opacity: '.6', backgroundColor: '#DDFF55'}, border: 'none !important',
+                  borderRight: 'none',
+                  borderLeft: 'none',
+                  borderTop: 'none',
+                  borderBottom: 'none',
+                  font: 'Public Sans'
+                }} headers={headers} items={data}>Export Wallets</ExportJsonCsv>
+
               </Button>
+
+
             </Card>
           </Grid>
         </Grid>
