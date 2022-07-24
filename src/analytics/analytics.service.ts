@@ -240,18 +240,18 @@ export class AnalyticsService {
   }
 
   public async getTargets(id: string, vector: number): Promise<number> {
-    const result = await this.prisma.$queryRaw<any>`select count(*) as cnt from "TargetingHolders" where "waitlistId" = ${id} and vector <= ${vector}`;
-    return result.cnt;
+    const result = await this.prisma.$queryRaw<any>`select count(*) from "TargetingHolders" where "waitlistId" = ${id} and vector <= ${+vector}`;
+    return result[0].count;
   }
 
   public async exportTargets(id: string, vector: number): Promise<TargetingResponse> {
     const result = await this.prisma.$queryRaw<any>`select address from "TargetingHolders" 
     inner join "TokenHolder" TH on TH.id = "TargetingHolders"."holderId" 
-    where "TargetingHolders"."waitlistId" = ${id} and vector <= ${vector}`;
+    where "TargetingHolders"."waitlistId" = ${id} and vector <= ${+vector}`;
 
 
     return {
-      address: result.address
+      address: result
     };
   }
 
