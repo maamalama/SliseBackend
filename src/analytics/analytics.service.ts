@@ -432,9 +432,6 @@ export class AnalyticsService {
   }
 
   public async getTokens(): Promise<Token[]> {
-   const a = await this.exportTargets('5d10518a-093c-48ef-a2dc-4269d70f6993', 1);
-   const b = a;
-
    /* const a = await this.fetchHolders(1,'0x79fcdef22feed20eddacbb2587640e45491b757f',10000);
     const b = a;*/
     /*const a = await this.getTwitterFollowersCount('acecreamu');*/
