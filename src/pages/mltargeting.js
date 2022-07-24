@@ -160,11 +160,10 @@ export default function GeneralBooking() {
   };
 
   useEffect(() => {
-    const whitelistId = window.localStorage.getItem('whitelistId');
     const getData = setTimeout(() => {
         axiosInstance
           .get(
-            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?id=${whitelistId}&vector=${+newView}`,
+            `https://daoanalytics.herokuapp.com/api/analytics/getTargets?vector=${+newView}`,
             {
               headers: {
                 'Access-Control-Allow-Origin': '*',
