@@ -91,12 +91,11 @@ export default function UploadSingleFile(props) {
       }, 10000);
 
     }
-  }, [uploadedFile]);
+  }, [uploadedFile, whitelistName]);
 
 
   const handleChangeData = (props) => {
     setWhitelistName(props.target.value);
-    console.log(whitelistName);
   }
 
   const files = acceptedFiles.map(file => (
