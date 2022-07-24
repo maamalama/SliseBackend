@@ -1,7 +1,7 @@
 import { formatNumber } from './utils';
 import { Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from './img/twitter.svg';
 import ConnectButton from 'src/components/ConnectButton';
 
@@ -30,7 +30,7 @@ const TwitterFollowers = ({ value }) => {
       <Stack direction="column" alignItems="center">
         <img {...Icon} />
         <Typography variant="subtitle2">Twitter Followers</Typography>
-        {connected ? (
+        {connected || value > 0 ? (
           <Typography variant="h3">{formatNumber(value)}</Typography>
         ) : (
           <ConnectButton onClick={handleConnect} disabled={loading} />

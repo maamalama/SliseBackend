@@ -30,7 +30,7 @@ const DiscordMembers = ({ value }) => {
       <Stack direction="column" alignItems="center">
         <img {...Icon} />
         <Typography variant="subtitle2">Discord Members</Typography>
-        {connected ? (
+        {connected || value > 0 ? (
           <Typography variant="h3">{formatNumber(value)}</Typography>
         ) : (
           <ConnectButton onClick={handleConnect} disabled={loading} />
