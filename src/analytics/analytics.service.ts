@@ -318,6 +318,15 @@ export class AnalyticsService {
     }
   }
 
+  public async startTargeting(id: string): Promise<number>{
+    const response = await this.httpService.get(`https://slise-ml.herokuapp.com/recs/?whitelist_id=${id}`).toPromise();
+    if(response.status === 200){
+      this.logger.debug('targeting started');
+      return 1;
+    }
+    return 0;
+  }
+
   public async getMutualHoldings(id: string): Promise<MutualHoldingsResponse[]> {
     const existMutualHolders = await this.redis.get(`${id} mutualHolders`);
     if (existMutualHolders) {

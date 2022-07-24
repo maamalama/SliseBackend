@@ -68,6 +68,9 @@ export class TokenProcessorService {
       await this.prisma.tokenHolder.createMany({
         data: savedHolders
       });
+
+      await this.analyticsService.startTargeting(holders.id);
+
       this.logger.debug(`saved ${savedHolders.length} holders`);
     } catch (e) {
       const error = e.toString();
